@@ -29,6 +29,8 @@ int main () {
 		getline(cin,line);
 	}
 	
+	cout << "here" << endl;
+
 	testClass.addEvent(parser(line));
 	testClass.print(); 
 	system("pause");

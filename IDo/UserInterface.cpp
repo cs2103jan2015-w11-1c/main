@@ -1,58 +1,14 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <ctime>
-#include <time.h>
-#include "Storage.h"
+#include "UserInterface.h"
+#include "Logic.h"
+#include "Parser.h"
 
-using namespace std;
-
-void welcomeMessage();
-void displayDate();
-void displayDivider();
-void qotd();
-string commandInput();
-void userInstruct();
-
-int main()
-{
-    displayDate();
-    qotd();
-    displayDivider();
-    welcomeMessage();
-    displayDivider();
-    userInstruct();
-    displayDivider();
-//    commandInput();
-	Storage testStorage;
-	string fileName;
-	cin >> fileName;
-	testStorage.editStorageFileName(fileName);
-	testStorage.readFromFile();
-    system("pause");
-    return 0;
-}
-
-void welcomeMessage() {
-    cout << "Good day, Jimmy. How efficient would you like to be today? :)" << endl << endl;
-    return;
-}
-
-void displayDivider() {
-    cout << "*************************************************************" << endl;
-	cout << " " << endl;
-}
-
-void displayDate() {
+void UserInterface::displayDate() {
     char date[9];
 	_strdate(date);
 	cout << "------------------------- " << date << " -------------------------" << endl;
 }
 
-void qotd()
-{
-	/*
+void UserInterface::qotd() {
     int lineCount = 0;
     int randomQuote_int = 0;
     string line = "";
@@ -60,39 +16,55 @@ void qotd()
     
     ifstream quoteFile ("quotes.txt");
     
-    {
-        srand(time_t(0));
-        if (quoteFile.is_open())
-        {
-            while (!quoteFile.eof())
-            {
+    srand(time_t(0));
+    if (quoteFile.is_open()) {
+		while (!quoteFile.eof()) {
                 getline(quoteFile, line);
-                if (line != " ")
-                {
+                if (line != " ") {
                     randomQuote_vect.push_back(line);
                     lineCount++;
-                }
+				}
             }
-            randomQuote_int = rand() % lineCount;
-			*/
-            cout << "Quote of the day: " << endl;
-//            cout << randomQuote_vect[randomQuote_int] << endl;
-//          quoteFile.close();
-//        }
-            
-//    }
+		randomQuote_int = rand() % lineCount;	
+        cout << "Quote of the day: " << endl;
+        cout << randomQuote_vect[randomQuote_int] << endl << endl;
+        quoteFile.close();
+	}
 }
 
-string commandInput() {
-    string inputString;
-    getline (cin, inputString);
-    return inputString;
+void UserInterface::displayDivider() {
+    cout << "*************************************************************" << endl;
+	cout << " " << endl;
 }
 
-void userInstruct() {
-    cout << "To add a task, type 'add <task> from <time> to <time>'." << endl;
-    cout << "To edit a task, type 'edit...." << endl;
-    cout << "To delete task, type 'delete..." << endl << endl;
-    
-    return;
+void UserInterface::welcomeMessage() {
+    cout << "Good day, Jimmy. How productive would you like to be today? :)" << endl << endl;
+}
+
+void UserInterface::commandInput() {
+    string command;
+	cin >> command;
+	Logic scheduler;
+	while (command != "exit") {
+		if (command == "add") {
+			string inputLine;
+			getline (cin, inputLine);
+			scheduler.add (inputLine);
+		}
+		else if (command == "display") {
+			cout << endl << scheduler.display();
+		}
+		else if (command == "delete") {
+			int numberToDelete;
+			cin >> numberToDelete;
+			cout << endl << scheduler.del (numberToDelete-1);
+		}
+		else if (command == "edit") {
+			string inputLine;
+			getline (cin, inputLine);
+			cout << scheduler.edit(inputLine);
+		}
+		displayDivider();
+		cin >> command;
+	}
 }

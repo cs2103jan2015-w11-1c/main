@@ -5,47 +5,13 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include "UserInterface.h"
+#include "Logic.h"
+#include "Parser.h"
 
 using namespace std;
 
-enum TaskType {
-	Timed, Deadline, Floating
-};
-
-class Task {
-private:
-	TaskType taskType;
-	string taskName;
-	string startDate;
-	string startTime;
-	string endDate;
-	string endTime;
-	string status;
-	string description;
-
-public:
-	Task ();
-	Task (TaskType code, string name, string date1, string time1, string date2, string time2, string tempStatus, string elaboration);
-	TaskType getTaskType ();
-	string getTaskName();
-	string getStartDate();
-	string getStartTime();
-	string getEndDate();
-	string getEndTime();
-	string getStatus();
-	string getDescription();
-	void setTaskType (TaskType type);
-	void setTaskName (string name);
-	void setStartDate (string date);
-	void setStartTime (string time);
-	void setEndDate (string date);
-	void setEndTime (string time);
-	void setStatus (string tempStatus);
-	void setDescription (string elaboration);
-};
-
-
-class Storage {
+/* class Storage {
 private:
 	string storageFileName;
 	vector<Task> _scheduler;
@@ -60,5 +26,5 @@ public:
 	Task getTask ();
 	void readFromFile ();
 };
-
+*/
 #endif

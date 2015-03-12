@@ -9,25 +9,26 @@
 #include "UserInterface.h"
 #include "Logic.h"
 #include "Task.h"
+#include "Storage.h"
 
 const int FIRST_WORD = 0;
 
 string Parser::processAddContent(string userInput){
 
-	string addResult="SUCCESSFULLY ADDED";
+	string addResult="Successfully added '" + userInput + "'";
 	split(userInput);
 	
-	for(int i=0;i<inputs.size();i++){
+	for(int i=0;i<inputs.size();i++) {
 		if(inputs[i]=="from" && inputs[i+2]=="to"){	
 			splitStartDateTime(inputs[i+1]);
 			splitEndDateTime(inputs[i+3]);
 			break;
 		}
-		else if(inputs[i]=="by"){
+		else if(inputs[i]=="by") {
 			_deadline = inputs[i+1];
 			break;
 		}
-		else{
+		else {
 			_taskName = _taskName + " " + inputs[i];
 		}
 	}
@@ -44,7 +45,7 @@ string Parser::processAddContent(string userInput){
 			return addResult;
 		}
 	}  
-	
+	cout << "parser task name:" << _taskName << endl;
 	tasks.setTaskName(_taskName);
 	tasks.setStartDate(_startDate);
 	tasks.setStartTime(_startTime);

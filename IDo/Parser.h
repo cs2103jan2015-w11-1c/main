@@ -9,6 +9,7 @@
 #include "UserInterface.h"
 #include "Logic.h"
 #include "Task.h"
+#include "Storage.h"
 
 using namespace std;
 

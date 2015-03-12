@@ -2,6 +2,7 @@
 #include "UserInterface.h"
 #include "Parser.h"
 #include "Task.h"
+#include "Storage.h"
 #include <sstream>
 
 //Pre-condition: takes in a task object
@@ -23,7 +24,7 @@ void Logic::add(string inputLine) {
 string Logic::display() {
 
 	if (_listOfTasks.empty()) {
-		return "NO TASKS RECORDED\n";
+		return "No tasks have been recorded.\n";
 	} 
 
 	ostringstream oss;
@@ -51,12 +52,12 @@ string Logic::display() {
 //Post: returns the deleted string
 string Logic::del(int numberToDelete) {
 	if (_listOfTasks.empty()) {
-		return "NO TASKS ADDED\n";
+		return "No tasks have been added\n";
 	}
 	else {
 		_listOfTasks.erase(_listOfTasks.begin()+numberToDelete);
 		ostringstream oss;
-		oss << "SUCCESSFULLY DELETED TASK " << numberToDelete+1 << endl;
+		oss << "Task " << numberToDelete+1 << " is deleted successfully." << endl;
 		return oss.str();
 	}
 }
@@ -97,6 +98,11 @@ string Logic::edit(string inputLine){
 	}
 
 	ostringstream oss;
-	oss << endl << "SUCCESSFULLY EDITED TASK " << data.getEditNumber() << endl;
+	oss << endl << "Task " << data.getEditNumber() << " is edited successfully." << endl;
 	return oss.str();
+}
+
+void Logic::updateStorage () {
+	Storage saveToDisk;
+	saveToDisk.updateFile (_listOfTasks);
 }

@@ -2,20 +2,12 @@
 #include "UserInterface.h"
 #include "Logic.h"
 #include "Parser.h"
+#include "Task.h"
 
-/*Task::Task (TaskType code, string name, string date1, string time1, string date2, string time2) {
-	taskType=code;
-	taskName=name;
-	startDate=date1;
-	startTime=time1;
-	endDate=date2;
-	endTime=time2;
-} */
 
-/*
 Storage::Storage () {
 	numberOfItems=0;
-	storageFileName="IDo.txt";
+	storageFileName="output.txt";
 }
 
 int Storage::getNumberOfItems () {
@@ -30,15 +22,13 @@ void Storage::editStorageFileName (string name) {
 	storageFileName=name;
 }
 
-void Storage::addTask (Task task) {
-	_scheduler.push_back(task);
-	numberOfItems++;
+void Storage::updateFile (vector <Task> &temp) {
+	ofstream writeFile (storageFileName);
+	writeFile << temp[0].getTaskName() << endl;
+	writeFile.close();
 }
 
-Task Storage::getTask () {
-	return _scheduler[0];
-}
-	
+/*
 void Storage::readFromFile () {
 	ifstream readFile (storageFileName);
 	Task hello;
@@ -60,4 +50,4 @@ void Storage::readFromFile () {
 		readFile.close();
 	}
 }
-*/
+ */

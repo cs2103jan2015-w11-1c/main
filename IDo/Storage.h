@@ -8,13 +8,15 @@
 #include "UserInterface.h"
 #include "Logic.h"
 #include "Parser.h"
+#include "Task.h"
 
 using namespace std;
 
-/* class Storage {
+class Task;
+
+class Storage {
 private:
 	string storageFileName;
-	vector<Task> _scheduler;
 	int numberOfItems;
 
 public:
@@ -22,9 +24,8 @@ public:
 	int getNumberOfItems();
 	string getStorageFileName ();
 	void editStorageFileName (string name);
-	void addTask (Task task);
-	Task getTask ();
-	void readFromFile ();
+	void updateFile (vector <Task> &temp);
+//	void readFromFile ();
 };
-*/
+
 #endif

@@ -9,6 +9,8 @@
 #include <time.h>
 #include "Parser.h"
 #include "Logic.h"
+#include "Task.h"
+#include "Storage.h"
 
 using namespace std;
 

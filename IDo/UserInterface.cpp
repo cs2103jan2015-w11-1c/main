@@ -1,6 +1,8 @@
 #include "UserInterface.h"
 #include "Logic.h"
 #include "Parser.h"
+#include "Task.h"
+#include "Storage.h"
 
 void UserInterface::displayDate() {
     char date[9];
@@ -33,12 +35,13 @@ void UserInterface::qotd() {
 }
 
 void UserInterface::displayDivider() {
+	cout << " " << endl;
     cout << "*************************************************************" << endl;
 	cout << " " << endl;
 }
 
 void UserInterface::welcomeMessage() {
-    cout << "Good day, Jimmy. How productive would you like to be today? :)" << endl << endl;
+    cout << "Good day, Jimmy. How productive would you like to be today? :)" << endl;
 }
 
 void UserInterface::commandInput() {
@@ -48,10 +51,12 @@ void UserInterface::commandInput() {
 	while (command != "exit") {
 		if (command == "add") {
 			string inputLine;
+			cin.ignore();
 			getline (cin, inputLine);
 			scheduler.add (inputLine);
 		}
 		else if (command == "display") {
+			displayDivider();
 			cout << endl << scheduler.display();
 		}
 		else if (command == "delete") {
@@ -67,4 +72,5 @@ void UserInterface::commandInput() {
 		displayDivider();
 		cin >> command;
 	}
+	scheduler.updateStorage();
 }

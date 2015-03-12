@@ -7,6 +7,7 @@
 #include "UserInterface.h"
 #include "Parser.h"
 #include "Task.h"
+#include "Storage.h"
 
 using namespace std;
 
@@ -18,8 +19,8 @@ public:
 	void add (string inputLine);
 	string display();
 	string del (int numberToDelete);
-	string edit(string inputLine);
-//	void updateStorage(vector<Task>); 
+	string edit (string inputLine);
+	void updateStorage ();
 };
 
 #endif

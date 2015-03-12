@@ -2,6 +2,7 @@
 #include "UserInterface.h"
 #include "Parser.h"
 #include "Task.h"
+#include "Storage.h"
 #include <sstream>
 
 string Task::getTaskName () {

@@ -13,64 +13,74 @@
 
 const int FIRST_WORD = 0;
 
-string Parser::processAddContent(string userInput){
+bool Parser::processAddContent(string userInput){
 
-	string addResult="Successfully added '" + userInput + "'";
+	bool addResultValid = true;
+
 	split(userInput);
 	
 	for(int i=0;i<inputs.size();i++) {
-		if(inputs[i]=="from" && inputs[i+2]=="to"){	
-			splitStartDateTime(inputs[i+1]);
-			splitEndDateTime(inputs[i+3]);
+		if(inputs[i] == "from" && inputs[i+2] == "to"){	
+			if(dateTimeValid(inputs[i+1]) && dateTimeValid(inputs[i+3])){
+				splitStartDateTime(inputs[i+1]);
+				splitEndDateTime(inputs[i+3]);
+			}
+			else{
+				addResultValid = false;
+			}
 			break;
 		}
-		else if(inputs[i]=="by") {
-			_deadline = inputs[i+1];
+		else if(inputs[i] == "by") {
+			if(isDateValid(inputs[i+1])){
+				_deadline = inputs[i+1];
+			}
+			else{
+				addResultValid = false;
+			} 
 			break;
 		}
 		else {
-			_taskName = _taskName + " " + inputs[i];
+			if(!_taskName.empty()){
+				_taskName = _taskName + " " + inputs[i];
+			}
+			else{
+				_taskName = inputs[i];
+			}
 		}
 	}
 
-	if (!_startTime.empty() && !_endTime.empty()) {
-		if(!isPossibleTime(_startTime) || !isPossibleTime(_endTime)){
-			addResult = "Error: Wrong Input";
-			return addResult;
-		}
-	} 
-	if (!_startDate.empty() && !_endDate.empty()) {
-		if(!isDateValid(_startDate)|| !isDateValid(_endDate)){
-			addResult = "Error: Wrong Input";
-			return addResult;
-		}
-	}  
-	cout << "parser task name:" << _taskName << endl;
+	if(_startTime>_endTime){
+		addResultValid = false;
+	}
+
+	return addResultValid;
+}
+
+Task Parser::getTask () {
+
 	tasks.setTaskName(_taskName);
 	tasks.setStartDate(_startDate);
 	tasks.setStartTime(_startTime);
 	tasks.setEndDate(_endDate);
 	tasks.setEndTime(_endTime); 
-	if (!_deadline.empty()) {
-		tasks.setDeadline(_deadline);
-	}
-	return addResult;
-}
+	tasks.setDeadline(_deadline);
 
-Task Parser::getTask () {
 	return tasks;
 }
 
 void Parser::processEditContent(string userInput){
 		
 	split(userInput);
-	
 	_editNumber = atoi(inputs[0].c_str());
-	
 	_taskInfo = inputs[1];
-	
+
 	for(int i=2;i<inputs.size();i++){
-		_editContent = _editContent + " " + inputs[i];
+		if(!_editContent.empty()){
+			_editContent = _editContent + " " + inputs[i];
+		}
+		else{
+			_editContent = inputs[i];
+		}
 	} 
 }
 
@@ -86,13 +96,30 @@ string Parser::getEditContent () {
 	return _editContent;
 }
 
+bool Parser::dateTimeValid(string dateTime){
+	
+	bool valid = true;
+	size_t found = dateTime.find_first_of(",");;
+	
+	if(found!=string::npos){
+		if(!isDateValid(dateTime.substr(0, found))){
+			valid = false; 	
+		}
+		if(!isPossibleTime(dateTime.substr(found+1, dateTime.size()))){
+			valid = false;
+		}
+	}	
+	
+	return valid;
+}
+
 string Parser::splitEndDateTime(string dateTime){
 	
 	string endDateTime;
 	size_t found = dateTime.find_first_of(",");;
 	
 	if(found!=string::npos){
-		_endDate = dateTime.substr(0, found);
+		_endDate = dateTime.substr(0, found);		
 		_endTime = dateTime.substr(found+1,dateTime.size());
 	}		
 	
@@ -117,16 +144,12 @@ string Parser::splitStartDateTime(string dateTime){
 }
 
 
+
 bool Parser::isPossibleTime(string time){
 	
-	int minute;
-	if(time.size()>4) {
-		return false;
-	}
-		
-	minute = atoi(time.c_str());
-
-	if(minute>2359) {
+	int minute = atoi(time.c_str());
+	
+	if(time.size()>4 || minute > 2359) {
 		return false;
 	}
 		
@@ -152,7 +175,7 @@ bool Parser::isDateValid(string date){
 	checkDate = checkDate.substr(found+1,checkDate.size());
 	int year = atoi(checkDate.substr(0,checkDate.size()).c_str());
 
-	if(month>12 || year > 9999) {
+	if(month>12 || year > 9999 ) {
 		valid = false;
 	}
 		
@@ -171,21 +194,17 @@ bool Parser::isDateValid(string date){
 }
 
 
-vector<string> Parser::splitParameters(string commandParametersString){
+vector<string> Parser::split(string userInput){
 	vector<string> tokens;
-	istringstream iss(commandParametersString);
+	istringstream iss(userInput);
 	copy(istream_iterator<string>(iss), istream_iterator<string>(), back_inserter<vector<string> >(tokens));
-		
+	inputs = tokens;
+
 	return tokens;
 }
 
-void Parser::split(string userInput){
-	inputs = splitParameters(userInput);
-}
-
-
 void Parser::print(){
-	
+
 	cout<<"Task: "<<_taskName<<endl;
 	cout<<"Start: "<<_startDate << " " << _startTime <<endl;
 	cout<<"End: "<<_endDate << " " << _endTime <<endl;

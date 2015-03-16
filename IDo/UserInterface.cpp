@@ -4,9 +4,17 @@
 #include "Task.h"
 #include "Storage.h"
 
+using namespace std;
+
+UserInterface::UserInterface(void){
+}
+
+UserInterface::~UserInterface(void){
+}
+
 void UserInterface::displayDate() {
     char date[9];
-	_strdate(date);
+	_strdate_s(date);
 	cout << "------------------------- " << date << " -------------------------" << endl;
 }
 
@@ -40,14 +48,18 @@ void UserInterface::displayDivider() {
 	cout << " " << endl;
 }
 
-void UserInterface::welcomeMessage() {
-    cout << "Good day, Jimmy. How productive would you like to be today? :)" << endl;
+string UserInterface::welcomeMessage() {
+    string welcome =  "Good day, Jimmy. How productive would you like to be today? :)";
+	cout<<welcome;
+
+	return welcome;
 }
 
+
 void UserInterface::commandInput() {
-    string command;
+	string command;
 	cin >> command;
-	Logic scheduler;
+	
 	while (command != "exit") {
 		if (command == "add") {
 			string inputLine;
@@ -69,7 +81,13 @@ void UserInterface::commandInput() {
 			getline (cin, inputLine);
 			cout << scheduler.edit(inputLine);
 		}
+		else{
+
+			cout<<"Wrong Command";
+		}
+
 		displayDivider();
+
 		cin >> command;
 	}
 	scheduler.updateStorage();

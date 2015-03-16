@@ -5,14 +5,24 @@
 #include "Storage.h"
 #include <sstream>
 
+const string SUCCESSFULLY_ADDED = "Successfully added '";
+const string ERROR_WRONG_INPUT = "Error: Wrong Input!";
+
 //Pre-condition: takes in a task object
 //adds the task to the private vector list of tasks
 //passes the updated vector to storage 
 //Post-condition: none
 void Logic::add(string inputLine) {
 	Parser data;
-	cout << endl << data.processAddContent(inputLine) << endl;
-	_listOfTasks.push_back(data.getTask());
+
+	if(data.processAddContent(inputLine)){
+		_listOfTasks.push_back(data.getTask());
+		cout << endl << SUCCESSFULLY_ADDED << inputLine << "'";
+	}
+	else{
+		cout << endl << ERROR_WRONG_INPUT;
+	}
+
 //	updateStorage(_listOfTasks);
 }
 

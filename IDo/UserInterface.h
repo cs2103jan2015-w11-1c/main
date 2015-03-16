@@ -14,12 +14,22 @@
 
 using namespace std;
 
+#pragma once
 class UserInterface {
+private:
+
+	string GUIfeedback;
+	Logic scheduler;
+
 public:
+
+	UserInterface(void);
+	~UserInterface(void);
+
 	void displayDate();
 	void qotd();
 	void displayDivider();
-	void welcomeMessage();
+	string welcomeMessage();
 	void commandInput();
 };
 

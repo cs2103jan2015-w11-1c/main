@@ -33,7 +33,7 @@ class Parser {
 	
 	public:
 		
-		string processAddContent(string userInput);
+		bool processAddContent(string userInput);
 		Task getTask ();
 		void processEditContent(string userInput);
 
@@ -41,18 +41,18 @@ class Parser {
 		string getTaskInfo ();
 		string getEditContent ();
 
+		bool dateTimeValid(string dateTime);
 		string splitStartDateTime(string dateTime);
 		string splitEndDateTime(string dateTime);
 		bool isPossibleTime(string time);
 		bool isDateValid(string date);
-		void split(string userInput);
 		void print();
 		
-		static string removeFirstWord(string  userInput);
-		static vector<string> splitParameters(string commandParametersString);
-		static string trim_right(const string& s, const string& delimiters = " \f\n\r\t\v");
-		static string trim_left(const string& s, const string& delimiters = " \f\n\r\t\v");
-		static string trim(const string &s, const string& delimiters = "\f\n\r\t\v");
+		vector<string> split(string userInput);
+		string removeFirstWord();		
+	//	static string trim_right(const string& s, const string& delimiters = " \f\n\r\t\v");
+	//	static string trim_left(const string& s, const string& delimiters = " \f\n\r\t\v");
+	//	static string trim(const string &s, const string& delimiters = "\f\n\r\t\v");
 		
 		
 };

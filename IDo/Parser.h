@@ -16,45 +16,48 @@ using namespace std;
 class Parser {
 	
 	private:
-		 
-		vector<string> inputs;
-		string _taskName;
-		string _deadline;
-		string _duration;
-		string _startTime;
-		string _endTime;
-		string _startDate;
-		string _endDate;	
+
 		Task tasks;
+
+		static const string MESSAGE_ADD;
+		static const string MESSAGE_DISPLAY;
+		static const string MESSAGE_DELETE;
+		static const string MESSAGE_EDIT;
+		static const string MESSAGE_CLEAR;
+		static const string MESSAGE_ERROR;
+		static const string MESSAGE_EXIT;
+
+		string _userInputs;	
+		string _userCommand;
 		
-		string _taskInfo;
-		string _editContent;
-		int _editNumber;
+		vector<string> splittedUserInputs;
+		vector<string> parsedInputs;
 	
 	public:
-		
-		bool processAddContent(string userInput);
-		Task getTask ();
-		void processEditContent(string userInput);
 
-		int getEditNumber ();
-		string getTaskInfo ();
-		string getEditContent ();
+		Parser();
+		~Parser();
+
+		vector<string> completeParsing(string);
+		vector<string> split(string userInput);		
+		
+		enum CommandType{
+			ADD, DISPLAY, DELETE, EDIT, CLEAR, EXIT, ERROR
+		};
+
+		CommandType userCommand();
+		bool parseActions(vector<string> inputs);
+		bool processAddContent(vector<string> inputs);
+		bool processEditContent(vector<string> inputs);
+		vector<string> getParsedInputs();
 
 		bool dateTimeValid(string dateTime);
-		string splitStartDateTime(string dateTime);
-		string splitEndDateTime(string dateTime);
+		bool splitStartDateTime(string dateTime);
+		bool splitEndDateTime(string dateTime);
 		bool isPossibleTime(string time);
 		bool isDateValid(string date);
-		void print();
 		
-		vector<string> split(string userInput);
-		string removeFirstWord();		
-	//	static string trim_right(const string& s, const string& delimiters = " \f\n\r\t\v");
-	//	static string trim_left(const string& s, const string& delimiters = " \f\n\r\t\v");
-	//	static string trim(const string &s, const string& delimiters = "\f\n\r\t\v");
-		
-		
+	
 };
 
 #endif

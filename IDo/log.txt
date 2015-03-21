@@ -1,0 +1,6 @@
+Log sequence: 
+User wants to "add'
+UI pass to logichi
+User wants to "delete'
+User wants to "delete'
+User wants to "exit'

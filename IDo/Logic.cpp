@@ -1,118 +1,114 @@
 #include "Logic.h"
-#include "UserInterface.h"
-#include "Parser.h"
-#include "Task.h"
-#include "Storage.h"
 #include <sstream>
+#include <assert.h>
 
-const string SUCCESSFULLY_ADDED = "Successfully added '";
+
+const string SUCCESSFULLY_ADDED = "[Added Successfully]";
+const string DISPLAYING = "[List of Tasks]";
 const string ERROR_WRONG_INPUT = "Error: Wrong Input!";
 
-//Pre-condition: takes in a task object
-//adds the task to the private vector list of tasks
-//passes the updated vector to storage 
-//Post-condition: none
-void Logic::add(string inputLine) {
-	Parser data;
+void Logic::getParsedInformation(string line){
 
-	if(data.processAddContent(inputLine)){
-		_listOfTasks.push_back(data.getTask());
-		cout << endl << SUCCESSFULLY_ADDED << inputLine << "'";
-	}
-	else{
-		cout << endl << ERROR_WRONG_INPUT;
-	}
+	Parser parser;
 
-//	updateStorage(_listOfTasks);
+	userInput = line;
+
+	//pass to parser and process
+	parsedInformation = parser.completeParsing(userInput);
+
 }
 
+bool Logic::process(string line){
 
+	getParsedInformation(line);
+	commandChoice = parsedInformation[0];
+
+	if(commandChoice == "add"){
+		Add add;
+		if(add.execute(parsedInformation)){
+			_listOfTasks.push_back(add.getTask());
+			printMessage(SUCCESSFULLY_ADDED);
+		}
+	}
+
+	if(commandChoice == "delete"){
+		Delete remove;
+		if(remove.execute(parsedInformation, getListofTasks())){
+			_listOfTasks = remove.getNewList();
+		} else{
+			cout<<"Task List is empty/Wrong task input!"<<endl;
+		}
+	}
+
+	if(commandChoice == "edit"){
+		Edit edit;
+		if(edit.execute(parsedInformation, getListofTasks())){
+			setListOfTasks(edit.getNewList());
+		} else{
+			cout<<"Task NOT edited"<<endl;
+		}
+	}
+
+	if(commandChoice == "display"){
+		printMessage(DISPLAYING);
+		printMessage2(display());
+	}
+
+	if(commandChoice == "exit"){
+		return false;
+	}
+
+	return true;
+}
 
 //Pre-condition:none
 //strings all the tasks in the vector 
 //Post: returns the string
-string Logic::display() {
-
-	if (_listOfTasks.empty()) {
-		return "No tasks have been recorded.\n";
-	} 
+string Logic::display(){
 
 	ostringstream oss;
 
 	for (int i = 0; i < _listOfTasks.size(); i++) {
+
+		oss << "\n";
+
 		if (!_listOfTasks[i].getStartDate().empty()) {
-			oss << i+1 << ". " << "Task Name:" << _listOfTasks[i].getTaskName() << endl <<
-			"Start: " << _listOfTasks[i].getStartDate() << "," << _listOfTasks[i].getStartTime() << endl <<
-			"End: " << _listOfTasks[i].getEndDate() << "," << _listOfTasks[i].getEndTime() << endl << endl;
+			oss << i+1 << ". " << _listOfTasks[i].getTaskName() << "\n" 
+				<<  "From " << setw(20) << _listOfTasks[i].getStartDate() << "," << _listOfTasks[i].getStartTime() << "\n"
+				<< "To " << setw(18) << _listOfTasks[i].getEndDate() << "," << _listOfTasks[i].getEndTime();
 		}
 		else if (!_listOfTasks[i].getDeadline().empty()) {
-			oss << i+1 << ". " << "Task Name:" << _listOfTasks[i].getTaskName() << endl <<
-			"Deadline: " << _listOfTasks[i].getDeadline() << endl << endl;
+			oss << i+1 << ". " << _listOfTasks[i].getTaskName() << "\n" 
+				<< "By " << setw(18) <<_listOfTasks[i].getDeadline();
 		}
 		else {
-			oss << i+1 << ". " << "Task Name:" << _listOfTasks[i].getTaskName() << endl << endl;
+			oss << i+1 << ". "  << _listOfTasks[i].getTaskName();
 		}
 	}
 
 	return oss.str();
-
 }
 
-//Pre: takes in the number to be deleted
-//Post: returns the deleted string
-string Logic::del(int numberToDelete) {
-	if (_listOfTasks.empty()) {
-		return "No tasks have been added\n";
-	}
-	else {
-		_listOfTasks.erase(_listOfTasks.begin()+numberToDelete);
-		ostringstream oss;
-		oss << "Task " << numberToDelete+1 << " is deleted successfully." << endl;
-		return oss.str();
-	}
+
+
+void Logic::printMessage(string message){
+	cout << endl <<  message <<  endl << endl;
 }
 
-string Logic::edit(string inputLine){
-	Parser data;
-	data.processEditContent(inputLine);
-
-	if (data.getTaskInfo()=="taskname") {
-		int numberToEdit=data.getEditNumber()-1;
-		string newContent=data.getEditContent();
-		_listOfTasks[numberToEdit].setTaskName(newContent);
-	}
-	else if (data.getTaskInfo()=="starttime") {
-		int numberToEdit=data.getEditNumber()-1;
-		string newContent=data.getEditContent();
-		_listOfTasks[numberToEdit].setStartTime(newContent);
-	}
-	else if (data.getTaskInfo()=="startdate") {
-		int numberToEdit=data.getEditNumber()-1;
-		string newContent=data.getEditContent();
-		_listOfTasks[numberToEdit].setStartDate(newContent);
-	}
-	else if (data.getTaskInfo()=="endtime") {
-		int numberToEdit=data.getEditNumber()-1;
-		string newContent=data.getEditContent();
-		_listOfTasks[numberToEdit].setEndTime(newContent);
-	}
-	else if (data.getTaskInfo()=="enddate") {
-		int numberToEdit=data.getEditNumber()-1;
-		string newContent=data.getEditContent();
-		_listOfTasks[numberToEdit].setEndDate(newContent);
-	}
-	else if (data.getTaskInfo()=="deadline") {
-		int numberToEdit=data.getEditNumber()-1;
-		string newContent=data.getEditContent();
-		_listOfTasks[numberToEdit].setDeadline(newContent);
-	}
-
-	ostringstream oss;
-	oss << endl << "Task " << data.getEditNumber() << " is edited successfully." << endl;
-	return oss.str();
+void Logic::printMessage2(string message){
+	cout << message <<  endl;
 }
 
 void Logic::updateStorage () {
 	Storage saveToDisk;
 	saveToDisk.updateFile (_listOfTasks);
+}
+
+vector<Task> Logic::getListofTasks(){
+	return _listOfTasks;
+}
+
+vector<Task> Logic::setListOfTasks(vector<Task> newList){
+	_listOfTasks = newList;
+	return _listOfTasks;
 }

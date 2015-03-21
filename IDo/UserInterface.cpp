@@ -1,23 +1,48 @@
 #include "UserInterface.h"
-#include "Logic.h"
-#include "Parser.h"
-#include "Task.h"
-#include "Storage.h"
 
 using namespace std;
 
-UserInterface::UserInterface(void){
+UserInterface::UserInterface(){
 }
 
-UserInterface::~UserInterface(void){
+UserInterface::~UserInterface(){
+} 
+
+//Take in user inputs
+string UserInterface::receiveInput(){
+	string fromUser;
+	getline(cin, fromUser);
+	_userInput = fromUser;
+
+	return _userInput;
 }
 
+//Get UserInputs
+string UserInterface::getUserInputs() {
+	return _userInput;
+}
+
+
+void UserInterface::process() {
+	
+	bool carryOn = true;
+
+	Logic logic;
+	while(carryOn){
+		carryOn = logic.process(receiveInput());
+	}
+}
+
+
+
+// displays today's date at the launch of the program
 void UserInterface::displayDate() {
     char date[9];
 	_strdate_s(date);
 	cout << "------------------------- " << date << " -------------------------" << endl;
 }
 
+// displays quote of the day at the launch of the program
 void UserInterface::qotd() {
     int lineCount = 0;
     int randomQuote_int = 0;
@@ -55,40 +80,3 @@ string UserInterface::welcomeMessage() {
 	return welcome;
 }
 
-
-void UserInterface::commandInput() {
-	string command;
-	cin >> command;
-	
-	while (command != "exit") {
-		if (command == "add") {
-			string inputLine;
-			cin.ignore();
-			getline (cin, inputLine);
-			scheduler.add (inputLine);
-		}
-		else if (command == "display") {
-			displayDivider();
-			cout << endl << scheduler.display();
-		}
-		else if (command == "delete") {
-			int numberToDelete;
-			cin >> numberToDelete;
-			cout << endl << scheduler.del (numberToDelete-1);
-		}
-		else if (command == "edit") {
-			string inputLine;
-			getline (cin, inputLine);
-			cout << scheduler.edit(inputLine);
-		}
-		else{
-
-			cout<<"Wrong Command";
-		}
-
-		displayDivider();
-
-		cin >> command;
-	}
-	scheduler.updateStorage();
-}

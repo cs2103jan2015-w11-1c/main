@@ -20,7 +20,7 @@ int main() {
     UI.displayDivider();
     UI.welcomeMessage();
     UI.displayDivider();
-    UI.commandInput();
+	UI.process();
 	
 	system("pause");
     return 0;

@@ -1,8 +1,5 @@
 #include "Storage.h"
-#include "UserInterface.h"
-#include "Logic.h"
-#include "Parser.h"
-#include "Task.h"
+#include <assert.h>
 
 
 Storage::Storage () {
@@ -24,7 +21,10 @@ void Storage::editStorageFileName (string name) {
 
 void Storage::updateFile (vector <Task> &temp) {
 	ofstream writeFile (storageFileName);
-	writeFile << temp[0].getTaskName() << endl;
+	assert (!temp.empty());
+	for (int i = 0 ; i < temp.size() ; i++) {
+		writeFile << temp[i].getTaskName() << endl;
+	}
 	writeFile.close();
 }
 

@@ -11,6 +11,7 @@
 #include "Logic.h"
 #include "Task.h"
 #include "Storage.h"
+#include "Log.h"
 
 using namespace std;
 
@@ -18,19 +19,20 @@ using namespace std;
 class UserInterface {
 private:
 
-	string GUIfeedback;
-	Logic scheduler;
+	string _userInput;
 
 public:
+	UserInterface();
+	~UserInterface();
 
-	UserInterface(void);
-	~UserInterface(void);
+	string receiveInput();
+	string getUserInputs();
+	void process();
 
 	void displayDate();
 	void qotd();
 	void displayDivider();
 	string welcomeMessage();
-	void commandInput();
 };
 
 #endif

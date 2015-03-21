@@ -6,21 +6,38 @@
 #include <iostream>
 #include "UserInterface.h"
 #include "Parser.h"
+#include "Add.h"
+#include "Delete.h"
 #include "Task.h"
-#include "Storage.h"
+#include "UserInterface.h"
+#include "Parser.h"
+#include "Edit.h"
+#include <iomanip>
 
 using namespace std;
 
 class Logic {
 private:
+
+	Task task;
 	vector<Task> _listOfTasks;
+	vector<string> parsedInformation;
+	string userInput;
+	string commandChoice;
 
 public:
-	void add (string inputLine);
-	string display();
-	string del (int numberToDelete);
-	string edit (string inputLine);
+
+	void getParsedInformation(string);
+	bool process(string);
+	string display();	
+
+	void printMessage(string message);
+	void printMessage2(string message);
 	void updateStorage ();
+
+	Task getTask();
+	vector<Task> getListofTasks();
+	vector<Task> setListOfTasks(vector<Task> newList);
 };
 
 #endif

@@ -6,95 +6,181 @@
 #include <sstream>
 #include <iterator>
 #include "Parser.h"
-#include "UserInterface.h"
-#include "Logic.h"
-#include "Task.h"
-#include "Storage.h"
 
 const int FIRST_WORD = 0;
+const string Parser::MESSAGE_ADD = "add";
+const string Parser::MESSAGE_DISPLAY = "display";
+const string Parser::MESSAGE_DELETE = "delete";
+const string Parser::MESSAGE_EDIT = "edit";
+const string Parser::MESSAGE_CLEAR = "clear";
+const string Parser::MESSAGE_ERROR = "details not parsed";
+const string Parser::MESSAGE_EXIT = "exit";
 
-bool Parser::processAddContent(string userInput){
+Parser::Parser(){
+}
+
+Parser::~Parser(){
+}
+
+vector<string> Parser::completeParsing(string line){
+	split(line);
+
+	parseActions(splittedUserInputs);
+
+	return parsedInputs;
+}
+
+
+vector<string> Parser::split(string userInput){
+	vector<string> tokens;
+	istringstream iss(userInput);
+	copy(istream_iterator<string>(iss), istream_iterator<string>(), back_inserter<vector<string> >(tokens));
+	splittedUserInputs = tokens;
+
+	return tokens;
+}
+
+Parser::CommandType Parser::userCommand(){
+	_userCommand = splittedUserInputs[0];
+
+	if (_userCommand == "add") {
+		return ADD;
+    }
+    else if (_userCommand == "display") {
+        return DISPLAY;
+    }
+	else if (_userCommand == "delete") {
+        return DELETE;
+    }
+	else if (_userCommand == "edit") {
+        return EDIT;
+    }
+	else if (_userCommand == "clear") {
+        return CLEAR;
+    }
+	else if (_userCommand == "exit") {
+		return EXIT;
+	}
+	else{
+		return ERROR;
+	}
+}
+
+
+bool Parser::parseActions(vector<string> splittedUserInputs){
+	CommandType commandChoice = userCommand();
+	splittedUserInputs.erase(splittedUserInputs.begin());
+	
+	switch (commandChoice){
+		case ADD:
+			parsedInputs.push_back("add");
+			processAddContent(splittedUserInputs);
+			break;
+
+		case DISPLAY:
+			parsedInputs.push_back("display");
+			break;
+
+		case DELETE:
+			parsedInputs.push_back("delete");
+			break;
+
+		case EDIT:
+			parsedInputs.push_back("edit");
+			processEditContent(splittedUserInputs);
+			break;
+		
+		case CLEAR:
+			parsedInputs.push_back("clear");
+			break;
+
+		case EXIT:
+			parsedInputs.push_back("exit");
+
+	}
+
+	return 1;
+}
+
+bool Parser::processAddContent(vector<string> inputs){
 
 	bool addResultValid = true;
+	int size = inputs.size();
+	string task;
 
-	split(userInput);
+	if(size>4){
+		if(inputs[size-4] == "from" && inputs[size-2] == "to"){	
+			if(dateTimeValid(inputs[size-3]) && dateTimeValid(inputs[size-1])){
+				for(int i=0;i<size-4;i++){
+					task += inputs[i] + " ";
+				}
+				parsedInputs.push_back(task);
+				splitStartDateTime(inputs[size-3]);
+				splitEndDateTime(inputs[size-1]);
+			}
+		} else if(inputs[size-2] == "by"){
+			if(isDateValid(inputs[size-1])){
+				parsedInputs.push_back(inputs[size-1]);
+			}
+		} else {
+			for(int i=0;i<size;i++){
+				task += inputs[i] + " ";
+			}
+			parsedInputs.push_back(task);
+		}
+	} else if(size==3 || size==4){
+		if(inputs[size-2] == "by"){
+			if(isDateValid(inputs[size-1])){
+				for(int i=0;i<size-2;i++){
+					task += inputs[i] + " ";
+				}
+				parsedInputs.push_back(task);
+				parsedInputs.push_back(inputs[size-1]);
+			}
+		} else {
+			for(int i=0;i<size;i++){
+				task += inputs[i] + " ";
+			}
+			parsedInputs.push_back(task);
+		}
+	} else if (size!=0){
+		for(int i=0;i<size;i++){
+				task += inputs[i] + " ";
+			}
+		parsedInputs.push_back(task);
+	} else{
+		return false;
+	}
+
 	
-	for(int i=0;i<inputs.size();i++) {
-		if(inputs[i] == "from" && inputs[i+2] == "to"){	
-			if(dateTimeValid(inputs[i+1]) && dateTimeValid(inputs[i+3])){
-				splitStartDateTime(inputs[i+1]);
-				splitEndDateTime(inputs[i+3]);
-			}
-			else{
-				addResultValid = false;
-			}
-			break;
-		}
-		else if(inputs[i] == "by") {
-			if(isDateValid(inputs[i+1])){
-				_deadline = inputs[i+1];
-			}
-			else{
-				addResultValid = false;
-			} 
-			break;
-		}
-		else {
-			if(!_taskName.empty()){
-				_taskName = _taskName + " " + inputs[i];
-			}
-			else{
-				_taskName = inputs[i];
-			}
-		}
-	}
-
-	if(_startTime>_endTime){
-		addResultValid = false;
-	}
-
 	return addResultValid;
 }
 
-Task Parser::getTask () {
 
-	tasks.setTaskName(_taskName);
-	tasks.setStartDate(_startDate);
-	tasks.setStartTime(_startTime);
-	tasks.setEndDate(_endDate);
-	tasks.setEndTime(_endTime); 
-	tasks.setDeadline(_deadline);
+bool Parser::processEditContent(vector<string> inputs){
+	
+	int size = inputs.size();
+	string task;
 
-	return tasks;
-}
-
-void Parser::processEditContent(string userInput){
-		
-	split(userInput);
-	_editNumber = atoi(inputs[0].c_str());
-	_taskInfo = inputs[1];
-
-	for(int i=2;i<inputs.size();i++){
-		if(!_editContent.empty()){
-			_editContent = _editContent + " " + inputs[i];
+	if(size == 3){
+		parsedInputs.push_back(inputs[0]); //task index to be edited
+		parsedInputs.push_back(inputs[1]); //task type to be edited
+	
+		for(int i=2;i<size;i++){
+			task += inputs[i] + " ";; //task details to be edited
 		}
-		else{
-			_editContent = inputs[i];
-		}
-	} 
+		parsedInputs.push_back(inputs[2]);
+	} else {
+		return false;
+	}
+
+	return true;
+} 
+
+vector<string> Parser::getParsedInputs(){
+	return parsedInputs;
 }
 
-int Parser::getEditNumber () {
-	return _editNumber;
-}
-
-string Parser::getTaskInfo () {
-	return _taskInfo;
-}
-
-string Parser::getEditContent () {
-	return _editContent;
-}
 
 bool Parser::dateTimeValid(string dateTime){
 	
@@ -113,37 +199,33 @@ bool Parser::dateTimeValid(string dateTime){
 	return valid;
 }
 
-string Parser::splitEndDateTime(string dateTime){
+bool Parser::splitEndDateTime(string dateTime){
 	
-	string endDateTime;
 	size_t found = dateTime.find_first_of(",");;
 	
 	if(found!=string::npos){
-		_endDate = dateTime.substr(0, found);		
-		_endTime = dateTime.substr(found+1,dateTime.size());
-	}		
+		parsedInputs.push_back(dateTime.substr(0, found));		
+		parsedInputs.push_back(dateTime.substr(found+1,dateTime.size()));
+	} else{
+		return 0;
+	}	
 	
-	endDateTime = _endDate + _endTime;
-	
-	return endDateTime;
+	return 1;
 }
 
-string Parser::splitStartDateTime(string dateTime){
+bool Parser::splitStartDateTime(string dateTime){
 	
-	string startDateTime;
 	size_t found = dateTime.find_first_of(",");;
 	
 	if(found!=string::npos){
-		_startDate = dateTime.substr(0, found);		
-		_startTime = dateTime.substr(found+1,dateTime.size());
-	}		
+		parsedInputs.push_back(dateTime.substr(0, found));		
+		parsedInputs.push_back(dateTime.substr(found+1,dateTime.size()));
+	} else{
+		return false;
+	}
 	
-	startDateTime = _startDate + _startTime;
-	
-	return startDateTime;
+	return true;
 }
-
-
 
 bool Parser::isPossibleTime(string time){
 	
@@ -194,21 +276,6 @@ bool Parser::isDateValid(string date){
 }
 
 
-vector<string> Parser::split(string userInput){
-	vector<string> tokens;
-	istringstream iss(userInput);
-	copy(istream_iterator<string>(iss), istream_iterator<string>(), back_inserter<vector<string> >(tokens));
-	inputs = tokens;
 
-	return tokens;
-}
 
-void Parser::print(){
-
-	cout<<"Task: "<<_taskName<<endl;
-	cout<<"Start: "<<_startDate << " " << _startTime <<endl;
-	cout<<"End: "<<_endDate << " " << _endTime <<endl;
-	cout<<"Deadline: "<<_deadline<<endl;	
-	
-}
 

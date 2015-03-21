@@ -21,6 +21,9 @@ private:
 	string _deadline;
 
 public:
+
+	Task();
+	~Task();
 	string getTaskName();
 	string getStartDate();
 	string getStartTime();

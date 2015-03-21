@@ -2,8 +2,13 @@
 #include "UserInterface.h"
 #include "Parser.h"
 #include "Task.h"
-#include "Storage.h"
 #include <sstream>
+
+Task::Task(){
+}
+
+Task::~Task(){
+}
 
 string Task::getTaskName () {
 	return _taskName;
@@ -52,3 +57,4 @@ void Task::setEndTime (string time) {
 void Task::setDeadline (string date) {
 	_deadline=date;
 }
+

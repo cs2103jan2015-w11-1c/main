@@ -34,6 +34,10 @@ string Task::getDeadline() {
 	return _deadline;
 }
 
+Status Task::getStatus() {
+	return _status;
+}
+
 void Task::setTaskName (string name) {
 	_taskName=name;
 }
@@ -58,3 +62,6 @@ void Task::setDeadline (string date) {
 	_deadline=date;
 }
 
+void Task::setStatus (Status state) {
+	_status=state;
+}

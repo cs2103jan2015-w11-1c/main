@@ -11,6 +11,10 @@
 
 using namespace std;
 
+enum Status{
+		COMPLETED, UNCOMPLETED
+	};
+
 class Task {
 private:
 	string _taskName;
@@ -19,9 +23,11 @@ private:
 	string _endDate;
 	string _endTime;
 	string _deadline;
+	Status _status;
 
 public:
 
+	
 	Task();
 	~Task();
 	string getTaskName();
@@ -30,12 +36,14 @@ public:
 	string getEndDate();
 	string getEndTime();
 	string getDeadline();
+	Status getStatus();
 	void setTaskName (string name);
 	void setStartDate (string date);
 	void setStartTime (string time);
 	void setEndDate (string date);
 	void setEndTime (string time);
 	void setDeadline (string date);
+	void setStatus (Status state);
 };
 
 #endif

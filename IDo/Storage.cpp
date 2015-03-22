@@ -3,12 +3,7 @@
 
 
 Storage::Storage () {
-	numberOfItems=0;
 	storageFileName="output.txt";
-}
-
-int Storage::getNumberOfItems () {
-	return numberOfItems;
 }
 
 string Storage::getStorageFileName () {
@@ -21,33 +16,17 @@ void Storage::editStorageFileName (string name) {
 
 void Storage::updateFile (vector <Task> &temp) {
 	ofstream writeFile (storageFileName);
-	assert (!temp.empty());
 	for (int i = 0 ; i < temp.size() ; i++) {
 		writeFile << temp[i].getTaskName() << endl;
+		if(!temp[i].getStartDate().empty()){
+			writeFile << temp[i].getStartDate() << endl;
+			writeFile << temp[i].getStartTime() << endl;
+			writeFile << temp[i].getEndDate() << endl;
+			writeFile << temp[i].getEndTime() << endl;
+		} else if(!temp[i].getDeadline().empty()){
+			writeFile << temp[i].getDeadline() << endl;
+		}
+		writeFile << endl;
 	}
 	writeFile.close();
 }
-
-/*
-void Storage::readFromFile () {
-	ifstream readFile (storageFileName);
-	Task hello;
-	string name;
-	string date1; 
-	string time1;
-	getline(readFile,name);
-	while (name!="NULL") {
-		getline(readFile,date1);
-		getline(readFile,time1);
-		hello.setTaskName(name);
-		hello.setStartDate(date1);
-		hello.setStartTime(time1);
-		cout << hello.getTaskName() << endl;
-		cout << hello.getStartDate() << endl;
-		cout << hello.getStartTime() << endl;
-		name="NULL";
-		getline(readFile,name);
-		readFile.close();
-	}
-}
- */

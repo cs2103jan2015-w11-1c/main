@@ -16,6 +16,8 @@ using namespace std;
 class Parser {
 	
 	private:
+		vector<string> splittedUserInputs;
+		vector<string> parsedInputs;
 
 		Task tasks;
 
@@ -30,34 +32,24 @@ class Parser {
 		string _userInputs;	
 		string _userCommand;
 		
-		vector<string> splittedUserInputs;
-		vector<string> parsedInputs;
-	
-	public:
-
-		Parser();
-		~Parser();
-
-		vector<string> completeParsing(string);
-		vector<string> split(string userInput);		
-		
 		enum CommandType{
 			ADD, DISPLAY, DELETE, EDIT, CLEAR, EXIT, ERROR
 		};
-
 		CommandType userCommand();
-		bool parseActions(vector<string> inputs);
+
+		vector<string> split(string userInput);
+		bool parseActions(vector<string> inputs);	
 		bool processAddContent(vector<string> inputs);
 		bool processEditContent(vector<string> inputs);
 		vector<string> getParsedInputs();
-
 		bool dateTimeValid(string dateTime);
 		bool splitStartDateTime(string dateTime);
 		bool splitEndDateTime(string dateTime);
 		bool isPossibleTime(string time);
 		bool isDateValid(string date);
-		
 	
+	public:
+		vector<string> completeParsing(string);
 };
 
 #endif

@@ -17,7 +17,6 @@ class Task;
 class Storage {
 private:
 	string storageFileName;
-	int numberOfItems;
 
 public:
 	Storage();
@@ -25,7 +24,6 @@ public:
 	string getStorageFileName ();
 	void editStorageFileName (string name);
 	void updateFile (vector <Task> &temp);
-//	void readFromFile ();
 };
 
 #endif

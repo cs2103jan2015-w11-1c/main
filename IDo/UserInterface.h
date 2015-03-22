@@ -18,21 +18,20 @@ using namespace std;
 #pragma once
 class UserInterface {
 private:
-
 	string _userInput;
 
 public:
 	UserInterface();
 	~UserInterface();
 
-	string receiveInput();
-	string getUserInputs();
-	void process();
-
 	void displayDate();
 	void qotd();
 	void displayDivider();
 	string welcomeMessage();
+	void process();
+	string receiveInput();
+	inline string getUserInputs();
+	
 };
 
 #endif

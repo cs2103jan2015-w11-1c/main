@@ -2,38 +2,11 @@
 
 using namespace std;
 
-UserInterface::UserInterface(){
+UserInterface::UserInterface() {
 }
 
-UserInterface::~UserInterface(){
+UserInterface::~UserInterface() {
 } 
-
-//Take in user inputs
-string UserInterface::receiveInput(){
-	string fromUser;
-	getline(cin, fromUser);
-	_userInput = fromUser;
-
-	return _userInput;
-}
-
-//Get UserInputs
-string UserInterface::getUserInputs() {
-	return _userInput;
-}
-
-
-void UserInterface::process() {
-	
-	bool carryOn = true;
-
-	Logic logic;
-	while(carryOn){
-		carryOn = logic.process(receiveInput());
-	}
-}
-
-
 
 // displays today's date at the launch of the program
 void UserInterface::displayDate() {
@@ -75,8 +48,37 @@ void UserInterface::displayDivider() {
 
 string UserInterface::welcomeMessage() {
     string welcome =  "Good day, Jimmy. How productive would you like to be today? :)";
-	cout<<welcome;
+	cout << welcome;
 
 	return welcome;
 }
+
+void UserInterface::process() {
+	
+	bool carryOn = true;
+
+	Logic logic;
+	while(carryOn){
+		carryOn = logic.process(receiveInput());
+	}
+}
+
+//Take in user inputs
+string UserInterface::receiveInput() {
+	string fromUser;
+	getline(cin, fromUser);
+	_userInput = fromUser;
+
+	return _userInput;
+}
+
+//Get UserInputs
+string UserInterface::getUserInputs() {
+	return _userInput;
+}
+
+
+
+
+
 

@@ -16,30 +16,6 @@ const string Parser::MESSAGE_CLEAR = "clear";
 const string Parser::MESSAGE_ERROR = "details not parsed";
 const string Parser::MESSAGE_EXIT = "exit";
 
-Parser::Parser(){
-}
-
-Parser::~Parser(){
-}
-
-vector<string> Parser::completeParsing(string line){
-	split(line);
-
-	parseActions(splittedUserInputs);
-
-	return parsedInputs;
-}
-
-
-vector<string> Parser::split(string userInput){
-	vector<string> tokens;
-	istringstream iss(userInput);
-	copy(istream_iterator<string>(iss), istream_iterator<string>(), back_inserter<vector<string> >(tokens));
-	splittedUserInputs = tokens;
-
-	return tokens;
-}
-
 Parser::CommandType Parser::userCommand(){
 	_userCommand = splittedUserInputs[0];
 
@@ -61,11 +37,19 @@ Parser::CommandType Parser::userCommand(){
 	else if (_userCommand == "exit") {
 		return EXIT;
 	}
-	else{
+	else {
 		return ERROR;
 	}
 }
 
+vector<string> Parser::split(string userInput){
+	vector<string> tokens;
+	istringstream iss(userInput);
+	copy(istream_iterator<string>(iss), istream_iterator<string>(), back_inserter<vector<string> >(tokens));
+	splittedUserInputs = tokens;
+
+	return tokens;
+}
 
 bool Parser::parseActions(vector<string> splittedUserInputs){
 	CommandType commandChoice = userCommand();
@@ -181,7 +165,6 @@ vector<string> Parser::getParsedInputs(){
 	return parsedInputs;
 }
 
-
 bool Parser::dateTimeValid(string dateTime){
 	
 	bool valid = true;
@@ -199,20 +182,6 @@ bool Parser::dateTimeValid(string dateTime){
 	return valid;
 }
 
-bool Parser::splitEndDateTime(string dateTime){
-	
-	size_t found = dateTime.find_first_of(",");;
-	
-	if(found!=string::npos){
-		parsedInputs.push_back(dateTime.substr(0, found));		
-		parsedInputs.push_back(dateTime.substr(found+1,dateTime.size()));
-	} else{
-		return 0;
-	}	
-	
-	return 1;
-}
-
 bool Parser::splitStartDateTime(string dateTime){
 	
 	size_t found = dateTime.find_first_of(",");;
@@ -225,6 +194,20 @@ bool Parser::splitStartDateTime(string dateTime){
 	}
 	
 	return true;
+}
+
+bool Parser::splitEndDateTime(string dateTime){
+	
+	size_t found = dateTime.find_first_of(",");;
+	
+	if(found!=string::npos){
+		parsedInputs.push_back(dateTime.substr(0, found));		
+		parsedInputs.push_back(dateTime.substr(found+1,dateTime.size()));
+	} else{
+		return 0;
+	}	
+	
+	return 1;
 }
 
 bool Parser::isPossibleTime(string time){
@@ -275,7 +258,10 @@ bool Parser::isDateValid(string date){
 	return valid;
 }
 
+vector<string> Parser::completeParsing(string line){
+	split(line);
 
+	parseActions(splittedUserInputs);
 
-
-
+	return parsedInputs;
+}

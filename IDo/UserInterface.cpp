@@ -76,9 +76,3 @@ string UserInterface::receiveInput() {
 string UserInterface::getUserInputs() {
 	return _userInput;
 }
-
-
-
-
-
-

@@ -12,7 +12,6 @@
 #include "Parser.h"
 #include "Edit.h"
 
-
 using namespace std;
 
 class Logic {
@@ -22,7 +21,6 @@ private:
 	vector<string> parsedInformation;
 	string userInput;
 	vector<Task> _listOfTasks;
-//	Task task;
 
 public:
 
@@ -31,7 +29,8 @@ public:
 	void updateStorage ();
 	void printMessage(string message);
 	void printMessage2(string message);
-	string display();	
+	string display();
+	void markStatus();
 	vector<Task> getListofTasks();
 	vector<Task> setListOfTasks(vector<Task> newList);
 };

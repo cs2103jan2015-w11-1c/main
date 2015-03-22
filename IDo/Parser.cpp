@@ -34,6 +34,9 @@ Parser::CommandType Parser::userCommand(){
 	else if (_userCommand == "clear") {
         return CLEAR;
     }
+	else if (_userCommand == "mark") {
+		return MARK;
+	}
 	else if (_userCommand == "exit") {
 		return EXIT;
 	}
@@ -74,6 +77,11 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 			processEditContent(splittedUserInputs);
 			break;
 		
+		case MARK:
+			parsedInputs.push_back("mark");
+			processMarkContent(splittedUserInputs);
+			break;
+
 		case CLEAR:
 			parsedInputs.push_back("clear");
 			break;
@@ -160,6 +168,21 @@ bool Parser::processEditContent(vector<string> inputs){
 
 	return true;
 } 
+
+bool Parser::processMarkContent(vector<string> inputs){
+
+	int size = inputs.size();
+	string task;
+
+	if(size == 2){
+		parsedInputs.push_back(inputs[0]); //task index to be edited
+		parsedInputs.push_back(inputs[1]); //task type to be edited
+	} else {
+		return false;
+	}
+
+	return true;
+}
 
 vector<string> Parser::getParsedInputs(){
 	return parsedInputs;

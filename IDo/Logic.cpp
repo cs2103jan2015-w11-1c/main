@@ -38,11 +38,12 @@ bool Logic::process(string line){
 	} else if(commandChoice == "display"){
 		printMessage(DISPLAYING);
 		printMessage2(display());
+	} else if(commandChoice == "mark"){
+		markStatus();
 	} else if(commandChoice == "exit"){
 		updateStorage();
 		return false;
 	}
-
 	return true;
 }
 
@@ -76,19 +77,35 @@ void Logic::printMessage2(string message){
 string Logic::display(){
 
 	ostringstream oss;
+	int size=_listOfTasks.size();
+	for (int i = 0; i < size; i++) {
 
-	for (int i = 0; i < _listOfTasks.size(); i++) {
-
-		oss << "\n";
-		oss << i+1 << ". "  << _listOfTasks[i].getTaskName() << "\n";
+		oss << endl;
+		oss << i+1 << ". "  << _listOfTasks[i].getTaskName();
+		if(_listOfTasks[i].getStatus() == UNCOMPLETED) {
+			oss << "(UNCOMPLETED)"; 
+		} else {
+			oss << "(COMPLETED)";
+		}
+		oss << endl;
 		if(!_listOfTasks[i].getStartDate().empty()){
-			oss << "From " << setw(16) << _listOfTasks[i].getStartDate() << "," << _listOfTasks[i].getStartTime() << "\n"
-				<< "To " << setw(18) << _listOfTasks[i].getEndDate() << "," << _listOfTasks[i].getEndTime();
+			oss << "From " << setw(16) << _listOfTasks[i].getStartDate() << "," << _listOfTasks[i].getStartTime() << endl
+				<< "To " << setw(18) << _listOfTasks[i].getEndDate() << "," << _listOfTasks[i].getEndTime() << endl;
 		} else if(!_listOfTasks[i].getDeadline().empty()){
-			oss << "By " << setw(18) <<_listOfTasks[i].getDeadline();
+			oss << "By " << setw(18) <<_listOfTasks[i].getDeadline() << endl;
 		}
 	}
 	return oss.str();
+}
+
+void Logic::markStatus(){
+	int numberToMark=atoi(parsedInformation[1].c_str());
+	string status=parsedInformation[2];
+	if(status == "yes"){
+		_listOfTasks[numberToMark-1].setStatus(COMPLETED);
+	} else if(status == "no"){
+		_listOfTasks[numberToMark-1].setStatus(UNCOMPLETED);
+	}
 }
 
 vector<Task> Logic::getListofTasks(){

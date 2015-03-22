@@ -33,7 +33,7 @@ class Parser {
 		string _userCommand;
 		
 		enum CommandType{
-			ADD, DISPLAY, DELETE, EDIT, CLEAR, EXIT, ERROR
+			ADD, DISPLAY, DELETE, EDIT, CLEAR, EXIT, ERROR, MARK
 		};
 		CommandType userCommand();
 
@@ -41,6 +41,7 @@ class Parser {
 		bool parseActions(vector<string> inputs);	
 		bool processAddContent(vector<string> inputs);
 		bool processEditContent(vector<string> inputs);
+		bool processMarkContent(vector<string> inputs);
 		vector<string> getParsedInputs();
 		bool dateTimeValid(string dateTime);
 		bool splitStartDateTime(string dateTime);

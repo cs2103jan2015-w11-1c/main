@@ -19,6 +19,7 @@ using namespace std;
 class UserInterface {
 private:
 	string _userInput;
+//	Logic logic;
 
 public:
 	UserInterface();
@@ -30,7 +31,7 @@ public:
 	string welcomeMessage();
 	void process();
 	string receiveInput();
-	inline string getUserInputs();
+	string getUserInputs();
 	
 };
 

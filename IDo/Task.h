@@ -12,8 +12,12 @@
 using namespace std;
 
 enum Status{
-		COMPLETED, UNCOMPLETED
-	};
+	COMPLETED, UNCOMPLETED
+};
+
+enum Priority{
+	HIGH, MEDIUM, LOW, NONE
+};
 
 class Task {
 private:
@@ -24,10 +28,10 @@ private:
 	string _endTime;
 	string _deadline;
 	Status _status;
+	Priority _priority;
 
 public:
 
-	
 	Task();
 	~Task();
 	string getTaskName();
@@ -37,6 +41,7 @@ public:
 	string getEndTime();
 	string getDeadline();
 	Status getStatus();
+	Priority getPriority();
 	void setTaskName (string name);
 	void setStartDate (string date);
 	void setStartTime (string time);
@@ -44,6 +49,7 @@ public:
 	void setEndTime (string time);
 	void setDeadline (string date);
 	void setStatus (Status state);
+	void setPriority(Priority priority);
 };
 
 #endif

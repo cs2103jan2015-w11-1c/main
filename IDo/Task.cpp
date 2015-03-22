@@ -5,6 +5,7 @@
 #include <sstream>
 
 Task::Task(){
+	_status=UNCOMPLETED;
 }
 
 Task::~Task(){
@@ -38,6 +39,10 @@ Status Task::getStatus() {
 	return _status;
 }
 
+Priority Task::getPriority() {
+	return _priority;
+}
+
 void Task::setTaskName (string name) {
 	_taskName=name;
 }
@@ -65,3 +70,7 @@ void Task::setDeadline (string date) {
 void Task::setStatus (Status state) {
 	_status=state;
 }
+
+void Task::setPriority (Priority priority) {
+	_priority=priority;
+} 

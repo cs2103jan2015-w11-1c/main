@@ -6,6 +6,7 @@
 
 Task::Task(){
 	_status=UNCOMPLETED;
+	_priority=LOW;
 }
 
 Task::~Task(){

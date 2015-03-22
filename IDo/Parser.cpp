@@ -140,7 +140,7 @@ bool Parser::processAddContent(vector<string> inputs){
 				task += inputs[i] + " ";
 			}
 		parsedInputs.push_back(task);
-	} else{
+	} else {
 		return false;
 	}
 

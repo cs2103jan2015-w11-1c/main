@@ -1,7 +1,9 @@
 #include "Logic.h"
 #include <sstream>
+#include <iostream>
+#include <iomanip>
 #include <assert.h>
-
+#include <string>
 
 const string SUCCESSFULLY_ADDED = "[Added Successfully]";
 const string DISPLAYING = "[List of Tasks]";
@@ -27,6 +29,26 @@ void Logic::printMessage(string message){
 
 // Print out the tasks added
 void Logic::printMessage2(){
+
+	string center(string heading, const int w) {
+		stringstream ss, spaces;
+		int padding = w - heading.size();	// count excess room to pad
+		for (int i=0; i<padding/2; ++i)
+			spaces << " ";
+		ss << spaces.str() << heading << spaces.str(); // format with padding
+		if(padding>0 && padding%2 != 0)	// if odd #, add 1 space
+			ss << " ";
+		return ss.str();
+	}
+
+	cout << center("No.", 4) << " | "
+		 << center("From:", 8) << " | "
+		 << center("To:", 8) << " | "
+	     << center("Status:", 10) << " | "
+		 << center("Task name:", 15) << endl;
+
+	cout << string(45, '-') << endl;
+
 	int size = _listOfTasks.size();
 	for (int i = 0 ; i < size ; i++) {
 		cout << i+1 << display(_listOfTasks[i]) <<  endl;
@@ -35,26 +57,35 @@ void Logic::printMessage2(){
 
 // Returns the string of a particular Task class
 string Logic::display(Task task){
-	ostringstream oss;
-	
-	oss << ". "  << task.getTaskName();
-	// output completion status
-	if(task.getStatus() == UNCOMPLETED) {
-		oss << "(UNCOMPLETED)"; 
-	} else {
-		oss << "(COMPLETED)";
+
+	string fillTable(const string content, const int width) {
+		stringstream ss;
+		ss << fixed << right;
+		ss.fill(' ');        // fill space around displayed text
+		ss.width(width);     // set width around displayed text
+		ss << content;
+		return ss.str();
 	}
-	
+
 	// output start, end date, time or deadline
-	oss << endl;
 	if(!task.getStartDate().empty()){
-		oss << "From " << setw(16) << task.getStartDate() << "," << task.getStartTime() << endl
-			<< "To " << setw(18) << task.getEndDate() << "," << task.getEndTime() << endl;
+		cout << fillTable(task.getStartDate(), 8) << " | " << endl 
+			 << fillTable(task.getStartTime(), 8) << " | " 
+			 << fillTable(task.getEndDate(), 8) << endl << task.getEndTime() << endl;
 	} else if(!task.getDeadline().empty()){
-		oss << "By " << setw(18) <<task.getDeadline() << endl;
+		cout << fillTable(task.getDeadline(), 8) << endl;
+	}
+	// output completion status
+	
+	if(task.getStatus() == UNCOMPLETED) {
+	 cout << fillTable("(UNCOMPLETED)", 10); 
+	} else {
+		cout << fillTable("(COMPLETED)", 10);
 	}
 	
-	return oss.str();
+	// output task name
+	fillTable(task.getTaskName(), 15);
+	
 }
 
 // Marks status as COMPLETED or UNCOMPLETED

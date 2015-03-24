@@ -39,7 +39,7 @@ string Logic::display(Task task){
 	
 	oss << ". "  << task.getTaskName();
 	// output completion status
-	if(task.getStatus() == INCOMPLETE) {
+	if(task.getStatus() == NOTDONE) {
 		oss << "(UNCOMPLETED)"; 
 	} else {
 		oss << "(COMPLETED)";

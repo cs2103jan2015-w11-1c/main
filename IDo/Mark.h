@@ -23,6 +23,8 @@ public:
 	Task markStatus (Task);
 	Task markPriority (Task);
 	Task markLabel (Task);
+	void setTypeToMark(string);
+	void setContentToMark(string);
 };
 
 #endif

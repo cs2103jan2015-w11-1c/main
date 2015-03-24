@@ -12,7 +12,7 @@
 using namespace std;
 
 enum Status{
-	COMPLETED, INCOMPLETE
+	DONE, NOTDONE
 };
 
 enum Priority{

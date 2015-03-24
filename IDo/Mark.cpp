@@ -19,10 +19,18 @@ bool Mark::isValidInput(int userinput, int taskListSize) {
 	
 }
 
-vector<Task> Mark::execute(vector<string> parsedInfo, vector<Task> taskListFromLogic) {
-	_typetomark = parsedInfo[2];
+void Mark::setTypeToMark (string type) {
+	_typetomark = type;
+}
+
+void Mark::setContentToMark (string content) {
+	_contenttomark = content;
+}
+
+vector<Task> Mark::execute (vector<string> parsedInfo, vector<Task> taskListFromLogic) {
+	setTypeToMark (parsedInfo[2]);
 	
-	_contenttomark = parsedInfo[3];
+	setContentToMark (parsedInfo[3]);
 	
 	Task tasktomark = taskListFromLogic[_indextomark];
 	Task marked;
@@ -41,10 +49,10 @@ vector<Task> Mark::execute(vector<string> parsedInfo, vector<Task> taskListFromL
 
 
 Task Mark::markStatus (Task tasktomark) {
-	if (_contenttomark == "completed") {
-		tasktomark.setStatus(COMPLETED);
-	} else if (_contenttomark == "incomplete") {
-		tasktomark.setStatus(INCOMPLETE);
+	if (_contenttomark == "done") {
+		tasktomark.setStatus(DONE);
+	} else if (_contenttomark == "notdone") {
+		tasktomark.setStatus(NOTDONE);
 	} 
 	
 	return tasktomark;

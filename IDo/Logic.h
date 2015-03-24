@@ -25,9 +25,11 @@ private:
 	void getParsedInformation(string);
 	void printMessage(string message);
 	void printMessage2();
+	void printMessage3();
 	string center(string heading, const int w);
 	void display(Task task);
 	string fillTable(const string content, const int width);
+	void viewCompletedTasks();
 
 public:
 	bool process(string);

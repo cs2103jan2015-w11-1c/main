@@ -1,8 +1,15 @@
 #include "Logic.h"
 #include <sstream>
+#include <iostream>
+#include <iomanip>
 #include <assert.h>
+<<<<<<< HEAD
+#include <string>
+
+=======
 
 const string SUCCESSFULLY_MARKED = "[Marked Successfully]";
+>>>>>>> cae607f72ac9aaeed2f788ef84605bba8b4292f3
 const string SUCCESSFULLY_ADDED = "[Added Successfully]";
 const string DISPLAYING = "[List of Tasks]";
 const string ERROR_WRONG_INPUT = "Error: Wrong Input!";
@@ -25,38 +32,96 @@ void Logic::printMessage(string message){
 	cout << endl <<  message <<  endl << endl;
 }
 
+string Logic::center(string heading, const int w) {
+		stringstream ss, spaces;
+		int padding = w - heading.size();	// count excess room to pad
+		for (int i=0; i<padding/2; ++i)
+			spaces << " ";
+		ss << spaces.str() << heading << spaces.str(); // format with padding
+		if(padding>0 && padding%2 != 0)	// if odd #, add 1 space
+			ss << " ";
+		return ss.str();
+	}
+
+
 // Print out the tasks added
 void Logic::printMessage2(){
+
+	
+	cout << center("No.", 3) << " | "
+		 << center("Frm date:", 10) << " | "
+		 << center("Frm time:", 6) << " | "
+		 << center("To date:", 10) << " | "
+		 << center("To time:", 6) << " | "
+	     << center("Status:", 10) << " | "
+		 << center("Task:", 15) << endl;
+
+	cout << string(80, '-') << endl;
+
 	int size = _listOfTasks.size();
 	for (int i = 0 ; i < size ; i++) {
-		cout << i+1 << display(_listOfTasks[i]) <<  endl;
+		cout << i+1 << "." << setw(4) << " | ";
+		display(_listOfTasks[i]);
 	}
 }
+
+string Logic::fillTable(const string content, const int width) {
+		stringstream ss;
+		ss << fixed << right;
+		ss.fill(' ');        // fill space around displayed text
+		ss.width(width);     // set width around displayed text
+		ss << content;
+		return ss.str();
+	}
 
 // Returns the string of a particular Task class
-string Logic::display(Task task){
-	ostringstream oss;
-	
-	oss << ". "  << task.getTaskName();
-	// output completion status
-	if(task.getStatus() == NOTDONE) {
-		oss << "(UNCOMPLETED)"; 
-	} else {
-		oss << "(COMPLETED)";
-	}
-	
+void Logic::display(Task task) {
+
 	// output start, end date, time or deadline
-	oss << endl;
 	if(!task.getStartDate().empty()){
-		oss << "From " << setw(16) << task.getStartDate() << "," << task.getStartTime() << endl
-			<< "To " << setw(18) << task.getEndDate() << "," << task.getEndTime() << endl;
-	} else if(!task.getDeadline().empty()){
-		oss << "By " << setw(18) <<task.getDeadline() << endl;
+		cout << fillTable(task.getStartDate(), 10) << " | "
+			 << fillTable(task.getStartTime(), 9) << " | " 
+			 << fillTable(task.getEndDate(), 10) << " | "  
+			 << fillTable(task.getEndTime(), 8) << " | ";
+	} else if(!task.getDeadline().empty()) {
+		cout << fillTable(task.getDeadline(), 10) << " | ";
+	}
+
+	// output completion status
+<<<<<<< HEAD
+	if(task.getStatus() == NOTDONE) {
+=======
+<<<<<<< HEAD
+	if(task.getStatus() == UNCOMPLETED) {
+	 cout << fillTable("(NOT DONE)", 10) << " | "; 
+=======
+	if(task.getStatus() == INCOMPLETE) {
+>>>>>>> bbd34939334d82d46337ce55633aa19781cd9293
+		oss << "(UNCOMPLETED)"; 
+>>>>>>> cae607f72ac9aaeed2f788ef84605bba8b4292f3
+	} else {
+		cout << fillTable("(DONE)", 10) << " | ";
 	}
 	
-	return oss.str();
+	// output task name
+	cout << left << setw(15) << task.getTaskName() << endl;
+	
 }
 
+<<<<<<< HEAD
+// Marks status as COMPLETED or UNCOMPLETED
+void Logic::markStatus() {
+	int numberToMark=atoi(parsedInformation[1].c_str());
+	string status=parsedInformation[2];
+	
+	if(status == "yes"){
+		_listOfTasks[numberToMark-1].setStatus(COMPLETED);
+	} else if(status == "no"){
+		_listOfTasks[numberToMark-1].setStatus(UNCOMPLETED);
+	}
+}
+=======
+>>>>>>> cae607f72ac9aaeed2f788ef84605bba8b4292f3
 
 // Processes the command and inputs passed from UI
 bool Logic::process(string line){

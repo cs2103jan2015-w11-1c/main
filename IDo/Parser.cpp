@@ -1,16 +1,5 @@
-#include <iostream>
-#include <algorithm>
-#include <vector>
-#include <string>
-#include <stdlib.h>
-#include <sstream>
-#include <iterator>
 #include "Parser.h"
-//#include "boost/date_time/gregorian/gregorian.hpp" 
-//#include "boost/date_time/posix_time/posix_time.hpp"
-
-//using namespace boost::posix_time;
-//using namespace boost::gregorian;
+#include <iostream>
 
 const int FIRST_WORD = 0;
 const int SECOND_WORD = 1;
@@ -23,6 +12,7 @@ const string Parser::CHOICE_EDIT = "edit";
 const string Parser::CHOICE_MARK = "mark";
 const string Parser::CHOICE_CLEAR = "clear";
 const string Parser::CHOICE_ERROR = "details not parsed";
+const string Parser::CHOICE_VIEW = "view";
 const string Parser::CHOICE_EXIT = "exit";
 const string Parser::MESSAGE_INVALID_TIME = "Invalid Time Input";
 const string Parser::MESSAGE_INVALID_DATE = "Invalid Date Input";
@@ -49,6 +39,9 @@ Parser::CommandType Parser::userCommand(){
 	else if (_userCommand == CHOICE_MARK) {
 		return MARK;
 	}
+	else if (_userCommand == CHOICE_VIEW) {
+        return VIEW;
+    }
 	else if (_userCommand == CHOICE_EXIT) {
 		return EXIT;
 	}
@@ -99,10 +92,17 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 		case CLEAR:
 			parsedInputs.push_back("clear");
 			break;
+		
+		case VIEW:
+			parsedInputs.push_back("view");
+			processView(splittedUserInputs);
+			break;
 
 		case EXIT:
 			parsedInputs.push_back("exit");
 
+		case INVALID:
+			break;
 	}
 
 	return 1;
@@ -125,7 +125,7 @@ bool Parser::processAddContent(vector<string> inputs){
 				splitStartDateTime(inputs[size-3]);
 				splitEndDateTime(inputs[size-1]);
 			}
-		} else if(inputs[size-2] == "by"){
+		} /*else if(inputs[size-2] == "by"){
 			if(isDateValid(inputs[size-1])){
 				parsedInputs.push_back(inputs[size-1]);
 			}
@@ -134,8 +134,8 @@ bool Parser::processAddContent(vector<string> inputs){
 				_taskContent += inputs[i] + " ";
 			}
 			parsedInputs.push_back(_taskContent);
-		}
-	} else if(size==3 || size==4){
+		}*/
+	} else if(size > 2){
 		if(inputs[size-2] == "by"){
 			if(isDateValid(inputs[size-1])){
 				for(int i=0;i<size-2;i++){
@@ -143,13 +143,22 @@ bool Parser::processAddContent(vector<string> inputs){
 				}
 				parsedInputs.push_back(_taskContent);
 				parsedInputs.push_back(inputs[size-1]);
+				parsedInputs.push_back("2359");
 			}
-		} else {
+			if(dateTimeValid(inputs[size-1])) {
+				for(int i=0;i<size-4;i++){
+					_taskContent += inputs[i] + " ";
+				}
+				parsedInputs.push_back(_taskContent);
+				splitEndDateTime(inputs[size-1]);
+			}
+
+		}/* else {
 			for(int i=0;i<size;i++){
 				_taskContent += inputs[i] + " ";
 			}
 			parsedInputs.push_back(_taskContent);
-		}
+		}*/
 	} else if (size!=0){
 		for(int i=0;i<size;i++){
 				_taskContent += inputs[i] + " ";
@@ -203,6 +212,20 @@ bool Parser::processMarkContent(vector<string> inputs){
 	return true;
 }
 
+//This parses the information that a view function requires i.e. undone, done, commands
+bool Parser::processView(vector<string> inputs) {
+
+	int size = inputs.size();
+
+	if(size == 1) {
+		parsedInputs.push_back(inputs[FIRST_WORD]); //undone, done, commands 
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
 vector<string> Parser::getParsedInputs(){
 	return parsedInputs;
 }
@@ -212,8 +235,8 @@ vector<string> Parser::getParsedInputs(){
 bool Parser::dateTimeValid(string dateTime){
 	
 	bool valid = true;
-	size_t found = dateTime.find_first_of(",");;
-	
+	size_t found = dateTime.find_first_of(",");
+
 	if(found!=string::npos){
 		if(!isDateValid(dateTime.substr(0, found))){
 			valid = false; 	
@@ -221,20 +244,23 @@ bool Parser::dateTimeValid(string dateTime){
 		if(!isPossibleTime(dateTime.substr(found+1, dateTime.size()))){
 			valid = false;
 		}
-	}	
+	} else {
+		cout << endl << "[Error] Check that datetime is YYYY/MM/DD,HHMM" << endl << endl;
+		valid = false;
+	}
 	
 	return valid;
 }
 
 //This splits a string into start date and time
-bool Parser::splitStartDateTime(string dateTime){
+bool Parser::splitStartDateTime(string dateTime) {
 	
-	size_t found = dateTime.find_first_of(",");;
+	size_t found = dateTime.find_first_of(",");
 	
-	if(found!=string::npos){
+	if (found != string::npos) {
 		parsedInputs.push_back(dateTime.substr(0, found));		
 		parsedInputs.push_back(dateTime.substr(found+1,dateTime.size()));
-	} else{
+	} else {
 		return false;
 	}
 	
@@ -243,7 +269,7 @@ bool Parser::splitStartDateTime(string dateTime){
 
 //This splits a string into end date and time
 //Post: Returns true if success, Returns false if no
-bool Parser::splitEndDateTime(string dateTime){
+bool Parser::splitEndDateTime(string dateTime) {
 	
 	size_t found = dateTime.find_first_of(",");;
 	
@@ -272,9 +298,31 @@ bool Parser::isPossibleTime(string time){
 
 //This checks if date is valid
 //Post: Returns true if valid, Returns false if invalid
-bool Parser::isDateValid(string date){
+bool Parser::isDateValid(string dateinput){
 
-	string checkDate;
+	date today = day_clock::local_day();
+
+	if (dateinput[4]!='/' && dateinput[7]!= '/' || dateinput[4]!='/' && dateinput[6]!= '/') {
+		cout << endl << "[ERROR] Check that Date Format is YYYY/MM/DD" << endl << endl;
+		return false;
+	}
+	
+	try{
+		date dateToCheck(from_simple_string(dateinput));
+		days difference = dateToCheck - today;
+
+		if (difference < days(0)) {
+			cout << "[ERROR] Check that the date is not before today" << today << endl << endl;
+			return false;
+		}
+	} catch (exception& e) {
+		cout<< "[ERROR] " << e.what() << endl << endl;
+		return false;
+	}
+
+	 
+
+/*	string checkDate;
 	bool valid=true;
 	if(date[3]!='/' && date[5]!= '/') {
 		valid = false;
@@ -305,8 +353,8 @@ bool Parser::isDateValid(string date){
 		if(month==2 && days>29) {
 			valid = false;
 		}
-	}	
-	return valid;
+	}*/	
+	return true;
 }
 
 //Post: Returns a vector of inputs which have been parsed

@@ -11,9 +11,10 @@ namespace LogicTest
 		
 		TEST_METHOD(isValidInput)
 		{
-			Mark mark;
-			int 
-			bool isValid = mark.isValidInput();
+			int userInputNum = 3;
+			Mark mark(userInputNum);
+			int vectorSize = 4;
+			bool isValid = mark.isValidInput(vectorSize);
 				Assert::IsTrue(isValid);
 
 			//Mark mark;

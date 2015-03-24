@@ -6,45 +6,58 @@
 #include <sstream>
 #include <iterator>
 #include "Parser.h"
+//#include "boost/date_time/gregorian/gregorian.hpp" 
+//#include "boost/date_time/posix_time/posix_time.hpp"
+
+//using namespace boost::posix_time;
+//using namespace boost::gregorian;
 
 const int FIRST_WORD = 0;
-const string Parser::MESSAGE_ADD = "add";
-const string Parser::MESSAGE_DISPLAY = "display";
-const string Parser::MESSAGE_DELETE = "delete";
-const string Parser::MESSAGE_EDIT = "edit";
-const string Parser::MESSAGE_CLEAR = "clear";
-const string Parser::MESSAGE_ERROR = "details not parsed";
-const string Parser::MESSAGE_EXIT = "exit";
+const int SECOND_WORD = 1;
+const int THIRD_WORD = 2;
 
+const string Parser::CHOICE_ADD = "add";
+const string Parser::CHOICE_DISPLAY = "display";
+const string Parser::CHOICE_DELETE = "delete";
+const string Parser::CHOICE_EDIT = "edit";
+const string Parser::CHOICE_MARK = "mark";
+const string Parser::CHOICE_CLEAR = "clear";
+const string Parser::CHOICE_ERROR = "details not parsed";
+const string Parser::CHOICE_EXIT = "exit";
+const string Parser::MESSAGE_INVALID_TIME = "Invalid Time Input";
+const string Parser::MESSAGE_INVALID_DATE = "Invalid Date Input";
+
+//This checks the choice of command 
 Parser::CommandType Parser::userCommand(){
 	_userCommand = splittedUserInputs[0];
 
-	if (_userCommand == "add") {
+	if (_userCommand == CHOICE_ADD) {
 		return ADD;
     }
-    else if (_userCommand == "display") {
+	else if (_userCommand == CHOICE_DISPLAY) {
         return DISPLAY;
     }
-	else if (_userCommand == "delete") {
-        return DELETE;
+	else if (_userCommand == CHOICE_DELETE) {
+        return DEL;
     }
-	else if (_userCommand == "edit") {
+	else if (_userCommand == CHOICE_EDIT) {
         return EDIT;
     }
-	else if (_userCommand == "clear") {
+	else if (_userCommand == CHOICE_CLEAR) {
         return CLEAR;
     }
-	else if (_userCommand == "mark") {
+	else if (_userCommand == CHOICE_MARK) {
 		return MARK;
 	}
-	else if (_userCommand == "exit") {
+	else if (_userCommand == CHOICE_EXIT) {
 		return EXIT;
 	}
 	else {
-		return ERROR;
+		return INVALID;
 	}
 }
 
+//This splits a string into words and stores them in a vector. Spacing is removed.
 vector<string> Parser::split(string userInput){
 	vector<string> tokens;
 	istringstream iss(userInput);
@@ -54,6 +67,7 @@ vector<string> Parser::split(string userInput){
 	return tokens;
 }
 
+//This processes the different commands.
 bool Parser::parseActions(vector<string> splittedUserInputs){
 	CommandType commandChoice = userCommand();
 	splittedUserInputs.erase(splittedUserInputs.begin());
@@ -68,7 +82,7 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 			parsedInputs.push_back("display");
 			break;
 
-		case DELETE:
+		case DEL:
 			parsedInputs.push_back("delete");
 			break;
 
@@ -94,19 +108,20 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 	return 1;
 }
 
+//This sorts out the correct information for add function
+//Returns false if userinput is invalid
 bool Parser::processAddContent(vector<string> inputs){
 
 	bool addResultValid = true;
 	int size = inputs.size();
-	string task;
 
 	if(size>4){
 		if(inputs[size-4] == "from" && inputs[size-2] == "to"){	
 			if(dateTimeValid(inputs[size-3]) && dateTimeValid(inputs[size-1])){
 				for(int i=0;i<size-4;i++){
-					task += inputs[i] + " ";
+					_taskContent += inputs[i] + " ";
 				}
-				parsedInputs.push_back(task);
+				parsedInputs.push_back(_taskContent);
 				splitStartDateTime(inputs[size-3]);
 				splitEndDateTime(inputs[size-1]);
 			}
@@ -116,30 +131,30 @@ bool Parser::processAddContent(vector<string> inputs){
 			}
 		} else {
 			for(int i=0;i<size;i++){
-				task += inputs[i] + " ";
+				_taskContent += inputs[i] + " ";
 			}
-			parsedInputs.push_back(task);
+			parsedInputs.push_back(_taskContent);
 		}
 	} else if(size==3 || size==4){
 		if(inputs[size-2] == "by"){
 			if(isDateValid(inputs[size-1])){
 				for(int i=0;i<size-2;i++){
-					task += inputs[i] + " ";
+					_taskContent += inputs[i] + " ";
 				}
-				parsedInputs.push_back(task);
+				parsedInputs.push_back(_taskContent);
 				parsedInputs.push_back(inputs[size-1]);
 			}
 		} else {
 			for(int i=0;i<size;i++){
-				task += inputs[i] + " ";
+				_taskContent += inputs[i] + " ";
 			}
-			parsedInputs.push_back(task);
+			parsedInputs.push_back(_taskContent);
 		}
 	} else if (size!=0){
 		for(int i=0;i<size;i++){
-				task += inputs[i] + " ";
+				_taskContent += inputs[i] + " ";
 			}
-		parsedInputs.push_back(task);
+		parsedInputs.push_back(_taskContent);
 	} else {
 		return false;
 	}
@@ -148,20 +163,20 @@ bool Parser::processAddContent(vector<string> inputs){
 	return addResultValid;
 }
 
-
+//This sorts out the information that an edit function requires i.e. task index, type and details
 bool Parser::processEditContent(vector<string> inputs){
 	
-	int size = inputs.size();
-	string task;
+	int inputSize = inputs.size();
 
-	if(size == 3){
-		parsedInputs.push_back(inputs[0]); //task index to be edited
-		parsedInputs.push_back(inputs[1]); //task type to be edited
+	if(inputSize == 3){
+		parsedInputs.push_back(inputs[FIRST_WORD]); //task index to be edited
+		parsedInputs.push_back(inputs[SECOND_WORD]); //task type to be edited
 	
-		for(int i=2;i<size;i++){
-			task += inputs[i] + " ";; //task details to be edited
+		for(int i = 2; i < inputSize ; i++){
+			_taskContent += inputs[i] + " "; //task details to be edited
 		}
-		parsedInputs.push_back(inputs[2]);
+		parsedInputs.push_back(inputs[THIRD_WORD]);
+
 	} else {
 		return false;
 	}
@@ -169,14 +184,18 @@ bool Parser::processEditContent(vector<string> inputs){
 	return true;
 } 
 
+//This sorts out the information that a mark function requires i.e. task index, task status
 bool Parser::processMarkContent(vector<string> inputs){
 
 	int size = inputs.size();
-	string task;
 
 	if(size == 2){
-		parsedInputs.push_back(inputs[0]); //task index to be edited
-		parsedInputs.push_back(inputs[1]); //task type to be edited
+		parsedInputs.push_back(inputs[FIRST_WORD]); //task index 
+		parsedInputs.push_back(inputs[SECOND_WORD]); //task status
+	} else if(size ==3){
+		parsedInputs.push_back(inputs[FIRST_WORD]); //task index 
+		parsedInputs.push_back(inputs[SECOND_WORD]); //task status
+		parsedInputs.push_back(inputs[THIRD_WORD]); //task content
 	} else {
 		return false;
 	}
@@ -188,6 +207,8 @@ vector<string> Parser::getParsedInputs(){
 	return parsedInputs;
 }
 
+//check if date and time is in correct format and valid
+//Post: Returns false if invalid, Returns true is valid
 bool Parser::dateTimeValid(string dateTime){
 	
 	bool valid = true;
@@ -205,6 +226,7 @@ bool Parser::dateTimeValid(string dateTime){
 	return valid;
 }
 
+//This splits a string into start date and time
 bool Parser::splitStartDateTime(string dateTime){
 	
 	size_t found = dateTime.find_first_of(",");;
@@ -219,6 +241,8 @@ bool Parser::splitStartDateTime(string dateTime){
 	return true;
 }
 
+//This splits a string into end date and time
+//Post: Returns true if success, Returns false if no
 bool Parser::splitEndDateTime(string dateTime){
 	
 	size_t found = dateTime.find_first_of(",");;
@@ -233,6 +257,8 @@ bool Parser::splitEndDateTime(string dateTime){
 	return 1;
 }
 
+//This checks if time is valid
+//Post: Returns true if valid, Returns false if invalid
 bool Parser::isPossibleTime(string time){
 	
 	int minute = atoi(time.c_str());
@@ -244,8 +270,10 @@ bool Parser::isPossibleTime(string time){
 	return true;
 }
 
+//This checks if date is valid
+//Post: Returns true if valid, Returns false if invalid
 bool Parser::isDateValid(string date){
-	
+
 	string checkDate;
 	bool valid=true;
 	if(date[3]!='/' && date[5]!= '/') {
@@ -281,6 +309,7 @@ bool Parser::isDateValid(string date){
 	return valid;
 }
 
+//Post: Returns a vector of inputs which have been parsed
 vector<string> Parser::completeParsing(string line){
 	split(line);
 

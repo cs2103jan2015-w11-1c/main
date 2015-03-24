@@ -85,6 +85,7 @@ void Logic::display(Task task) {
 	cout << left << setw(15) << task.getTaskName() << endl;
 }
 
+<<<<<<< HEAD
 string Logic::fillTable(const string content, const int width) {
 		stringstream ss;
 		ss << fixed << right;
@@ -93,7 +94,6 @@ string Logic::fillTable(const string content, const int width) {
 		ss << content;
 		return ss.str();
 }
-
 
 // Processes the command and inputs passed from UI
 bool Logic::process(string line){

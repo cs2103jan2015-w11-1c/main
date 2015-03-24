@@ -19,18 +19,14 @@ using namespace std;
 class UserInterface {
 private:
 	string _userInput;
+	string receiveInput();
 
 public:
-	UserInterface();
-	~UserInterface();
-
 	void displayDate();
 	void qotd();
 	void displayDivider();
 	string welcomeMessage();
 	void process();
-	string receiveInput();
-	string getUserInputs();
 };
 
 #endif

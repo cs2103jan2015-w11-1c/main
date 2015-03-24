@@ -1,17 +1,14 @@
-﻿Build started 24-Mar-15 5:35:06 PM.
-     1>Project "C:\Users\User\Documents\Sem 4\CS2103\Project\main\IDoTest\IDoTest.vcxproj" on node 2 (Rebuild target(s)).
+﻿Build started 3/25/2015 1:12:11 AM.
+     1>Project "C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDoTest\IDoTest.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\UnitTest\include" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\IDoTest.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /FC /errorReport:prompt stdafx.cpp
-         stdafx.cpp
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\UnitTest\include" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\IDoTest.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /FC /errorReport:prompt LogicTest.cpp
-         LogicTest.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo" /I"C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\UnitTest\include" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\IDoTest.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /FC /errorReport:prompt StorageTest.cpp
+         StorageTest.cpp
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\User\Documents\Sem 4\CS2103\Project\main\Debug\IDoTest.dll" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\UnitTest\lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\User\Documents\Sem 4\CS2103\Project\main\Debug\IDoTest.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\User\Documents\Sem 4\CS2103\Project\main\Debug\IDoTest.lib" /MACHINE:X86 /DLL Debug\stdafx.obj
-         Debug\LogicTest.obj
-            Creating library C:\Users\User\Documents\Sem 4\CS2103\Project\main\Debug\IDoTest.lib and object C:\Users\User\Documents\Sem 4\CS2103\Project\main\Debug\IDoTest.exp
-         IDoTest.vcxproj -> C:\Users\User\Documents\Sem 4\CS2103\Project\main\Debug\IDoTest.dll
-     1>Done Building Project "C:\Users\User\Documents\Sem 4\CS2103\Project\main\IDoTest\IDoTest.vcxproj" (Rebuild target(s)).
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\Debug\IDoTest.dll" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\UnitTest\lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\Debug\IDoTest.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\Debug\IDoTest.lib" /MACHINE:X86 /DLL Debug\stdafx.obj
+         Debug\StorageTest.obj
+         IDoTest.vcxproj -> C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\Debug\IDoTest.dll
+     1>Done Building Project "C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDoTest\IDoTest.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.74
+Time Elapsed 00:00:00.85

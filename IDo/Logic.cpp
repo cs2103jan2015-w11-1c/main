@@ -63,7 +63,7 @@ string Logic::center(string heading, const int w) {
 // Returns the string of a particular Task class
 void Logic::display(Task task) {
 	// output start, end date, time or deadline
-	if (!task.getStartDate().empty()) {
+/*	if (!task.getStartDate().empty()) {
 		cout << fillTable(task.getStartDate(), 10) << " | "
 			 << fillTable(task.getStartTime(), 9) << " | " 
 			 << fillTable(task.getEndDate(), 10) << " | "  
@@ -72,7 +72,12 @@ void Logic::display(Task task) {
 		cout << fillTable(task.getStartDate(), 10) << " | "
 			 << fillTable(task.getStartTime(), 9) << " | " 
 			 << fillTable(task.getDeadline(), 10) << " | ";
-	}
+	}*/
+
+	cout << fillTable(task.getStartDate(), 10) << " | "
+		 << fillTable(task.getStartTime(), 9) << " | " 
+		 << fillTable(task.getEndDate(), 10) << " | "  
+		 << fillTable(task.getEndTime(), 8) << " | ";
 
 	// output completion status
 	if (task.getStatus() == notdone) {
@@ -97,7 +102,7 @@ string Logic::fillTable(const string content, const int width) {
 // Display the tasks that are completed
 void Logic::viewCompletedTasks() {
 	int _size = _listOfTasks.size();
-	for (i = 0 ; i < _size ; i++) {
+	for (int i = 0 ; i < _size ; i++) {
 		if (_listOfTasks[i].getStatus() == done) {
 			display(_listOfTasks[i]);
 		}

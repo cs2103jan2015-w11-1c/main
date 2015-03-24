@@ -11,4 +11,12 @@
 #include "CppUnitTest.h"
 
 // TODO: reference additional headers your program requires here
-#include "..\IDo\Logic.h"
+#include "Add.h"
+#include "Delete.h"
+#include "Edit.h"
+#include "Logic.h"
+#include "Mark.h"
+#include "Parser.h"
+#include "Storage.h"
+#include "Task.h"
+#include "UserInterface.h"

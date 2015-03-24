@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{CD5B3018-8508-4588-8FE5-3A7FE0D7D9EC}</ProjectGuid>
+    <ProjectGuid>{CB85E19E-23D9-481A-A67F-CECE595D0474}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>IDoTest</RootNamespace>
   </PropertyGroup>
@@ -52,7 +52,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
     </ClCompile>
@@ -90,7 +90,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="LogicTest.cpp" />
+    <ClCompile Include="StorageTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IDo\IDo.vcxproj">

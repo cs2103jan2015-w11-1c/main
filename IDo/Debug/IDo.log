@@ -1,9 +1,9 @@
-﻿Build started 3/4/2015 11:28:36 AM.
-     1>Project "C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\IDo\IDo.vcxproj" on node 2 (Build target(s)).
+﻿Build started 3/25/2015 1:41:19 AM.
+     1>Project "C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\IDo.vcxproj" on node 2 (Build target(s)).
      1>Link:
-         IDo.vcxproj -> C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Debug\IDo.exe
-     1>Done Building Project "C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\IDo\IDo.vcxproj" (Build target(s)).
+         IDo.vcxproj -> C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\Debug\IDo.exe
+     1>Done Building Project "C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\IDo.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.19
+Time Elapsed 00:00:00.06

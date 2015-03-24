@@ -97,7 +97,7 @@ string Logic::fillTable(const string content, const int width) {
 // Display the tasks that are completed
 void Logic::viewCompletedTasks() {
 	int _size = _listOfTasks.size();
-	for (i = 0 ; i < _size ; i++) {
+	for (int i = 0 ; i < _size ; i++) {
 		if (_listOfTasks[i].getStatus() == done) {
 			display(_listOfTasks[i]);
 		}

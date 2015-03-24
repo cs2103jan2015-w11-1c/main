@@ -1,7 +1,6 @@
 #include "Storage.h"
 #include <assert.h>
 
-
 Storage::Storage () {
 	storageFileName="output.txt";
 }
@@ -24,7 +23,7 @@ void Storage::updateFile (vector <Task> &temp) {
 			writeFile << temp[i].getStartTime() << endl;
 			writeFile << temp[i].getEndDate() << endl;
 			writeFile << temp[i].getEndTime() << endl;
-		} else if(!temp[i].getDeadline().empty()){
+		} else if (!temp[i].getDeadline().empty()) {
 			writeFile << temp[i].getDeadline() << endl;
 		}
 		writeFile << endl;

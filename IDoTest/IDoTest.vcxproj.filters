@@ -27,6 +27,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StorageTest.cpp">
+<<<<<<< HEAD
+=======
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LogicTest.cpp">
+>>>>>>> 8bcfb747201fa50925d1a6cd4deed81101b0353a
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

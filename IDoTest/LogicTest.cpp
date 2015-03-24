@@ -9,13 +9,19 @@ namespace LogicTest
 	{
 	public:
 		
-		TEST_METHOD(markStatus)
+		TEST_METHOD(isValidInput)
 		{
-			Mark mark;
-			Task task;
-			task.setTaskName("do CS");
-			Status expected = NOTDONE;
-			Assert::AreEqual (expected, task.getStatus());
+			int userInputNum = 3;
+			Mark mark(userInputNum);
+			int vectorSize = 4;
+			bool isValid = mark.isValidInput(vectorSize);
+				Assert::IsTrue(isValid);
+
+			//Mark mark;
+			//Task task;
+			//task.setTaskName("do CS");
+			//Status expected = NOTDONE;
+			//Assert::AreEqual (expected, task.getStatus());
 
 			//mark.setContentToMark("done");
 			//task = mark.markStatus(task);

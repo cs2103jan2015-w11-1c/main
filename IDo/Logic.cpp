@@ -3,8 +3,13 @@
 #include <iostream>
 #include <iomanip>
 #include <assert.h>
+<<<<<<< HEAD
 #include <string>
 
+=======
+
+const string SUCCESSFULLY_MARKED = "[Marked Successfully]";
+>>>>>>> cae607f72ac9aaeed2f788ef84605bba8b4292f3
 const string SUCCESSFULLY_ADDED = "[Added Successfully]";
 const string DISPLAYING = "[List of Tasks]";
 const string ERROR_WRONG_INPUT = "Error: Wrong Input!";
@@ -83,8 +88,13 @@ void Logic::display(Task task) {
 	}
 
 	// output completion status
+<<<<<<< HEAD
 	if(task.getStatus() == UNCOMPLETED) {
 	 cout << fillTable("(NOT DONE)", 10) << " | "; 
+=======
+	if(task.getStatus() == INCOMPLETE) {
+		oss << "(UNCOMPLETED)"; 
+>>>>>>> cae607f72ac9aaeed2f788ef84605bba8b4292f3
 	} else {
 		cout << fillTable("(DONE)", 10) << " | ";
 	}
@@ -94,6 +104,7 @@ void Logic::display(Task task) {
 	
 }
 
+<<<<<<< HEAD
 // Marks status as COMPLETED or UNCOMPLETED
 void Logic::markStatus() {
 	int numberToMark=atoi(parsedInformation[1].c_str());
@@ -105,6 +116,8 @@ void Logic::markStatus() {
 		_listOfTasks[numberToMark-1].setStatus(UNCOMPLETED);
 	}
 }
+=======
+>>>>>>> cae607f72ac9aaeed2f788ef84605bba8b4292f3
 
 // Processes the command and inputs passed from UI
 bool Logic::process(string line){
@@ -143,7 +156,16 @@ bool Logic::process(string line){
 		printMessage2();
 
 	} else if(commandChoice == "mark"){
-		markStatus();
+		//markStatus();
+		Mark mark;
+		
+		if (mark.isValidInput(atoi(parsedInformation[1].c_str()), _listOfTasks.size())) {
+			_listOfTasks = mark.execute(parsedInformation, getListofTasks());
+			printMessage(SUCCESSFULLY_MARKED);
+			updateStorage();
+		} else {
+			printMessage(ERROR_WRONG_INPUT);
+		}
 
 	} else if(commandChoice == "exit"){
 		updateStorage();

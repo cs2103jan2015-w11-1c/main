@@ -11,6 +11,7 @@
 #include "Task.h"
 #include "Parser.h"
 #include "Edit.h"
+#include "Mark.h"
 
 using namespace std;
 

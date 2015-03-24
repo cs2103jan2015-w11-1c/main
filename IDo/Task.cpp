@@ -44,6 +44,10 @@ Priority Task::getPriority() {
 	return _priority;
 }
 
+Label Task::getLabel() {
+	return _label;
+}
+
 void Task::setTaskName (string name) {
 	_taskName=name;
 }
@@ -75,3 +79,7 @@ void Task::setStatus (Status state) {
 void Task::setPriority (Priority priority) {
 	_priority=priority;
 } 
+
+void Task::setLabel (Label label) {
+	_label = label;
+}

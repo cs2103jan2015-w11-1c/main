@@ -2,7 +2,7 @@
 #include <sstream>
 #include <assert.h>
 
-
+const string SUCCESSFULLY_MARKED = "[Marked Successfully]";
 const string SUCCESSFULLY_ADDED = "[Added Successfully]";
 const string DISPLAYING = "[List of Tasks]";
 const string ERROR_WRONG_INPUT = "Error: Wrong Input!";
@@ -106,7 +106,16 @@ bool Logic::process(string line){
 		printMessage2();
 
 	} else if(commandChoice == "mark"){
-		markStatus();
+		//markStatus();
+		Mark mark;
+		
+		if (mark.isValidInput(atoi(parsedInformation[1].c_str()), _listOfTasks.size())) {
+			_listOfTasks = mark.execute(parsedInformation, getListofTasks());
+			printMessage(SUCCESSFULLY_MARKED);
+			updateStorage();
+		} else {
+			printMessage(ERROR_WRONG_INPUT);
+		}
 
 	} else if(commandChoice == "exit"){
 		updateStorage();

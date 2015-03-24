@@ -31,6 +31,8 @@ vector<Task> Mark::execute(vector<string> parsedInfo, vector<Task> taskListFromL
 		marked = markStatus(tasktomark);
 	} else if (_typetomark == "priority") {
 		marked = markPriority(tasktomark);
+	} else if (_typetomark == "label") {
+		marked = markLabel(tasktomark);
 	}
 	
 	taskListFromLogic[_indextomark] = marked;

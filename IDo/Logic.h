@@ -17,7 +17,6 @@ using namespace std;
 
 class Logic {
 private:
-
 	string commandChoice;
 	vector<string> parsedInformation;
 	string userInput;
@@ -25,14 +24,12 @@ private:
 	void updateStorage ();
 	void getParsedInformation(string);
 	void printMessage(string message);
-	string center(string heading, const int w);
-	string fillTable(const string content, const int width);
 	void printMessage2();
+	string center(string heading, const int w);
 	void display(Task task);
-	void markStatus();
-	
-public:
+	string fillTable(const string content, const int width);
 
+public:
 	bool process(string);
 	vector<Task> getListofTasks();
 	vector<Task> setListOfTasks(vector<Task> newList);

@@ -10,19 +10,15 @@
 using namespace std;
 
 class Delete{
-	private:
-		int _taskIndex;
-		vector<Task> newList;
+private:
+	int _taskIndex;
+	vector<Task> newList;
 
-	public:
-		
-		Delete();
-		~Delete();
-		bool execute(vector<string> parsedInformation, vector<Task> taskList);
-		void getTaskIndexToBeDeleted(vector<string> parsedInformation);
-		void findAndDeleteTask(vector<Task> listOfTasks);
-
-		vector<Task> getNewList();
+public:
+	bool execute(vector<string> parsedInformation, vector<Task> taskList);
+	void getTaskIndexToBeDeleted(vector<string> parsedInformation);
+	void findAndDeleteTask(vector<Task> listOfTasks);
+	vector<Task> getNewList();
 };
 
 #endif

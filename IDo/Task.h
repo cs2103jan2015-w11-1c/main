@@ -11,16 +11,16 @@
 
 using namespace std;
 
-enum Status{
-	DONE, NOTDONE
+enum Status {
+	done, notdone
 };
 
-enum Priority{
-	HIGH, MEDIUM, LOW, NONE
+enum Priority {
+	high, medium, low, none
 };
 
 enum Label {
-	STUDIES, CCA, FRIENDS, FAMILY, MISC
+	studies, cca, friends, family, misc
 };
 
 class Task {
@@ -34,9 +34,9 @@ private:
 	Status _status;
 	Priority _priority;
 	Label _label;
+	string _extra;
 
 public:
-
 	Task();
 	~Task();
 	string getTaskName();
@@ -48,15 +48,17 @@ public:
 	Status getStatus();
 	Priority getPriority();
 	Label getLabel();
-	void setTaskName (string name);
-	void setStartDate (string date);
-	void setStartTime (string time);
-	void setEndDate (string date);
-	void setEndTime (string time);
-	void setDeadline (string date);
-	void setStatus (Status state);
+	string getExtra();
+	void setTaskName(string name);
+	void setStartDate(string date);
+	void setStartTime(string time);
+	void setEndDate(string date);
+	void setEndTime(string time);
+	void setDeadline(string date);
+	void setStatus(Status state);
 	void setPriority(Priority priority);
-	void setLabel (Label label);
+	void setLabel(Label label);
+	void setExtra(string extra);
 };
 
 #endif

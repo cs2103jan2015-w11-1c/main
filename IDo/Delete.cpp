@@ -1,11 +1,5 @@
 #include "Delete.h"
 
-Delete::Delete(){
-}
-
-Delete::~Delete(){
-}
-
 bool Delete::execute(vector<string> parsedInformation, vector<Task> taskList){
 	int size = parsedInformation.size();
 

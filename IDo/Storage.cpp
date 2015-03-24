@@ -16,7 +16,8 @@ void Storage::editStorageFileName (string name) {
 
 void Storage::updateFile (vector <Task> &temp) {
 	ofstream writeFile (storageFileName);
-	for (int i = 0 ; i < temp.size() ; i++) {
+	int _size = temp.size();
+	for (int i = 0 ; i < _size ; i++) {
 		writeFile << temp[i].getTaskName() << endl;
 		if(!temp[i].getStartDate().empty()){
 			writeFile << temp[i].getStartDate() << endl;

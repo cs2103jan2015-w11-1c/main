@@ -11,13 +11,10 @@ using namespace std;
 
 class Mark {
 private:
-	int _indextomark;
-	string _typetomark;
-	string _contenttomark;
+	int _indexToMark;
+	string _contentToMark;
 
 public:
-	Mark();
-	~Mark();
 	bool isValidInput(int, int);
 	vector<Task> execute (vector<string> parsedInformation, vector<Task> taskListFromLogic);
 	Task markStatus (Task);

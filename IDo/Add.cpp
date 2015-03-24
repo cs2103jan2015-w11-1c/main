@@ -1,11 +1,5 @@
 #include "Add.h"
 
-Add::Add(){
-}
-
-Add::~Add(){
-}
-
 bool Add::execute(vector<string> parsedInformation){
 	int size = parsedInformation.size();
 

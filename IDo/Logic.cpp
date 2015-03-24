@@ -28,25 +28,12 @@ void Logic::printMessage(string message){
 	cout << endl <<  message <<  endl << endl;
 }
 
-string Logic::center(string heading, const int w) {
-		stringstream ss, spaces;
-		int padding = w - heading.size();	// count excess room to pad
-		for (int i=0; i<padding/2; ++i)
-			spaces << " ";
-		ss << spaces.str() << heading << spaces.str(); // format with padding
-		if(padding>0 && padding%2 != 0)	// if odd #, add 1 space
-			ss << " ";
-		return ss.str();
-	}
-
 
 // Print out the tasks added
 void Logic::printMessage2(){
-
-	
 	cout << center("No.", 3) << " | "
-		 << center("Frm date:", 10) << " | "
-		 << center("Frm time:", 6) << " | "
+		 << center("From date:", 10) << " | "
+		 << center("From time:", 6) << " | "
 		 << center("To date:", 10) << " | "
 		 << center("To time:", 6) << " | "
 	     << center("Status:", 10) << " | "
@@ -61,12 +48,14 @@ void Logic::printMessage2(){
 	}
 }
 
-string Logic::fillTable(const string content, const int width) {
-		stringstream ss;
-		ss << fixed << right;
-		ss.fill(' ');        // fill space around displayed text
-		ss.width(width);     // set width around displayed text
-		ss << content;
+string Logic::center(string heading, const int w) {
+		stringstream ss, spaces;
+		int padding = w - heading.size();	// count excess room to pad
+		for (int i=0; i<padding/2; ++i)
+			spaces << " ";
+		ss << spaces.str() << heading << spaces.str(); // format with padding
+		if(padding>0 && padding%2 != 0)	// if odd #, add 1 space
+			ss << " ";
 		return ss.str();
 	}
 
@@ -80,11 +69,13 @@ void Logic::display(Task task) {
 			 << fillTable(task.getEndDate(), 10) << " | "  
 			 << fillTable(task.getEndTime(), 8) << " | ";
 	} else if(!task.getDeadline().empty()) {
-		cout << fillTable(task.getDeadline(), 10) << " | ";
+		cout << fillTable(task.getStartDate(), 10) << " | "
+			 << fillTable(task.getStartTime(), 9) << " | " 
+			 << fillTable(task.getDeadline(), 10) << " | ";
 	}
 
 	// output completion status
-	if(task.getStatus() == NOTDONE) {
+	if(task.getStatus() == notdone) {
 		cout << fillTable("(NOT DONE)", 10) << " | ";
 	} else {
 		cout << fillTable("(DONE)", 10) << " | ";
@@ -92,20 +83,17 @@ void Logic::display(Task task) {
 	
 	// output task name
 	cout << left << setw(15) << task.getTaskName() << endl;
-	
 }
 
-// Marks status as COMPLETED or UNCOMPLETED
-void Logic::markStatus() {
-	int numberToMark=atoi(parsedInformation[1].c_str());
-	string status=parsedInformation[2];
-	
-	if(status == "yes"){
-		_listOfTasks[numberToMark-1].setStatus(COMPLETED);
-	} else if(status == "no"){
-		_listOfTasks[numberToMark-1].setStatus(UNCOMPLETED);
-	}
+string Logic::fillTable(const string content, const int width) {
+		stringstream ss;
+		ss << fixed << right;
+		ss.fill(' ');        // fill space around displayed text
+		ss.width(width);     // set width around displayed text
+		ss << content;
+		return ss.str();
 }
+
 
 // Processes the command and inputs passed from UI
 bool Logic::process(string line){
@@ -144,11 +132,10 @@ bool Logic::process(string line){
 		printMessage2();
 
 	} else if(commandChoice == "mark"){
-		//markStatus();
 		Mark mark;
 		
 		if (mark.isValidInput(atoi(parsedInformation[1].c_str()), _listOfTasks.size())) {
-			_listOfTasks = mark.execute(parsedInformation, getListofTasks());
+			_listOfTasks = mark.execute(parsedInformation, _listOfTasks);
 			printMessage(SUCCESSFULLY_MARKED);
 			updateStorage();
 		} else {
@@ -158,6 +145,8 @@ bool Logic::process(string line){
 	} else if(commandChoice == "exit"){
 		updateStorage();
 		return false;
+	} else {
+		cout << ERROR_WRONG_INPUT << endl;
 	}
 	return true;
 }

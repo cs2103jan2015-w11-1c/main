@@ -1,11 +1,5 @@
 #include "Edit.h"
 
-Edit::Edit(){
-}
-
-Edit::~Edit(){
-}
-
 bool Edit::execute(vector<string> parsedInfo, vector<Task> taskListFromLogic){
 
 	parsedInformation = parsedInfo;

@@ -10,16 +10,12 @@
 using namespace std;
 
 class Add {
-	private:
+private:
+	Task _task;
 
-
-	public:
-		
-		Add();
-		~Add();
-		Task _task;
-		Task getTask();
-		bool execute(vector<string> parsedInformation);
+public:
+	Task getTask();
+	bool execute(vector<string> parsedInformation);
 };
 
 #endif

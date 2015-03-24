@@ -31,7 +31,6 @@ private:
 	void display(Task task);
 	void markStatus();
 	
-
 public:
 
 	bool process(string);

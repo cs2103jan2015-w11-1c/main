@@ -4,10 +4,6 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "UserInterface.h"
-#include "Logic.h"
-#include "Task.h"
-#include "Storage.h"
 
 using namespace std;
 
@@ -16,30 +12,38 @@ private:
 	vector<string> splittedUserInputs;
 	vector<string> parsedInputs;
 
-	Task tasks;
+	//Command Choices
+	static const string CHOICE_ADD;
+	static const string CHOICE_DISPLAY;
+	static const string CHOICE_DELETE;
+	static const string CHOICE_EDIT;
+	static const string CHOICE_MARK;
+	static const string CHOICE_CLEAR;
+	static const string CHOICE_ERROR;
+	static const string CHOICE_EXIT;
 
-	static const string MESSAGE_ADD;
-	static const string MESSAGE_DISPLAY;
-	static const string MESSAGE_DELETE;
-	static const string MESSAGE_EDIT;
-	static const string MESSAGE_CLEAR;
-	static const string MESSAGE_ERROR;
-	static const string MESSAGE_EXIT;
+	//Error Messages
+	static const string MESSAGE_INVALID_TIME;
+	static const string MESSAGE_INVALID_DATE;
 
 	string _userInputs;	
 	string _userCommand;
+	string _taskContent;
 		
 	enum CommandType{
-		ADD, DISPLAY, DELETE, EDIT, CLEAR, EXIT, ERROR, MARK
+		ADD, DISPLAY, DEL, EDIT, CLEAR, EXIT, INVALID, MARK
 	};
 	CommandType userCommand();
 
+	//Functions to process inputs
 	vector<string> split(string userInput);
 	bool parseActions(vector<string> inputs);	
 	bool processAddContent(vector<string> inputs);
 	bool processEditContent(vector<string> inputs);
 	bool processMarkContent(vector<string> inputs);
 	vector<string> getParsedInputs();
+
+	//Functions to check for validity
 	bool dateTimeValid(string dateTime);
 	bool splitStartDateTime(string dateTime);
 	bool splitEndDateTime(string dateTime);
@@ -47,6 +51,7 @@ private:
 	bool isDateValid(string date);
 	
 public:
+	//Stores information that has been parsed
 	vector<string> completeParsing(string);
 };
 

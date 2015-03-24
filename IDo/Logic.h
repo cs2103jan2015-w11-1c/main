@@ -24,9 +24,12 @@ private:
 	void updateStorage ();
 	void getParsedInformation(string);
 	void printMessage(string message);
+	string center(string heading, const int w);
+	string fillTable(const string content, const int width);
 	void printMessage2();
-	string display(Task task);
+	void display(Task task);
 	void markStatus();
+	
 
 public:
 

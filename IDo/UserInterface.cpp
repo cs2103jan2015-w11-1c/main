@@ -1,12 +1,12 @@
 #include "UserInterface.h"
 
-// Take in user inputs
-string UserInterface::receiveInput() {
-	string fromUser;
-	getline(cin, fromUser);
-	_userInput = fromUser;
-	return _userInput;
+using namespace std;
+
+UserInterface::UserInterface() {
 }
+
+UserInterface::~UserInterface() {
+} 
 
 // displays today's date at the launch of the program
 void UserInterface::displayDate() {
@@ -59,4 +59,18 @@ void UserInterface::process() {
 	while(carryOn){
 		carryOn = logic.process(receiveInput());
 	}
+}
+
+// Take in user inputs
+string UserInterface::receiveInput() {
+	string fromUser;
+
+	getline(cin, fromUser);
+	_userInput = fromUser;
+	return _userInput;
+}
+
+// Getter for UserInputs
+string UserInterface::getUserInputs() {
+	return _userInput;
 }

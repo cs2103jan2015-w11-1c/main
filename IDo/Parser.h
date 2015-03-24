@@ -4,18 +4,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <algorithm>
-#include <stdlib.h>
-#include <sstream>
-#include <iterator>
-#include "boost/date_time/gregorian/gregorian.hpp" 
-//#include "boost/date_time/posix_time/posix_time.hpp"
-//#include "boost/date_time/local_time/local_time.hpp" 
 
 using namespace std;
-//using namespace boost::posix_time;
-using namespace boost::gregorian;
-//using namespace boost::local_time;
 
 class Parser {
 private:
@@ -30,7 +20,6 @@ private:
 	static const string CHOICE_MARK;
 	static const string CHOICE_CLEAR;
 	static const string CHOICE_ERROR;
-	static const string CHOICE_VIEW;
 	static const string CHOICE_EXIT;
 
 	//Error Messages
@@ -42,7 +31,7 @@ private:
 	string _taskContent;
 		
 	enum CommandType{
-		ADD, DISPLAY, DEL, EDIT, CLEAR, VIEW, EXIT, INVALID, MARK
+		ADD, DISPLAY, DEL, EDIT, CLEAR, EXIT, INVALID, MARK
 	};
 	CommandType userCommand();
 
@@ -52,7 +41,6 @@ private:
 	bool processAddContent(vector<string> inputs);
 	bool processEditContent(vector<string> inputs);
 	bool processMarkContent(vector<string> inputs);
-	bool processView(vector<string> inputs);
 	vector<string> getParsedInputs();
 
 	//Functions to check for validity

@@ -1,89 +1,71 @@
 #include "Mark.h"
-Mark::Mark(int num) {
-	_indextomark = num - 1;
-}
-
-Mark::~Mark() {
-}
 
 //checks if input number falls within size of task list
-bool Mark::isValidInput(int taskListSize) {
-	//cout << "taskListSize = " << taskListSize << endl;
-
-	if (_indextomark <= taskListSize) {
-		
+bool Mark::isValidInput(int userinput, int taskListSize) {
+		if (userinput <= taskListSize) {
+		_indexToMark = userinput - 1;
 		return true;
 	} else {
 		return false;
 	}
-	
 }
 
-void Mark::setTypeToMark (string type) {
-	_typetomark = type;
+void Mark::setContentToMark(string content) {
+	_contentToMark = content;
 }
 
-void Mark::setContentToMark (string content) {
-	_contenttomark = content;
-}
-
-vector<Task> Mark::execute (vector<string> parsedInfo, vector<Task> taskListFromLogic) {
-	setTypeToMark (parsedInfo[2]);
+vector<Task> Mark::execute(vector<string> parsedInfo, vector<Task> taskListFromLogic) {
+	setContentToMark (parsedInfo[2]);
 	
-	setContentToMark (parsedInfo[3]);
-	
-	Task tasktomark = taskListFromLogic[_indextomark];
+	Task taskToMark = taskListFromLogic[_indexToMark];
 	Task marked;
 	
-	if (_typetomark == "status") {
-		marked = markStatus(tasktomark);
-	} else if (_typetomark == "priority") {
-		marked = markPriority(tasktomark);
-	} else if (_typetomark == "label") {
-		marked = markLabel(tasktomark);
+	if (_contentToMark == "done" || "notdone") {
+		marked = markStatus(taskToMark);
+	} else if (_contentToMark == "high" || "medium" || "low" || "none") {
+		marked = markPriority(taskToMark);
+	} else if (_contentToMark == "studies" || "cca" || "friends" || "family" || "misc") {
+		marked = markLabel(taskToMark);
 	}
 	
-	taskListFromLogic[_indextomark] = marked;
+	taskListFromLogic[_indexToMark] = marked;
 	return taskListFromLogic;
 }
 
 
-Task Mark::markStatus (Task tasktomark) {
-	if (_contenttomark == "done") {
-		tasktomark.setStatus(DONE);
-	} else if (_contenttomark == "notdone") {
-		tasktomark.setStatus(NOTDONE);
+Task Mark::markStatus (Task taskToMark) {
+	if (_contentToMark == "done") {
+		taskToMark.setStatus(done);
+	} else if (_contentToMark == "notdone") {
+		taskToMark.setStatus(notdone);
 	} 
-	
-	return tasktomark;
+	return taskToMark;
 }
 
-Task Mark::markPriority (Task tasktomark) {
-	if (_contenttomark == "high") {
-		tasktomark.setPriority(HIGH);
-	} else if (_contenttomark == "medium") {
-		tasktomark.setPriority(MEDIUM);
-	} else if (_contenttomark == "low") {
-		tasktomark.setPriority(LOW);
-	} else if (_contenttomark == "none") {
-		tasktomark.setPriority(NONE);
+Task Mark::markPriority (Task taskToMark) {
+	if (_contentToMark == "high") {
+		taskToMark.setPriority(high);
+	} else if (_contentToMark == "medium") {
+		taskToMark.setPriority(medium);
+	} else if (_contentToMark == "low") {
+		taskToMark.setPriority(low);
+	} else if (_contentToMark == "none") {
+		taskToMark.setPriority(none);
 	}
-
-	return tasktomark;
+	return taskToMark;
 }
 
-Task Mark::markLabel (Task tasktomark) {
-	if (_contenttomark == "studies") {
-		tasktomark.setLabel(STUDIES);
-	} else if (_contenttomark == "CCA") {
-		tasktomark.setLabel(CCA);
-	} else if (_contenttomark == "family") {
-		tasktomark.setLabel(FAMILY);
-	} else if (_contenttomark == "friends") {
-		tasktomark.setLabel(FRIENDS);
-	} else if (_contenttomark == "misc") {
-		tasktomark.setLabel(MISC);
+Task Mark::markLabel (Task taskToMark) {
+	if (_contentToMark == "studies") {
+		taskToMark.setLabel(studies);
+	} else if (_contentToMark == "CCA") {
+		taskToMark.setLabel(cca);
+	} else if (_contentToMark == "family") {
+		taskToMark.setLabel(family);
+	} else if (_contentToMark == "friends") {
+		taskToMark.setLabel(friends);
+	} else if (_contentToMark == "misc") {
+		taskToMark.setLabel(misc);
 	}
-
-	return tasktomark;
+	return taskToMark;
 }

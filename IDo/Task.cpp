@@ -5,7 +5,7 @@
 #include <sstream>
 
 Task::Task(){
-	_status=UNCOMPLETED;
+	_status=INCOMPLETE;
 	_priority=LOW;
 }
 

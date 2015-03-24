@@ -41,10 +41,10 @@ vector<Task> Mark::execute(vector<string> parsedInfo, vector<Task> taskListFromL
 
 
 Task Mark::markStatus (Task tasktomark) {
-	if (_contenttomark == "yes") {
+	if (_contenttomark == "completed") {
 		tasktomark.setStatus(COMPLETED);
-	} else if (_contenttomark == "no") {
-		tasktomark.setStatus(UNCOMPLETED);
+	} else if (_contenttomark == "incomplete") {
+		tasktomark.setStatus(INCOMPLETE);
 	} 
 	
 	return tasktomark;

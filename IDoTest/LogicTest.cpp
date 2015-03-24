@@ -11,11 +11,11 @@ namespace LogicTest
 		
 		TEST_METHOD(markStatus)
 		{
-			//Mark mark;
-			//Task task;
-			//task.setTaskName("do CS");
-			//Status expected = NOTDONE;
-			//Assert::AreEqual (expected, task.getStatus());
+			Mark mark;
+			Task task;
+			task.setTaskName("do CS");
+			Status expected = NOTDONE;
+			Assert::AreEqual (expected, task.getStatus());
 
 			//mark.setContentToMark("done");
 			//task = mark.markStatus(task);

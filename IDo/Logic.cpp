@@ -95,18 +95,6 @@ void Logic::display(Task task) {
 	
 }
 
-// Marks status as COMPLETED or UNCOMPLETED
-void Logic::markStatus() {
-	int numberToMark=atoi(parsedInformation[1].c_str());
-	string status=parsedInformation[2];
-	
-	if(status == "yes"){
-		_listOfTasks[numberToMark-1].setStatus(COMPLETED);
-	} else if(status == "no"){
-		_listOfTasks[numberToMark-1].setStatus(UNCOMPLETED);
-	}
-}
-
 // Processes the command and inputs passed from UI
 bool Logic::process(string line){
 

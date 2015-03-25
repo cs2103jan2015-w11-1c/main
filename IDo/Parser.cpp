@@ -6,7 +6,6 @@ const int SECOND_WORD = 1;
 const int THIRD_WORD = 2;
 
 const string Parser::CHOICE_ADD = "add";
-const string Parser::CHOICE_DISPLAY = "display";
 const string Parser::CHOICE_DELETE = "delete";
 const string Parser::CHOICE_EDIT = "edit";
 const string Parser::CHOICE_MARK = "mark";
@@ -23,9 +22,6 @@ Parser::CommandType Parser::userCommand(){
 
 	if (_userCommand == CHOICE_ADD) {
 		return ADD;
-    }
-	else if (_userCommand == CHOICE_DISPLAY) {
-        return DISPLAY;
     }
 	else if (_userCommand == CHOICE_DELETE) {
         return DEL;
@@ -69,10 +65,6 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 		case ADD:
 			parsedInputs.push_back("add");
 			processAddContent(splittedUserInputs);
-			break;
-
-		case DISPLAY:
-			parsedInputs.push_back("display");
 			break;
 
 		case DEL:

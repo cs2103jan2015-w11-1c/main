@@ -12,6 +12,7 @@
 #include "Parser.h"
 #include "Edit.h"
 #include "Mark.h"
+#include "View.h"
 
 using namespace std;
 
@@ -24,14 +25,8 @@ private:
 	void updateStorage ();
 	void getParsedInformation(string);
 	void printMessage(string message);
-	void printMessage2();
-	void printMessage3();
-	string center(string heading, const int w);
-	void display(Task task);
-	string fillTable(const string content, const int width);
-	void viewDoneTasks();
-	void viewNotDoneTasks();
 	void viewCommands();
+	void viewDecider();
 
 public:
 	bool process(string);

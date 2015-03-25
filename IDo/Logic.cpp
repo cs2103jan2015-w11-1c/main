@@ -8,7 +8,6 @@
 const string SUCCESSFULLY_MARKED = "[Marked Successfully]";
 const string SUCCESSFULLY_ADDED = "[Added Successfully]";
 const string SUCCESSFULLY_DELETED = "[Deleted Successfully]";
-const string DISPLAYING = "[List of Tasks]";
 const string ERROR_WRONG_INPUT = "Error: Wrong Input!";
 
 void Logic::updateStorage () {
@@ -28,111 +27,6 @@ void Logic::printMessage(string message) {
 	cout << endl <<  message <<  endl << endl;
 }
 
-// Display the header of the tasks added
-void Logic::printMessage2() {
-	cout << center("No.", 3) << "  "
-		 << center("From", 14) << "  "
-		 << center("To/by ", 16) << "  "
-	     << center("Status", 15) << "  "
-		 << center("Priority", 1) << " "
-		 << center("Task", 15) << endl;
-
-	cout << string(80, '-') << endl;
-}
-
-// Display all tasks
-void Logic::printMessage3() {
-	int size = _listOfTasks.size();
-	for (int i = 0 ; i < size ; i++) {
-		cout << i+1 << "." << setw(3) << "   ";
-		display(_listOfTasks[i]);
-	}
-	cout <<  endl;
-}
-
-string Logic::center(string heading, const int w) {
-	stringstream ss, spaces;
-	int padding = w - heading.size();	// count excess room to pad
-	for (int i=0; i<padding/2; ++i)
-		spaces << " ";
-	ss << spaces.str() << heading << spaces.str(); // format with padding
-	if(padding>0 && padding%2 != 0)	// if odd #, add 1 space
-		ss << " ";
-		return ss.str();
-	}
-
-// Returns the string of a particular Task class
-void Logic::display(Task task) {
-
-	if(!task.getStartDate().empty()){
-		cout << setw(10) << task.getStartDate();
-		cout << setw(6) << task.getStartTime();
-		cout << setw(13) << task.getEndDate() ;
-		cout << setw(6) << task.getEndTime() ;
-	} else {
-		cout << setw(16) << " ";
-		cout << setw(13) << task.getEndDate() ;
-		cout << setw(6) << task.getEndTime() ;
-	}
-
-	if (task.getStatus() == notdone) {
-		cout << setw(13) << "[NOT DONE]" ;
-	} else {
-		cout << setw(9) << "[DONE]" << setw(4) << " ";
-	}
-
-	if (task.getPriority() == high) {
-		cout << setw(9) << "[HIGH]" << setw(8) << " ";
-	} else if (task.getPriority() == medium) {
-		cout << setw(11) << "[MEDIUM]" << setw(6) << " ";
-	} else if (task.getPriority() == low) {
-		cout << setw(8) << "[LOW]" << setw(9) << " ";
-	} else {
-		cout << setw(9) << "[NONE]" << setw(8) << " ";
-	} 
-
-	
-	// output task name
-	cout << task.getTaskName() << endl;
-}
-
-string Logic::fillTable(const string content, const int width) {
-		stringstream ss;
-		ss << fixed << right;
-		ss.fill(' ');        // fill space around displayed text
-		ss.width(width);     // set width around displayed text
-		ss << content;
-		return ss.str();
-}
-
-// Display the tasks that are done
-void Logic::viewDoneTasks() {
-	int _size = _listOfTasks.size();
-	int j = 1; 
-	for (int i = 0 ; i < _size ; i++) {
-		if (_listOfTasks[i].getStatus() == done) {
-			cout << j << "." << setw(3) << "   ";
-			display(_listOfTasks[i]);
-			j++;
-		}
-	}
-	cout << endl;
-}
-
-// Display the tasks that are completed
-void Logic::viewNotDoneTasks() {
-	int _size = _listOfTasks.size();
-	int j = 1; 
-	for (int i = 0 ; i < _size ; i++) {
-		if (_listOfTasks[i].getStatus() == notdone) {
-			cout << j << "." << setw(3) << "   ";
-			display(_listOfTasks[i]);
-			j++;
-		}
-	}
-	cout << endl;
-}
-
 // List the commands available
 void Logic::viewCommands() {
 	cout << "Add a floating task: " << setw(30) << "add <task>" << endl;
@@ -148,7 +42,18 @@ void Logic::viewCommands() {
 	cout << "To change label: mark <task number> <friends/family/misc etc> " << endl;
 }
 
-
+void Logic::viewDecider() {
+	View view;
+	if (parsedInformation[1] == "all") {
+		view.viewAll(_listOfTasks);
+	} else if (parsedInformation[1] == "done") {
+		view.viewDoneTasks(_listOfTasks);
+	} else if (parsedInformation[1] == "notdone") {
+		view.viewNotDoneTasks(_listOfTasks);
+	} else if (parsedInformation[1] == "commands") {
+		viewCommands();
+	}
+}
 // Processes the command and inputs passed from UI
 bool Logic::process(string line) {
 
@@ -182,11 +87,6 @@ bool Logic::process(string line) {
 			cout<<"Task NOT edited"<<endl;
 		}
 
-	} else if (commandChoice == "display") {
-		printMessage(DISPLAYING);
-		printMessage2();
-		printMessage3();
-
 	} else if (commandChoice == "mark") {
 		Mark mark;
 		if (mark.isValidInput(atoi(parsedInformation[1].c_str()), _listOfTasks.size())) {
@@ -198,17 +98,8 @@ bool Logic::process(string line) {
 		}
 		updateStorage();
 
-	} else if (commandChoice == "view") {
-		printMessage(DISPLAYING);
-		if (parsedInformation[1] == "done") {
-			printMessage2();
-			viewDoneTasks();
-		} else if (parsedInformation[1] == "notdone") {
-			printMessage2();
-			viewNotDoneTasks();
-		} else if (parsedInformation[1] == "commands") {
-			viewCommands();
-		}
+	}  else if (commandChoice == "view") {
+		viewDecider();
 
 	} else if (commandChoice == "exit") {
 		updateStorage();

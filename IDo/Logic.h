@@ -29,7 +29,9 @@ private:
 	string center(string heading, const int w);
 	void display(Task task);
 	string fillTable(const string content, const int width);
-	void viewCompletedTasks();
+	void viewDoneTasks();
+	void viewNotDoneTasks();
+	void viewCommands();
 
 public:
 	bool process(string);

@@ -19,12 +19,11 @@ vector<Task> Mark::execute(vector<string> parsedInfo, vector<Task> taskListFromL
 	
 	Task taskToMark = taskListFromLogic[_indexToMark];
 	Task marked;
-	
-	if (_contentToMark == "done" || "notdone") {
+	if (_contentToMark == "done" || _contentToMark == "notdone") {
 		marked = markStatus(taskToMark);
-	} else if (_contentToMark == "high" || "medium" || "low" || "none") {
+	} else if (_contentToMark == "high" || _contentToMark == "medium" || _contentToMark == "low" || _contentToMark == "none") {
 		marked = markPriority(taskToMark);
-	} else if (_contentToMark == "studies" || "cca" || "friends" || "family" || "misc") {
+	} else if (_contentToMark == "studies" || _contentToMark == "cca" || _contentToMark == "friends" || _contentToMark == "family" || _contentToMark == "misc") {
 		marked = markLabel(taskToMark);
 	}
 	

@@ -23,10 +23,11 @@ private:
 	static const string CHOICE_ADD;
 	static const string CHOICE_DELETE;
 	static const string CHOICE_EDIT;
-	static const string CHOICE_MARK;
 	static const string CHOICE_CLEAR;
-	static const string CHOICE_ERROR;
+	static const string CHOICE_SEARCH;
+	static const string CHOICE_MARK;
 	static const string CHOICE_VIEW;
+	static const string CHOICE_ERROR;
 	static const string CHOICE_EXIT;
 
 	//Error Messages
@@ -38,7 +39,7 @@ private:
 	string _taskContent;
 		
 	enum CommandType{
-		ADD, DEL, EDIT, CLEAR, VIEW, EXIT, INVALID, MARK
+		ADD, DEL, EDIT, CLEAR, SEARCH, VIEW, MARK, INVALID, EXIT, 
 	};
 	CommandType userCommand();
 

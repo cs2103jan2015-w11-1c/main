@@ -1,5 +1,4 @@
 #include "Parser.h"
-#include <iostream>
 
 const int FIRST_WORD = 0;
 const int SECOND_WORD = 1;
@@ -8,16 +7,19 @@ const int THIRD_WORD = 2;
 const string Parser::CHOICE_ADD = "add";
 const string Parser::CHOICE_DELETE = "delete";
 const string Parser::CHOICE_EDIT = "edit";
-const string Parser::CHOICE_MARK = "mark";
 const string Parser::CHOICE_CLEAR = "clear";
-const string Parser::CHOICE_ERROR = "details not parsed";
+const string Parser::CHOICE_SEARCH = "search";
+const string Parser::CHOICE_MARK = "mark";
 const string Parser::CHOICE_VIEW = "view";
+const string Parser::CHOICE_ERROR = "details not parsed";
 const string Parser::CHOICE_EXIT = "exit";
 const string Parser::MESSAGE_INVALID_TIME = "Invalid Time Input";
 const string Parser::MESSAGE_INVALID_DATE = "Invalid Date Input";
 
 //This checks the choice of command 
 Parser::CommandType Parser::userCommand(){
+
+	//i.e. Returns "add" if user keys in "add do tutorial"
 	_userCommand = splittedUserInputs[0];
 
 	if (_userCommand == CHOICE_ADD) {
@@ -32,6 +34,9 @@ Parser::CommandType Parser::userCommand(){
 	else if (_userCommand == CHOICE_CLEAR) {
         return CLEAR;
     }
+	else if (_userCommand == CHOICE_SEARCH) {
+		return SEARCH;
+	}
 	else if (_userCommand == CHOICE_MARK) {
 		return MARK;
 	}
@@ -59,6 +64,8 @@ vector<string> Parser::split(string userInput){
 //This processes the different commands.
 bool Parser::parseActions(vector<string> splittedUserInputs){
 	CommandType commandChoice = userCommand();
+	
+	//Removes the first word u.e. user command
 	splittedUserInputs.erase(splittedUserInputs.begin());
 	
 	switch (commandChoice){
@@ -76,15 +83,20 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 			parsedInputs.push_back("edit");
 			processEditContent(splittedUserInputs);
 			break;
-		
-		case MARK:
-			parsedInputs.push_back("mark");
-			processMarkContent(splittedUserInputs);
-			break;
 
 		case CLEAR:
 			parsedInputs.push_back("clear");
 			break;
+		
+		case SEARCH:
+			parsedInputs.push_back("search");
+			parsedInputs.push_back(splittedUserInputs[0]);
+			break;
+
+		case MARK:
+			parsedInputs.push_back("mark");
+			processMarkContent(splittedUserInputs);
+			break;	
 		
 		case VIEW:
 			parsedInputs.push_back("view");
@@ -103,15 +115,16 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 }
 
 //This sorts out the correct information for add function
-//Returns false if userinput is invalid
-bool Parser::processAddContent(vector<string> inputs){
+//Pre: Takes in the content of userinputs less the command
+//Post: Returns false if userinput is invalid
+bool Parser::processAddContent(vector<string> inputs) {
 
 	bool addResultValid = true;
 	int size = inputs.size();
 
-	if(size>4){
+	if(size>4) {
 		if(inputs[size-4] == "from" && inputs[size-2] == "to"){	
-			if(dateTimeValid(inputs[size-3]) && dateTimeValid(inputs[size-1])){
+			if(dateTimeValid(inputs[size-3]) && dateTimeValid(inputs[size-1])) {
 				for(int i=0;i<size-4;i++){
 					_taskContent += inputs[i] + " ";
 				}
@@ -119,17 +132,8 @@ bool Parser::processAddContent(vector<string> inputs){
 				splitStartDateTime(inputs[size-3]);
 				splitEndDateTime(inputs[size-1]);
 			}
-		} /*else if(inputs[size-2] == "by"){
-			if(isDateValid(inputs[size-1])){
-				parsedInputs.push_back(inputs[size-1]);
-			}
-		} else {
-			for(int i=0;i<size;i++){
-				_taskContent += inputs[i] + " ";
-			}
-			parsedInputs.push_back(_taskContent);
-		} */
-	} else if(size > 2){
+		} 
+	} else if(size > 2) {
 		if(inputs[size-2] == "by"){
 			if(isDateValid(inputs[size-1])){
 				for(int i=0;i<size-2;i++){
@@ -146,13 +150,7 @@ bool Parser::processAddContent(vector<string> inputs){
 				parsedInputs.push_back(_taskContent);
 				splitEndDateTime(inputs[size-1]);
 			}
-
-		}/* else {
-			for(int i=0;i<size;i++){
-				_taskContent += inputs[i] + " ";
-			}
-			parsedInputs.push_back(_taskContent);
-		}*/
+		}
 	} else if (size!=0){
 		for(int i=0;i<size;i++){
 				_taskContent += inputs[i] + " ";
@@ -320,43 +318,10 @@ bool Parser::isDateValid(string dateinput){
 		return false;
 	}
 
-	 
-
-/*	string checkDate;
-	bool valid=true;
-	if(date[3]!='/' && date[5]!= '/') {
-		valid = false;
-	}
-			
-	size_t found = date.find_first_of("/");
-	
-	int days = atoi(date.substr(0,found).c_str());
-	checkDate = date.substr(found+1,date.size());
-		
-	int month = atoi(checkDate.substr(0,found).c_str());
-	found = checkDate.find_first_of("/");	
-
-	checkDate = checkDate.substr(found+1,checkDate.size());
-	int year = atoi(checkDate.substr(0,checkDate.size()).c_str());
-
-	if(month>12 || year > 9999 ) {
-		valid = false;
-	}
-		
-	if(month%2==0 && days>30) {
-		valid=false;
-	}
-	else if(month%2!=0 && days>31) {
-		valid=false;			
-	}
-	else {
-		if(month==2 && days>29) {
-			valid = false;
-		}
-	}*/	
 	return true;
 }
 
+//Pre: A string that takes in userinputs
 //Post: Returns a vector of inputs which have been parsed
 vector<string> Parser::completeParsing(string line){
 	split(line);

@@ -9,6 +9,7 @@
 #include "Storage.cpp"
 #include "Task.cpp"
 #include "UserInterface.cpp"
+#include "View.cpp"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

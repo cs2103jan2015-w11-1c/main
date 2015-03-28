@@ -13,15 +13,13 @@ class Mark {
 private:
 	int _indexToMark;
 	string _contentToMark;
+	void markStatus (Task &taskToMark);
+	void markPriority (Task &taskToMark);
+	void markLabel (Task &taskToMark);
 
 public:
-	bool isValidInput(int, int);
-	vector<Task> execute (vector<string> parsedInformation, vector<Task> taskListFromLogic);
-	Task markStatus (Task);
-	Task markPriority (Task);
-	Task markLabel (Task);
-	void setTypeToMark(string);
-	void setContentToMark(string);
+	bool isValidInput(vector <string>, int);
+	void execute (vector<string> parsedInformation, vector<Task> &taskListFromLogic);
 };
 
 #endif

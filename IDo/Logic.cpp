@@ -20,16 +20,57 @@ void Logic::getParsedInformation(string line) {
 	userInput = line;
 	//pass to parser and process
 	parsedInformation = parser.completeParsing(userInput);
-
 }
 
 void Logic::printMessage(string message) {
 	cout << endl <<  message <<  endl << endl;
 }
 
+void Logic::addTask() {
+	Add add;
+	if (add.execute(parsedInformation)) {
+		_listOfTasks.push_back(add.getTask());
+		printMessage(SUCCESSFULLY_ADDED);
+		updateStorage();
+	}
+}
+
+void Logic::deleteTask() {
+	Delete remove;
+	if (remove.execute(parsedInformation, getListofTasks())) {
+		_listOfTasks = remove.getNewList();
+		printMessage(SUCCESSFULLY_DELETED);
+		updateStorage();
+	} else {
+		cout<<"Task List is empty/Wrong task input!"<<endl;
+	}
+}
+
+void Logic::editTask() {
+	Edit edit;
+	if (edit.execute(parsedInformation, getListofTasks())) {
+		setListOfTasks(edit.getNewList());
+		updateStorage();
+	} else {
+		cout<<"Task NOT edited"<<endl;
+	}
+}
+
+void Logic::markTask() {
+	Mark mark;
+	if (mark.isValidInput(parsedInformation, _listOfTasks.size())) {
+		mark.execute(parsedInformation, _listOfTasks);
+		printMessage(SUCCESSFULLY_MARKED);
+		updateStorage();
+	} else {	
+		printMessage(ERROR_WRONG_INPUT);
+	}
+	updateStorage();
+}
+
 // List the commands available
 void Logic::viewCommands() {
-	cout << "Add a floating task: " << setw(30) << "add <task>" << endl;
+	cout << "Add a floating task: " << "add <task>" << endl;
 	cout << "Add a time task: add <task> from yyyy/mm/dd,hhmm to yyyy/mm/dd,hhmm" << endl;
 	cout << "Add a deadline: add <task> by yyyy/mm/dd,hhmm" << endl;
 	cout << "Editing details: edit <task number> <info to edit> <new content>" << endl;
@@ -44,6 +85,7 @@ void Logic::viewCommands() {
 
 void Logic::viewDecider() {
 	View view;
+	system("CLS");
 	if (parsedInformation[1] == "all") {
 		view.viewAll(_listOfTasks);
 	} else if (parsedInformation[1] == "done") {
@@ -61,46 +103,15 @@ bool Logic::process(string line) {
 	commandChoice = parsedInformation[0];
 	
 	if(commandChoice == "add") {
-		Add add;
-		if (add.execute(parsedInformation)) {
-			_listOfTasks.push_back(add.getTask());
-			printMessage(SUCCESSFULLY_ADDED);
-			updateStorage();
-		}
-
+		addTask();
 	} else if (commandChoice == "delete") {
-		Delete remove;
-		if (remove.execute(parsedInformation, getListofTasks())) {
-			_listOfTasks = remove.getNewList();
-			printMessage(SUCCESSFULLY_DELETED);
-			updateStorage();
-		} else {
-			cout<<"Task List is empty/Wrong task input!"<<endl;
-		}
-
+		deleteTask();
 	} else if (commandChoice == "edit") {
-		Edit edit;
-		if (edit.execute(parsedInformation, getListofTasks())) {
-			setListOfTasks(edit.getNewList());
-			updateStorage();
-		} else {
-			cout<<"Task NOT edited"<<endl;
-		}
-
+		editTask();
 	} else if (commandChoice == "mark") {
-		Mark mark;
-		if (mark.isValidInput(atoi(parsedInformation[1].c_str()), _listOfTasks.size())) {
-			_listOfTasks = mark.execute(parsedInformation, _listOfTasks);
-			printMessage(SUCCESSFULLY_MARKED);
-			updateStorage();
-		} else {
-			printMessage(ERROR_WRONG_INPUT);
-		}
-		updateStorage();
-
+		markTask();
 	}  else if (commandChoice == "view") {
 		viewDecider();
-
 	} else if (commandChoice == "exit") {
 		updateStorage();
 		return false;
@@ -117,7 +128,7 @@ vector<Task> Logic::getListofTasks(){
 	return _listOfTasks;
 }
 
-vector<Task> Logic::setListOfTasks(vector<Task> newList){
+vector<Task> Logic::setListOfTasks(vector<Task> newList) {
 	_listOfTasks = newList;
 	return _listOfTasks;
 }

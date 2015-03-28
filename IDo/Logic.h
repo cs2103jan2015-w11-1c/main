@@ -25,6 +25,10 @@ private:
 	void updateStorage ();
 	void getParsedInformation(string);
 	void printMessage(string message);
+	void addTask();
+	void deleteTask();
+	void editTask();
+	void markTask();
 	void viewCommands();
 	void viewDecider();
 

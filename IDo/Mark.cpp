@@ -1,47 +1,14 @@
 #include "Mark.h"
 
-//checks if input number falls within size of task list
-bool Mark::isValidInput(int userinput, int taskListSize) {
-		if (userinput <= taskListSize) {
-		_indexToMark = userinput - 1;
-		return true;
-	} else {
-		return false;
-	}
-}
-
-void Mark::setContentToMark(string content) {
-	_contentToMark = content;
-}
-
-vector<Task> Mark::execute(vector<string> parsedInfo, vector<Task> taskListFromLogic) {
-	setContentToMark (parsedInfo[2]);
-	
-	Task taskToMark = taskListFromLogic[_indexToMark];
-	Task marked;
-	if (_contentToMark == "done" || _contentToMark == "notdone") {
-		marked = markStatus(taskToMark);
-	} else if (_contentToMark == "high" || _contentToMark == "medium" || _contentToMark == "low" || _contentToMark == "none") {
-		marked = markPriority(taskToMark);
-	} else if (_contentToMark == "studies" || _contentToMark == "cca" || _contentToMark == "friends" || _contentToMark == "family" || _contentToMark == "misc") {
-		marked = markLabel(taskToMark);
-	}
-	
-	taskListFromLogic[_indexToMark] = marked;
-	return taskListFromLogic;
-}
-
-
-Task Mark::markStatus (Task taskToMark) {
+void Mark::markStatus (Task &taskToMark){
 	if (_contentToMark == "done") {
 		taskToMark.setStatus(done);
 	} else if (_contentToMark == "notdone") {
 		taskToMark.setStatus(notdone);
 	} 
-	return taskToMark;
 }
 
-Task Mark::markPriority (Task taskToMark) {
+void Mark::markPriority (Task &taskToMark) {
 	if (_contentToMark == "high") {
 		taskToMark.setPriority(high);
 	} else if (_contentToMark == "medium") {
@@ -51,10 +18,9 @@ Task Mark::markPriority (Task taskToMark) {
 	} else if (_contentToMark == "none") {
 		taskToMark.setPriority(none);
 	}
-	return taskToMark;
 }
 
-Task Mark::markLabel (Task taskToMark) {
+void Mark::markLabel (Task &taskToMark) {
 	if (_contentToMark == "studies") {
 		taskToMark.setLabel(studies);
 	} else if (_contentToMark == "CCA") {
@@ -66,5 +32,37 @@ Task Mark::markLabel (Task taskToMark) {
 	} else if (_contentToMark == "misc") {
 		taskToMark.setLabel(misc);
 	}
-	return taskToMark;
 }
+
+//checks if input number falls within size of task list
+bool Mark::isValidInput(vector <string> parsedInformation, int taskListSize) {
+	bool validNumber;
+	int size = parsedInformation.size() - 1; 
+	for (int i = 1 ; i < size ; i++) {
+		if (atoi(parsedInformation[i].c_str()) <= taskListSize && atoi(parsedInformation[i].c_str()) > 0) {
+			validNumber = true;
+		} else {
+			return false;
+		}
+	}
+	return validNumber;
+}
+
+void Mark::execute(vector<string> parsedInformation, vector<Task> &taskListFromLogic) {
+	int size = parsedInformation.size();
+	_contentToMark = parsedInformation[size - 1];
+	
+	for (int i = 1 ; i < size - 1 ; i++) {
+		_indexToMark = atoi(parsedInformation[1].c_str()) - 1;
+
+		if (_contentToMark == "done" || _contentToMark == "notdone") {
+			markStatus(taskListFromLogic[_indexToMark]);
+		} else if (_contentToMark == "high" || _contentToMark == "medium" || _contentToMark == "low" || _contentToMark == "none") {
+			markPriority(taskListFromLogic[_indexToMark]);
+		} else if (_contentToMark == "studies" || _contentToMark == "cca" || _contentToMark == "friends" || _contentToMark == "family" || _contentToMark == "misc") {
+			markLabel(taskListFromLogic[_indexToMark]);
+		}
+	}
+}
+
+

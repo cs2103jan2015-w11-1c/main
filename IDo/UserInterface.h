@@ -7,6 +7,7 @@
 #include <vector>
 #include <ctime>
 #include <time.h>
+#include <Windows.h>
 #include "Parser.h"
 #include "Logic.h"
 #include "Task.h"
@@ -31,6 +32,8 @@ public:
 	void process();
 	string receiveInput();
 	string getUserInputs();
+	void SetColor1(int value);
+	void instructMessage();
 };
 
 #endif

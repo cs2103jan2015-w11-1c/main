@@ -17,6 +17,7 @@ private:
 	void printHeader();
 	string center(string heading, const int w);
 	void display(Task task);
+	void SetColor(int value);
 
 public:
 	void viewAll(vector <Task> list);

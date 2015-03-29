@@ -1,5 +1,6 @@
 #include "UserInterface.h"
 #include <Windows.h>
+#include <iomanip>
 
 using namespace std;
 
@@ -18,6 +19,29 @@ void UserInterface::displayDate() {
     char date[9];
 	_strdate_s(date);
 	cout << "------------------------- " << date << " -------------------------" << endl;
+}
+
+// displays commands available at launch of program
+void UserInterface::instructMessage() {
+	cout << "Here are some commands: " << endl; 
+
+	SetColor1(2);
+	cout << setw(15) << "add";
+	SetColor1(2);
+	cout << setw(15) << "edit";
+	SetColor1(2);
+	cout << setw(15) << "delete";
+	SetColor1(2);
+	cout << setw(15) << "clear" << endl;
+	SetColor1(5);
+	cout << setw(22) << "search";
+	SetColor1(5);
+	cout << setw(15) << "mark";
+	SetColor1(5);
+	cout << setw(15) << "view" << endl;
+
+	SetColor1(7);
+	cout << "Let's get started!" << endl;
 }
 
 // displays quote of the day at the launch of the program

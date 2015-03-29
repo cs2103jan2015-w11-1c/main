@@ -105,7 +105,7 @@ void View::viewDoneTasks(vector <Task> list) {
 	cout << endl;
 }
 
-// Display the tasks that are completed
+// Display the tasks that are not done
 void View::viewNotDoneTasks(vector <Task> list) {
 	printMessage();
 	printHeader();
@@ -117,4 +117,9 @@ void View::viewNotDoneTasks(vector <Task> list) {
 		}
 	}
 	cout << endl;
+}
+
+// Default view after every command
+void View::viewDefault() {
+	viewNotDoneTasks();
 }

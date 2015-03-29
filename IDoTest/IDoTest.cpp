@@ -238,10 +238,16 @@ namespace LogicTest
 			Status outputstatus = task.getStatus();
 			Assert::AreEqual(expectedstatus, outputstatus);
 			
+			vector <string> parsedInfo;
+			parsedInfo = { "mark", "1", "done" };
 			
-			//vector <string> parsedInfo;
-			//parsedInfo = { "mark", "1", "friends" };
-			
+			Mark markStatus;
+			markStatus.execute(parsedInfo, taskListFromLogic);
+
+			expectedstatus = done;
+			outputstatus = taskListFromLogic[0].getStatus();
+			Assert::AreEqual(expectedstatus, outputstatus);
+
 		};
 	};
 }

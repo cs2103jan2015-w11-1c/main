@@ -225,5 +225,38 @@ namespace LogicTest
 			bool isValidInput = markstatus.isValidInput(parsedInfo, taskListSize);
 			Assert::IsTrue(isValidInput);
 		};
+
+		TEST_METHOD(execute)
+		{
+			vector <Task> taskListFromLogic;
+			Task task;
+			task.setTaskName("have dinner with anna");
+			task.setStatus(notdone);
+			taskListFromLogic.push_back(task);
+
+			Status expectedstatus = notdone;
+			Status outputstatus = task.getStatus();
+			Assert::AreEqual(expectedstatus, outputstatus);
+			
+			
+			//vector <string> parsedInfo;
+			//parsedInfo = { "mark", "1", "friends" };
+			
+		};
 	};
+}
+
+//creating a template specialization of the ToString function
+//for unit testing of enum Status type
+namespace Microsoft{
+	namespace VisualStudio {
+		namespace CppUnitTestFramework {
+
+			template<>
+			static std::wstring ToString<Status>(const Status  & status) {
+				return L"notdone";
+			}
+
+		}
+	}
 }

@@ -1,4 +1,5 @@
 #include "UserInterface.h"
+#include <Windows.h>
 
 using namespace std;
 
@@ -7,6 +8,10 @@ UserInterface::UserInterface() {
 
 UserInterface::~UserInterface() {
 } 
+
+void UserInterface::SetColor1(int value){
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),  value);
+}
 
 // displays today's date at the launch of the program
 void UserInterface::displayDate() {
@@ -33,7 +38,8 @@ void UserInterface::qotd() {
                     lineCount++;
 				}
             }
-		randomQuote_int = rand() % lineCount;	
+		randomQuote_int = rand() % lineCount;
+		SetColor1(6); // yellow
         cout << "Quote of the day: " << endl;
         cout << randomQuote_vect[randomQuote_int] << endl << endl;
         quoteFile.close();
@@ -42,12 +48,14 @@ void UserInterface::qotd() {
 
 void UserInterface::displayDivider() {
 	cout << " " << endl;
+	SetColor1(3); // cyan
     cout << "*************************************************************" << endl;
 	cout << " " << endl;
 }
 
 string UserInterface::welcomeMessage() {
-    string welcome =  "Good day, Jimmy. How productive would you like to be today? :)";
+    string welcome =  "Good day, Jim. How productive would you like to be today? :)";
+	SetColor1(15); // bright white
 	cout << welcome;
 	return welcome;
 }

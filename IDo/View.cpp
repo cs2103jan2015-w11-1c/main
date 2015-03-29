@@ -4,11 +4,16 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <Windows.h>
 
 const string DISPLAYING = "[List of Tasks]";
 
 void View::printMessage() {
 	cout << endl <<  DISPLAYING <<  endl << endl;
+}
+
+void View::SetColor(int value){
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),  value);
 }
 
 // Display the header of the tasks added
@@ -57,12 +62,16 @@ void View::display(Task task) {
 	}
 
 	if (task.getPriority() == high) {
+		SetColor(12); // red
 		cout << setw(9) << "[HIGH]" << setw(8) << " ";
 	} else if (task.getPriority() == medium) {
+		SetColor(14); // yellow
 		cout << setw(11) << "[MEDIUM]" << setw(6) << " ";
 	} else if (task.getPriority() == low) {
+		SetColor(15); // bright white
 		cout << setw(8) << "[LOW]" << setw(9) << " ";
 	} else {
+		SetColor(7); // default white
 		cout << setw(9) << "[NONE]" << setw(8) << " ";
 	} 
 

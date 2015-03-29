@@ -114,52 +114,195 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 	return 1;
 }
 
+bool Parser::checkTimedTask(){
+	Dates check;
+	int size = splittedUserInputs.size();
+	fromPosition = -1;
+	int toPosition = -1;
+	bool valid = true;
+
+	for(int i = 0; i < size; i ++) {
+		if(splittedUserInputs[i] == "from") {
+			fromPosition = i;
+		} 
+		if(splittedUserInputs[i] == "to") {
+			toPosition = i;
+		}
+	}
+
+	if(fromPosition !=-1 && toPosition != -1) {
+		for(int i = fromPosition+1; i < toPosition; i ++ ) {
+			if(!check.isDateValid(splittedUserInputs[i]) && !isPossibleTime(splittedUserInputs[i])) {
+				valid = false;
+			}
+		}
+		for(int i = toPosition+1 ; i <size ; i++) {
+			if(!check.isDateValid(splittedUserInputs[i]) && !isPossibleTime(splittedUserInputs[i])) {
+				valid = false;
+			}
+		}
+	} else {
+		return false;
+	}
+	
+
+	if(valid == true) {
+		for(int i = fromPosition+1; i < toPosition; i ++ ) {
+			if(check.isDateValid(splittedUserInputs[i])) {
+				_startDate = check.getFormattedDates();
+			}
+			if(isPossibleTime(splittedUserInputs[i])) {
+				_startTime = splittedUserInputs[i];
+			}
+		}
+
+		for(int i = toPosition+1 ; i < size ; i++) {
+			if(check.isDateValid(splittedUserInputs[i])) {
+				_endDate = check.getFormattedDates();
+			}
+			if(isPossibleTime(splittedUserInputs[i])) {
+				_endTime = splittedUserInputs[i];
+			}
+		}
+	}
+
+	if(!_startDate.empty() && !_endDate.empty()) { 
+		if(compareDates(_startDate,_endDate)) {
+			valid = false;
+		}
+	}
+
+	return valid;
+}
+
+bool Parser::checkDeadlineTask(){
+	Dates check;
+	int size = splittedUserInputs.size();
+	byPosition = -1;
+	bool valid = true;
+
+	for(int i = 0; i < size; i ++) {
+		if(splittedUserInputs[i] == "by") {
+			byPosition = i;
+		}
+	}
+
+	if(byPosition != -1) {
+		for(int i = byPosition+1; i < size; i ++ ) {
+			if(!check.isDateValid(splittedUserInputs[i]) && !isPossibleTime(splittedUserInputs[i])) {
+				valid = false;
+			}
+		}
+	}
+	else if (byPosition == -1) {
+		return false;
+	}
+	else {
+		valid = true;
+	}
+
+	if(valid == true) {
+		for(int i = byPosition+1 ; i < size ; i++) {
+	
+			if(check.isDateValid(splittedUserInputs[i])) {
+				_endDate = check.getFormattedDates();
+			}
+			if(isPossibleTime(splittedUserInputs[i])) {
+				_endTime = splittedUserInputs[i];
+			}
+		}
+	}
+
+	return valid;
+}
+
+bool Parser::checkFloating(){
+	int size = splittedUserInputs.size();
+	Dates check;
+	bool valid = true;
+
+	if(fromPosition!=size-1 && fromPosition!=-1) {
+		if(check.checkDateFormat(splittedUserInputs[fromPosition+1])){
+			valid = false;
+		}
+		if(isTimeFormat(splittedUserInputs[fromPosition+1])){
+			valid = false;
+		}
+	}
+
+	if(byPosition!=size-1 && byPosition!=-1) {
+		if(check.checkDateFormat(splittedUserInputs[byPosition+1])){
+			valid = false;
+		}
+		if(isTimeFormat(splittedUserInputs[byPosition+1])){
+			valid = false;
+		}
+	}
+
+	return valid;
+}
+
 //This sorts out the correct information for add function
 //Pre: Takes in the content of userinputs less the command
 //Post: Returns false if userinput is invalid
 bool Parser::processAddContent(vector<string> inputs) {
 
+	Dates check;
+
 	bool addResultValid = true;
 	int size = inputs.size();
 
-	if(size>4) {
-		if(inputs[size-4] == "from" && inputs[size-2] == "to"){	
-			if(dateTimeValid(inputs[size-3]) && dateTimeValid(inputs[size-1])) {
-				for(int i=0;i<size-4;i++){
-					_taskContent += inputs[i] + " ";
-				}
-				parsedInputs.push_back(_taskContent);
-				splitStartDateTime(inputs[size-3]);
-				splitEndDateTime(inputs[size-1]);
-			}
-		} 
-	} else if(size > 2) {
-		if(inputs[size-2] == "by"){
-			if(isDateValid(inputs[size-1])){
-				for(int i=0;i<size-2;i++){
-					_taskContent += inputs[i] + " ";
-				}
-				parsedInputs.push_back(_taskContent);
-				parsedInputs.push_back(inputs[size-1]);
-				parsedInputs.push_back("2359");
-			}
-			if(dateTimeValid(inputs[size-1])) {
-				for(int i=0;i<size-2;i++){
-					_taskContent += inputs[i] + " ";
-				}
-				parsedInputs.push_back(_taskContent);
-				splitEndDateTime(inputs[size-1]);
-			}
+	if(checkTimedTask()){
+		cout<<"timetask"<<endl;
+		for(int i = 0; i < fromPosition-1; i++){
+		_taskContent += inputs[i] + " ";
 		}
-	} else if (size!=0){
-		for(int i=0;i<size;i++){
-				_taskContent += inputs[i] + " ";
-			}
 		parsedInputs.push_back(_taskContent);
+
+		if(_startDate.empty() && _endDate.empty()) {
+			_startDate = check.getTodayDate();
+			_endDate = check.getTodayDate();
+		}
+		if(!_startDate.empty() && _endDate.empty()){
+			_endDate = _startDate;
+		}
+		if(_startDate.empty() && !_endDate.empty()){
+			_startDate = check.getTodayDate();
+		}
+
+		parsedInputs.push_back(_startDate);
+		parsedInputs.push_back(_startTime);
+		parsedInputs.push_back(_endDate);
+		parsedInputs.push_back(_endTime);
+
+	} else if (checkDeadlineTask()) {
+		cout<<"deadlinetask"<<endl;
+		for(int i = 0; i < byPosition-1; i++){
+			_taskContent += inputs[i] + " ";
+		}
+		parsedInputs.push_back(_taskContent);
+
+		if(_endTime.empty()) {
+			_endTime = "2359";
+		}
+		
+		if(_endDate.empty()) {
+			_endDate = check.getTodayDate();
+		}
+
+		parsedInputs.push_back(_endDate);
+		parsedInputs.push_back(_endTime);
+
+	} else if(checkFloating()) {
+		cout<<"floatingtask"<<endl;
+		for(int i = 0; i < size; i++){
+			_taskContent += inputs[i] + " ";
+		}
+		parsedInputs.push_back(_taskContent);
+
 	} else {
 		return false;
 	}
-
 	
 	return addResultValid;
 }
@@ -222,104 +365,78 @@ vector<string> Parser::getParsedInputs(){
 	return parsedInputs;
 }
 
-//check if date and time is in correct format and valid
-//Post: Returns false if invalid, Returns true is valid
-bool Parser::dateTimeValid(string dateTime){
-	
-	bool valid = true;
-	size_t found = dateTime.find_first_of(",");
+bool Parser::compareDates(string date, string date2) {
+	int size = date.size();
+	int size2 = date2.size();
 
-	if(found!=string::npos){
-		if(!isDateValid(dateTime.substr(0, found))){
-			valid = false; 	
+	for(int i = 0; i < size ; i++) {
+		if(date[i] == '/') {
+			date.erase(date.begin()+i);
+			size = date.size();
 		}
-		if(!isPossibleTime(dateTime.substr(found+1, dateTime.size()))){
-			valid = false;
-		}
-	} else {
-	//	cout << endl << "[Error] Check that datetime is YYYY/MM/DD,HHMM" << endl << endl;
-		valid = false;
 	}
 	
-	return valid;
-}
+	for(int i = 0; i < size2 ; i++) {
+		if(date2[i] == '/') {
+			date2.erase(date2.begin()+i);
+			size2 = date2.size();
+		}
+	}
 
-//This splits a string into start date and time
-bool Parser::splitStartDateTime(string dateTime) {
-	
-	size_t found = dateTime.find_first_of(",");
-	
-	if (found != string::npos) {
-		parsedInputs.push_back(dateTime.substr(0, found));		
-		parsedInputs.push_back(dateTime.substr(found+1,dateTime.size()));
+	if(atoi(date.c_str()) > atoi(date2.c_str())) {
+		cout << endl << "[Error] End Date is before Start Date??" << endl <<endl;
+		return true;
 	} else {
 		return false;
 	}
-	
-	return true;
-}
-
-//This splits a string into end date and time
-//Post: Returns true if success, Returns false if no
-bool Parser::splitEndDateTime(string dateTime) {
-	
-	size_t found = dateTime.find_first_of(",");;
-	
-	if(found!=string::npos){
-		parsedInputs.push_back(dateTime.substr(0, found));		
-		parsedInputs.push_back(dateTime.substr(found+1,dateTime.size()));
-	} else{
-		return 0;
-	}	
-	
-	return 1;
 }
 
 //This checks if time is valid
 //Post: Returns true if valid, Returns false if invalid
 bool Parser::isPossibleTime(string time){
 	
-	int minute = atoi(time.c_str());
-	
-	if(time.size()>4 || minute > 2359) {
+	size_t found = time.find_first_of(",");
+	if(found != string::npos && found != 0){
+		time = time.substr(found+1,time.size()-1);
+	}
+
+	if(time.size()>4) {
 		return false;
 	}
+
+	for(int i = 0; i < 4; i++) { 
+		if(!isdigit(time[i])){
+			return false;
+		}
+	}
+
+	int minute = atoi(time.c_str());
+	
+	if(minute > 2359) {
+		cout << "Error: Outside time range 0000 to 2359" << endl;
+		return false;
+	}
+
+	_time = time;
 		
 	return true;
 }
 
-//This checks if date is valid
-//Post: Returns true if valid, Returns false if invalid
-bool Parser::isDateValid(string dateinput){
+bool Parser::isTimeFormat(string time) {
 
-	date today = day_clock::local_day();
-
-	int size = dateinput.size();
-
-	if(dateinput[size-5] == ',') {
+	if(time.size()>4) {
 		return false;
 	}
 
-	if (dateinput[4]!='/' && dateinput[7]!= '/' || dateinput[4]!='/' && dateinput[6]!= '/') {
-		cout << endl << "[ERROR] Check that Date Format is YYYY/MM/DD" << endl << endl;
-		return false;
-	}
-	
-	try{
-		date dateToCheck(from_simple_string(dateinput));
-		days difference = dateToCheck - today;
-
-		if (difference < days(0)) {
-			cout << "[ERROR] Check that the date is not before today" << today << endl << endl;
+	for(int i = 0; i < 4; i++) { 
+		if(!isdigit(time[i])){
 			return false;
 		}
-	} catch (exception& e) {
-		cout<< "[ERROR] " << e.what() << endl << endl;
-		return false;
 	}
 
 	return true;
 }
+
 
 //Pre: A string that takes in userinputs
 //Post: Returns a vector of inputs which have been parsed

@@ -8,11 +8,9 @@
 #include <stdlib.h>
 #include <sstream>
 #include <iterator>
-#include "boost/date_time/gregorian/gregorian.hpp" 
+#include "Dates.h"
 
 using namespace std;
-using namespace boost::gregorian;
-
 
 class Parser {
 private:
@@ -34,9 +32,17 @@ private:
 	static const string MESSAGE_INVALID_TIME;
 	static const string MESSAGE_INVALID_DATE;
 
+	int fromPosition;
+	int byPosition;
+
 	string _userInputs;	
 	string _userCommand;
 	string _taskContent;
+	string _time;
+	string _startDate;
+	string _endDate;
+	string _startTime;
+	string _endTime;
 		
 	enum CommandType{
 		ADD, DEL, EDIT, CLEAR, SEARCH, VIEW, MARK, INVALID, EXIT, 
@@ -52,12 +58,18 @@ private:
 	bool processView(vector<string> inputs);
 	vector<string> getParsedInputs();
 
+
+	bool checkTimedTask();
+	bool checkDeadlineTask();
+	bool checkFloating();
+
 	//Functions to check for validity
-	bool dateTimeValid(string dateTime);
-	bool splitStartDateTime(string dateTime);
-	bool splitEndDateTime(string dateTime);
+	bool compareDates(string date, string date2);
 	bool isPossibleTime(string time);
+	bool isTimeFormat(string time);
+
 	bool isDateValid(string date);
+	bool timecheck(string input);
 	
 public:
 	//Stores information that has been parsed

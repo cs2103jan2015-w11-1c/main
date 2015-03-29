@@ -118,8 +118,9 @@ void View::viewNotDoneTasks(vector <Task> list) {
 	}
 	cout << endl;
 }
-
+/*
 // Default view after every command
 void View::viewDefault() {
 	viewNotDoneTasks();
 }
+*/

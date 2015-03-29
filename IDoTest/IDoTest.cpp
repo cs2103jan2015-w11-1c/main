@@ -205,3 +205,25 @@ namespace ParserTest
 		};
 	};
 }
+
+namespace LogicTest
+{
+	TEST_CLASS (MarkTest)
+	{
+	public:
+		TEST_METHOD(isValidInput)
+		{
+			vector <string> parsedInfo;
+			parsedInfo.push_back("mark");
+			parsedInfo.push_back("1");
+			parsedInfo.push_back("done");
+
+			//set the task list from logic size = 1
+			int taskListSize = 1;
+
+			Mark markstatus;
+			bool isValidInput = markstatus.isValidInput(parsedInfo, taskListSize);
+			Assert::IsTrue(isValidInput);
+		};
+	};
+}

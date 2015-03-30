@@ -9,7 +9,6 @@
 #include "Add.h"
 #include "Delete.h"
 #include "Task.h"
-#include "Parser.h"
 #include "Edit.h"
 #include "Mark.h"
 #include "View.h"
@@ -18,6 +17,8 @@ using namespace std;
 
 class Logic {
 private:
+	Storage saveToDisk;
+
 	string commandChoice;
 	vector<string> parsedInformation;
 	string userInput;

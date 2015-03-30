@@ -80,7 +80,7 @@ void View::display(Task task) {
 	cout << task.getTaskName() << endl;
 }
 
-void View::viewAll(vector <Task> list) {
+void View::viewAll(vector <Task> &list) {
 	printMessage();
 	printHeader();
 	int size = list.size();
@@ -92,7 +92,7 @@ void View::viewAll(vector <Task> list) {
 }
 
 // Display the tasks that are done
-void View::viewDoneTasks(vector <Task> list) {
+void View::viewDoneTasks(vector <Task> &list) {
 	printMessage();
 	printHeader();
 	int _size = list.size();
@@ -106,7 +106,7 @@ void View::viewDoneTasks(vector <Task> list) {
 }
 
 // Display the tasks that are not done
-void View::viewNotDoneTasks(vector <Task> list) {
+void View::viewNotDoneTasks(vector <Task> &list) {
 	printMessage();
 	printHeader();
 	int _size = list.size();

@@ -58,7 +58,6 @@ private:
 	bool processView(vector<string> inputs);
 	vector<string> getParsedInputs();
 
-
 	bool checkTimedTask();
 	bool checkDeadlineTask();
 	bool checkFloating();

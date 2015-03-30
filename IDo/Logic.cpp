@@ -8,10 +8,10 @@
 const string SUCCESSFULLY_MARKED = "[Marked Successfully]";
 const string SUCCESSFULLY_ADDED = "[Added Successfully]";
 const string SUCCESSFULLY_DELETED = "[Deleted Successfully]";
+const string SUCCESSFULLY_CLEARED = "[Cleared Successfully]";
 const string ERROR_WRONG_INPUT = "Error: Wrong Input!";
 
 void Logic::updateStorage () {
-	Storage saveToDisk;
 	saveToDisk.updateFile (_listOfTasks);
 }
 
@@ -108,14 +108,17 @@ bool Logic::process(string line) {
 		deleteTask();
 	} else if (commandChoice == "edit") {
 		editTask();
+	} else if (commandChoice == "clear") {
+		_listOfTasks.clear();
+		printMessage(SUCCESSFULLY_CLEARED);
+		updateStorage();
 	} else if (commandChoice == "mark") {
 		markTask();
-	}  else if (commandChoice == "view") {
+	} else if (commandChoice == "view") {
 		viewDecider();
 	} else if (commandChoice == "exit") {
 		updateStorage();
 		return false;
-
 	} else if (commandChoice == "invalid") {
 		cout << ERROR_WRONG_INPUT << endl;
 	} else {

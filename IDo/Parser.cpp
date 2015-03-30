@@ -114,6 +114,8 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 	return 1;
 }
 
+//Post: Returns true if it's a timed-task i.e. add...from <date/time> to <date/time>
+//		Returns false if it's not a timed-task
 bool Parser::checkTimedTask(){
 	Dates check;
 	int size = splittedUserInputs.size();
@@ -175,6 +177,8 @@ bool Parser::checkTimedTask(){
 	return valid;
 }
 
+//Post: Returns true if it's a deadline task i.e. add...by <date/time>
+//		Returns false if it's not a deadline task
 bool Parser::checkDeadlineTask(){
 	Dates check;
 	int size = splittedUserInputs.size();
@@ -216,6 +220,8 @@ bool Parser::checkDeadlineTask(){
 	return valid;
 }
 
+//Post: Returns true if it's floating task
+//		Returns false if it's not a floating task
 bool Parser::checkFloating(){
 	int size = splittedUserInputs.size();
 	Dates check;
@@ -328,20 +334,13 @@ bool Parser::processEditContent(vector<string> inputs){
 	return true;
 } 
 
-//This sorts out the information that a mark function requires i.e. task index, task status
+//This processes all words if mark function is called
 bool Parser::processMarkContent(vector<string> inputs){
 
 	int size = inputs.size();
 
-	if(size == 2){
-		parsedInputs.push_back(inputs[FIRST_WORD]); //task index 
-		parsedInputs.push_back(inputs[SECOND_WORD]); //task status
-	} else if(size ==3){
-		parsedInputs.push_back(inputs[FIRST_WORD]); //task index 
-		parsedInputs.push_back(inputs[SECOND_WORD]); //task status
-		parsedInputs.push_back(inputs[THIRD_WORD]); //task content
-	} else {
-		return false;
+	for(int i = 0; i < size ; i++) {
+		parsedInputs.push_back(inputs[i]);
 	}
 
 	return true;
@@ -365,6 +364,7 @@ vector<string> Parser::getParsedInputs(){
 	return parsedInputs;
 }
 
+//Post: Return true if date is a larger date than date2
 bool Parser::compareDates(string date, string date2) {
 	int size = date.size();
 	int size2 = date2.size();
@@ -422,6 +422,7 @@ bool Parser::isPossibleTime(string time){
 	return true;
 }
 
+//Return false if time is not 4 digit or time is digit
 bool Parser::isTimeFormat(string time) {
 
 	if(time.size()>4) {

@@ -16,6 +16,7 @@
 #include "Edit.h"
 #include "Mark.h"
 #include "View.h"
+#include "Search.h"
 #include "Storage.h"
 
 using namespace std;
@@ -37,6 +38,7 @@ private:
 	void markTask();
 	void viewCommands();
 	void viewDecider();
+	void searchWord();
 	void storeChange(string directory);
 	void exitProgram();
 

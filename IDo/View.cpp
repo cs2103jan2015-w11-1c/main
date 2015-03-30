@@ -70,7 +70,7 @@ void View::display(Task task) {
 		cout << setw(11) << "[MEDIUM]" << setw(6) << " ";
 		SetColor(7); // default white
 	} else if (task.getPriority() == low) {
-		SetColor(15); // bright white
+		SetColor(10); // bright green
 		cout << setw(8) << "[LOW]" << setw(9) << " ";
 		SetColor(7); // default white
 	} else {

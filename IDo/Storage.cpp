@@ -86,7 +86,7 @@ void Storage::updateFile (vector <Task> &temp) {
 			break;
 		}
 
-		writeFile << "nextevent!";
+		writeFile << "nextevent!" << endl;
 	}
 	writeFile.close();
 }

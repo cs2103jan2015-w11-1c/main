@@ -39,7 +39,7 @@ void Logic::deleteTask() {
 		printMessage(SUCCESSFULLY_DELETED);
 		updateStorage();
 	} else {
-		cout<<"Task List is empty/Wrong task input!"<<endl;
+		cout << "Task List is empty/Wrong task input!" << endl;
 	}
 }
 

@@ -23,6 +23,7 @@ void View::printHeader() {
 		 << center("To/by ", 16) << "  "
 	     << center("Status", 15) << "  "
 		 << center("Priority", 1) << " "
+		 << center("Label", 2) << " "
 		 << center("Task", 15) << endl;
 
 	cout << string(80, '-') << endl;
@@ -78,9 +79,12 @@ void View::display(Task task) {
 		cout << setw(9) << "[NONE]" << setw(8) << " ";
 	}
 
+	// output task label
+	cout << setw(6) << task.getLabel() << setw(7) << " ";
 	
 	// output task name
 	cout << task.getTaskName() << endl;
+
 }
 
 void View::viewAll(vector <Task> &list) {

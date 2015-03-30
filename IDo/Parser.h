@@ -25,6 +25,7 @@ private:
 	static const string CHOICE_SEARCH;
 	static const string CHOICE_MARK;
 	static const string CHOICE_VIEW;
+	static const string CHOICE_SORT;
 	static const string CHOICE_ERROR;
 	static const string CHOICE_EXIT;
 
@@ -45,7 +46,7 @@ private:
 	string _endTime;
 		
 	enum CommandType{
-		ADD, DEL, EDIT, CLEAR, SEARCH, VIEW, MARK, INVALID, EXIT, 
+		ADD, DEL, EDIT, CLEAR, SEARCH, VIEW, MARK, SORT, INVALID, EXIT, 
 	};
 	CommandType userCommand();
 
@@ -56,6 +57,7 @@ private:
 	bool processEditContent(vector<string> inputs);
 	bool processMarkContent(vector<string> inputs);
 	bool processView(vector<string> inputs);
+	bool processSortContent(vector<string> inputs);
 	vector<string> getParsedInputs();
 
 	bool checkTimedTask();

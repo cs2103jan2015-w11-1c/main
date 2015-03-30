@@ -9,8 +9,9 @@ const string Parser::CHOICE_DELETE = "delete";
 const string Parser::CHOICE_EDIT = "edit";
 const string Parser::CHOICE_CLEAR = "clear";
 const string Parser::CHOICE_SEARCH = "search";
-const string Parser::CHOICE_MARK = "mark";
 const string Parser::CHOICE_VIEW = "view";
+const string Parser::CHOICE_MARK = "mark";
+const string Parser::CHOICE_SORT = "sort";
 const string Parser::CHOICE_ERROR = "details not parsed";
 const string Parser::CHOICE_EXIT = "exit";
 const string Parser::MESSAGE_INVALID_TIME = "Invalid Time Input";
@@ -37,11 +38,14 @@ Parser::CommandType Parser::userCommand(){
 	else if (_userCommand == CHOICE_SEARCH) {
 		return SEARCH;
 	}
+	else if (_userCommand == CHOICE_VIEW) {
+        return VIEW;
+    }
 	else if (_userCommand == CHOICE_MARK) {
 		return MARK;
 	}
-	else if (_userCommand == CHOICE_VIEW) {
-        return VIEW;
+	else if (_userCommand == CHOICE_SORT) {
+        return SORT;
     }
 	else if (_userCommand == CHOICE_EXIT) {
 		return EXIT;
@@ -93,15 +97,20 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 			parsedInputs.push_back(splittedUserInputs[0]);
 			break;
 
-		case MARK:
-			parsedInputs.push_back("mark");
-			processMarkContent(splittedUserInputs);
-			break;	
-		
 		case VIEW:
 			parsedInputs.push_back("view");
 			processView(splittedUserInputs);
 			break;
+
+		case MARK:
+			parsedInputs.push_back("mark");
+			processMarkContent(splittedUserInputs);
+			break;	
+	
+		case SORT:
+			parsedInputs.push_back("sort");
+			processSortContent(splittedUserInputs);
+			break;	
 
 		case EXIT:
 			parsedInputs.push_back("exit");
@@ -360,6 +369,20 @@ bool Parser::processView(vector<string> inputs) {
 	return true;
 }
 
+//This parses the information that a sort function requires i.e. sort date/time/undone/priority
+bool Parser::processSortContent(vector<string> inputs) {
+
+	int size = inputs.size();
+
+	if(size == 1) {
+		parsedInputs.push_back(inputs[FIRST_WORD]); //date/time/undone/priority
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
 vector<string> Parser::getParsedInputs(){
 	return parsedInputs;
 }
@@ -442,8 +465,11 @@ bool Parser::isTimeFormat(string time) {
 //Pre: A string that takes in userinputs
 //Post: Returns a vector of inputs which have been parsed
 vector<string> Parser::completeParsing(string line){
+
+	//removes spacing between words
 	split(line);
 
+	//Process Parsing 
 	parseActions(splittedUserInputs);
 
 	return parsedInputs;

@@ -64,16 +64,19 @@ void View::display(Task task) {
 	if (task.getPriority() == high) {
 		SetColor(12); // red
 		cout << setw(9) << "[HIGH]" << setw(8) << " ";
+		SetColor(7); // default white
 	} else if (task.getPriority() == medium) {
-		SetColor(14); // yellow
+		SetColor(14); // bright yellow
 		cout << setw(11) << "[MEDIUM]" << setw(6) << " ";
+		SetColor(7); // default white
 	} else if (task.getPriority() == low) {
 		SetColor(15); // bright white
 		cout << setw(8) << "[LOW]" << setw(9) << " ";
+		SetColor(7); // default white
 	} else {
 		SetColor(7); // default white
 		cout << setw(9) << "[NONE]" << setw(8) << " ";
-	} 
+	}
 
 	
 	// output task name

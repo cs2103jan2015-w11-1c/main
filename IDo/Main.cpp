@@ -20,6 +20,8 @@ int main() {
     UI.displayDivider();
     UI.welcomeMessage();
     UI.displayDivider();
+	UI.instructMessage();
+	UI.displayDivider();
 	UI.process();
 	
 	system("pause");

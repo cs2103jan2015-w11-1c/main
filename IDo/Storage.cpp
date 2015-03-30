@@ -2,7 +2,10 @@
 #include <assert.h>
 
 Storage::Storage () {
-	storageFileName="output.txt";
+	ifstream readFile ("filename.txt");
+	string directory;
+	getline (readFile,directory);
+	storageFileName=directory;
 }
 
 string Storage::getStorageFileName () {
@@ -82,7 +85,95 @@ void Storage::updateFile (vector <Task> &temp) {
 			writeFile << "misc" << endl;
 			break;
 		}
-		
+
+		writeFile << "nextevent!";
 	}
 	writeFile.close();
+}
+
+void Storage::readFile (vector <Task> &temp) {
+	ifstream readFile (storageFileName);
+	string line;
+	string taskName;
+	string startDate;
+	string startTime;
+	string endDate;
+	string endTime;
+	string status;
+	string priority;
+	string label;
+	Task task;
+	vector <string> tempTask;
+
+	while (!cin.eof()) {
+		while (line != "nextevent!") {
+			getline (readFile,line);
+			tempTask.push_back(line);
+		}
+
+		taskName = tempTask[0];
+
+		if (tempTask.size() == 8) {
+			startDate = tempTask[1];
+			startTime = tempTask[2];
+		}
+
+		if (tempTask.size() == 6 || tempTask.size() == 8) {
+			endDate = tempTask[3];
+			endTime = tempTask[4];
+		}
+
+		status = tempTask[5];
+		priority = tempTask[6];
+		label = tempTask[7];
+
+		task.setTaskName(taskName);
+		task.setStartDate(startDate);
+		task.setStartTime(startTime);
+		task.setEndDate(endDate);
+		task.setEndTime(endTime);
+
+		if (status == "done") {
+			task.setStatus(done);
+
+		} else {
+			task.setStatus(notdone);
+		}
+
+
+		if (priority == "high") {
+			task.setPriority(high);
+
+		} else if (priority == "medium") {
+			task.setPriority(medium);
+
+		} else if (priority == "low") {
+			task.setPriority(low);
+
+		} else {
+			task.setPriority(medium);
+		}
+		
+
+		if (label == "studies") {
+			task.setLabel(studies);
+
+		} else if (label == "cca") {
+			task.setLabel(cca);
+
+		} else if (label == "friends") {
+			task.setLabel(friends);
+
+		} else if (label == "family") {
+			task.setLabel(family);
+
+		}  else {
+			task.setLabel(misc);
+		}
+
+
+		temp.push_back(task);
+
+		line.clear();
+	}
 }

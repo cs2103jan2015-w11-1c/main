@@ -93,8 +93,14 @@ void Logic::viewDecider() {
 	}
 }
 
-void Logic::storeChange() {
+void Logic::storeChange(string directory) {
 	storage.editStorageFileName(parsedInformation[1]);
+}
+
+void Logic::exitProgram() {
+	ofstream writeFile ("filename.txt");
+	writeFile << storage.getStorageFileName();
+	writeFile.close();
 }
 
 // Processes the command and inputs passed from UI
@@ -118,10 +124,11 @@ bool Logic::process(string line) {
 	} else if (commandChoice == "view") {
 		viewDecider();
 	} else if (commandChoice == "store") {
-		storeChange();
+		storeChange(parsedInformation[1]);
 		updateStorage();
 	} else if (commandChoice == "exit") {
 		updateStorage();
+		exitProgram();
 		return false;
 	} else if (commandChoice == "invalid") {
 		cout << ERROR_WRONG_INPUT << endl;

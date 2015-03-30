@@ -20,6 +20,7 @@ public:
 	string getStorageFileName ();
 	void editStorageFileName (string name);
 	void updateFile (vector <Task> &temp);
+	void readFile (vector <Task> &temp);
 };
 
 #endif

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <fstream>
 #include <assert.h>
 
 #include "Parser.h"
@@ -36,7 +37,8 @@ private:
 	void markTask();
 	void viewCommands();
 	void viewDecider();
-	void storeChange();
+	void storeChange(string directory);
+	void exitProgram();
 
 public:
 	bool process(string);

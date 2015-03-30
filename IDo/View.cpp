@@ -18,12 +18,12 @@ void View::SetColor(int value){
 
 // Display the header of the tasks added
 void View::printHeader() {
-	cout << center("No.", 3) << "  "
-		 << center("From", 14) << "  "
-		 << center("To/by ", 16) << "  "
-	     << center("Status", 15) << "  "
-		 << center("Priority", 1) << " "
-		 << center("Label", 2) << " "
+	cout << " " 
+		 << center("No.", 1) << "  "
+		 << center("From", 12) << "  "
+		 << center("To/by ", 18) << "  "
+	     << center("Status", 12) << "  "
+		 << center("Label", 7) << " "
 		 << center("Task", 15) << endl;
 
 	cout << string(80, '-') << endl;
@@ -45,46 +45,53 @@ string View::center(string heading, const int w) {
 // Print out one event
 void View::display(Task task) {
 
+	cout << setw(5) << " ";
 	if(!task.getStartDate().empty()){
 		cout << setw(10) << task.getStartDate();
-		cout << setw(6) << task.getStartTime();
-		cout << setw(13) << task.getEndDate() ;
-		cout << setw(6) << task.getEndTime() ;
+		cout << setw(5) << task.getStartTime();
+		cout << setw(2) << " ";
+		cout << setw(9) << task.getEndDate() ;
+		cout << setw(5) << task.getEndTime() ;
 	} else {
 		cout << setw(16) << " ";
-		cout << setw(13) << task.getEndDate() ;
-		cout << setw(6) << task.getEndTime() ;
+		cout << setw(10) << task.getEndDate() ;
+		cout << setw(5) << task.getEndTime() ;
 	}
 
 	if (task.getStatus() == notdone) {
-		cout << setw(13) << "[NOT DONE]" ;
+		cout << setw(12) << "[NOT DONE]" << setw(3) << " ";
 	} else {
-		cout << setw(9) << "[DONE]" << setw(4) << " ";
+		cout << setw(8) << "[DONE]" << setw(7) << " ";
+	}
+
+	if (task.getLabel() == misc) {
+		cout << "[MISC]" << setw(6) << " ";
+	} else if (task.getLabel() == studies) {
+		cout << "[STUDIES]" << setw(3) << " ";
+	} else if (task.getLabel() == cca) {
+		cout << "[CCA]" << setw(7) << " ";
+	} else if (task.getLabel() == friends) {
+		cout << "[FRIENDS]" << setw(3) << " ";
+	} else {
+		cout << "[FAMILY]" << setw(4) << " ";
 	}
 
 	if (task.getPriority() == high) {
 		SetColor(12); // red
-		cout << setw(9) << "[HIGH]" << setw(8) << " ";
+		cout << task.getTaskName() << endl;
 		SetColor(7); // default white
 	} else if (task.getPriority() == medium) {
 		SetColor(14); // bright yellow
-		cout << setw(11) << "[MEDIUM]" << setw(6) << " ";
+		cout << task.getTaskName() << endl;
 		SetColor(7); // default white
 	} else if (task.getPriority() == low) {
 		SetColor(10); // bright green
-		cout << setw(8) << "[LOW]" << setw(9) << " ";
+		cout << task.getTaskName() << endl;
 		SetColor(7); // default white
 	} else {
 		SetColor(7); // default white
-		cout << setw(9) << "[NONE]" << setw(8) << " ";
+		cout << task.getTaskName() << endl;
 	}
-
-	// output task label
-	cout << setw(6) << task.getLabel() << setw(7) << " ";
-	
-	// output task name
-	cout << task.getTaskName() << endl;
-
 }
 
 void View::viewAll(vector <Task> &list) {
@@ -92,7 +99,7 @@ void View::viewAll(vector <Task> &list) {
 	printHeader();
 	int size = list.size();
 	for (int i = 0 ; i < size ; i++) {
-		cout << i+1 << "." << setw(3) << "   ";
+		cout << setw(3) << i+1 << ".";
 		display(list[i]);
 	}
 	cout <<  endl;
@@ -105,7 +112,7 @@ void View::viewDoneTasks(vector <Task> &list) {
 	int _size = list.size();
 	for (int i = 0 ; i < _size ; i++) {
 		if (list[i].getStatus() == done) {
-			cout << i+1 << "." << setw(3) << "   ";
+			cout << setw(3) << i+1 << ".";
 			display(list[i]);
 		}
 	}
@@ -119,7 +126,7 @@ void View::viewNotDoneTasks(vector <Task> &list) {
 	int _size = list.size();
 	for (int i = 0 ; i < _size ; i++) {
 		if (list[i].getStatus() == notdone) {
-			cout << i+1 << "." << setw(3) << "   ";
+			cout << setw(3) << i+1 << ".";
 			display(list[i]);
 		}
 	}

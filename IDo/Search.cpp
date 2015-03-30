@@ -23,7 +23,6 @@ void Search::execute(vector <Task> taskListFromLogic) {
 //conducts the matching of task name with the word to be searched
 //returns true if word is found, false otherwise
 bool Search::foundWord(string taskname) {
-	int i;
 	bool found = false;
 
 	vector <string> tokenisedTaskName;

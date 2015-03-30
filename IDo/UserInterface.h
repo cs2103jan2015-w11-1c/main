@@ -29,6 +29,7 @@ public:
 	void qotd();
 	void displayDivider();
 	string welcomeMessage();
+	void readFile();
 	void process();
 	string receiveInput();
 	string getUserInputs();

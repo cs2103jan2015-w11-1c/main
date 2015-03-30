@@ -25,6 +25,7 @@ void Storage::updateFile (vector <Task> &temp) {
 	for (int i = 0 ; i < _size ; i++) {
 		writeFile << temp[i].getTaskName() << endl;
 		if (!temp[i].getStartDate().empty()) {
+			cout << "write start date" << endl;
 			writeFile << temp[i].getStartDate() << endl;
 			writeFile << temp[i].getStartTime() << endl;
 		}
@@ -86,8 +87,9 @@ void Storage::updateFile (vector <Task> &temp) {
 			break;
 		}
 
-		writeFile << "nextevent!" << endl;
+		writeFile << "__________" << endl;
 	}
+	writeFile << "_____" << endl;
 	writeFile.close();
 }
 
@@ -102,34 +104,38 @@ void Storage::readFile (vector <Task> &temp) {
 	string status;
 	string priority;
 	string label;
-	Task task;
 	vector <string> tempTask;
 
-	while (!cin.eof()) {
-		while (line != "nextevent!") {
-			getline (readFile,line);
+	getline(readFile,line);
+	while (line != "_____") {
+		while (line != "__________") {
 			tempTask.push_back(line);
+			getline (readFile,line);
 		}
 
+		Task task;
+		int size = tempTask.size();
 		taskName = tempTask[0];
+		task.setTaskName(taskName);
 
-		if (tempTask.size() == 8) {
+		if (size == 8) {
 			startDate = tempTask[1];
 			startTime = tempTask[2];
-		}
-
-		if (tempTask.size() == 6 || tempTask.size() == 8) {
 			endDate = tempTask[3];
 			endTime = tempTask[4];
+			task.setStartDate(startDate);
+			task.setStartTime(startTime);
 		}
 
-		status = tempTask[5];
-		priority = tempTask[6];
-		label = tempTask[7];
+		if (size == 6) {
+			endDate = tempTask[1];
+			endTime = tempTask[2];
+		}
 
-		task.setTaskName(taskName);
-		task.setStartDate(startDate);
-		task.setStartTime(startTime);
+		status = tempTask[size-3];
+		priority = tempTask[size-2];
+		label = tempTask[size-1];
+
 		task.setEndDate(endDate);
 		task.setEndTime(endTime);
 
@@ -171,9 +177,8 @@ void Storage::readFile (vector <Task> &temp) {
 			task.setLabel(misc);
 		}
 
-
 		temp.push_back(task);
-
-		line.clear();
+		tempTask.clear();
+		getline(readFile,line);
 	}
 }

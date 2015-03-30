@@ -88,9 +88,14 @@ string UserInterface::welcomeMessage() {
 	return welcome;
 }
 
+void UserInterface::readFile() {
+	logic.readFromFile();
+}
+
 void UserInterface::process() {
 	bool carryOn = true;
 
+	readFile();
 	while(carryOn){
 		carryOn = logic.process(receiveInput());
 	}

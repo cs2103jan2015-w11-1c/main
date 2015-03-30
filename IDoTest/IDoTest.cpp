@@ -10,6 +10,7 @@
 #include "Task.cpp"
 #include "UserInterface.cpp"
 #include "View.cpp"
+#include "Dates.cpp"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

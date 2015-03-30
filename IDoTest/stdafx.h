@@ -20,3 +20,5 @@
 #include "Storage.h"
 #include "Task.h"
 #include "UserInterface.h"
+#include "Dates.h"
+#include "View.h"

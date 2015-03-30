@@ -1,12 +1,9 @@
-#include "Logic.h"
-#include "UserInterface.h"
-#include "Parser.h"
 #include "Task.h"
-#include <sstream>
 
 Task::Task(){
 	_status = notdone;
 	_priority = low;
+	_label = misc;
 }
 
 Task::~Task(){

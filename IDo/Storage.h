@@ -5,9 +5,6 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include "UserInterface.h"
-#include "Logic.h"
-#include "Parser.h"
 #include "Task.h"
 
 using namespace std;
@@ -20,7 +17,6 @@ private:
 
 public:
 	Storage();
-	int getNumberOfItems();
 	string getStorageFileName ();
 	void editStorageFileName (string name);
 	void updateFile (vector <Task> &temp);

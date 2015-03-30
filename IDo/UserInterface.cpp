@@ -1,6 +1,5 @@
 #include "UserInterface.h"
-#include <Windows.h>
-#include <iomanip>
+
 
 using namespace std;
 
@@ -86,7 +85,6 @@ string UserInterface::welcomeMessage() {
 
 void UserInterface::process() {
 	bool carryOn = true;
-	Logic logic;
 
 	while(carryOn){
 		carryOn = logic.process(receiveInput());

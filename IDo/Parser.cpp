@@ -13,6 +13,7 @@ const string Parser::CHOICE_VIEW = "view";
 const string Parser::CHOICE_MARK = "mark";
 const string Parser::CHOICE_SORT = "sort";
 const string Parser::CHOICE_ERROR = "details not parsed";
+const string Parser::CHOICE_STORE = "store";
 const string Parser::CHOICE_EXIT = "exit";
 const string Parser::MESSAGE_INVALID_TIME = "Invalid Time Input";
 const string Parser::MESSAGE_INVALID_DATE = "Invalid Date Input";
@@ -25,32 +26,25 @@ Parser::CommandType Parser::userCommand(){
 
 	if (_userCommand == CHOICE_ADD) {
 		return ADD;
-    }
-	else if (_userCommand == CHOICE_DELETE) {
+    } else if (_userCommand == CHOICE_DELETE) {
         return DEL;
-    }
-	else if (_userCommand == CHOICE_EDIT) {
+    } else if (_userCommand == CHOICE_EDIT) {
         return EDIT;
-    }
-	else if (_userCommand == CHOICE_CLEAR) {
+    } else if (_userCommand == CHOICE_CLEAR) {
         return CLEAR;
-    }
-	else if (_userCommand == CHOICE_SEARCH) {
+    } else if (_userCommand == CHOICE_SEARCH) {
 		return SEARCH;
-	}
-	else if (_userCommand == CHOICE_VIEW) {
+	} else if (_userCommand == CHOICE_VIEW) {
         return VIEW;
-    }
-	else if (_userCommand == CHOICE_MARK) {
+    } else if (_userCommand == CHOICE_MARK) {
 		return MARK;
-	}
-	else if (_userCommand == CHOICE_SORT) {
+	} else if (_userCommand == CHOICE_SORT) {
         return SORT;
-    }
-	else if (_userCommand == CHOICE_EXIT) {
+    } else if (_userCommand == CHOICE_EXIT) {
 		return EXIT;
-	}
-	else {
+	} else if (_userCommand == CHOICE_STORE) {
+		return STORE;
+	} else {
 		return INVALID;
 	}
 }
@@ -111,6 +105,10 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 			parsedInputs.push_back("sort");
 			processSortContent(splittedUserInputs);
 			break;	
+
+		case STORE:
+			parsedInputs.push_back("store");
+			parsedInputs.push_back(splittedUserInputs[0]);
 
 		case EXIT:
 			parsedInputs.push_back("exit");
@@ -268,7 +266,7 @@ bool Parser::processAddContent(vector<string> inputs) {
 	int size = inputs.size();
 
 	if(checkTimedTask()){
-		cout<<"timetask"<<endl;
+		cout << "timetask" << endl;
 		for(int i = 0; i < fromPosition-1; i++){
 		_taskContent += inputs[i] + " ";
 		}
@@ -291,7 +289,7 @@ bool Parser::processAddContent(vector<string> inputs) {
 		parsedInputs.push_back(_endTime);
 
 	} else if (checkDeadlineTask()) {
-		cout<<"deadlinetask"<<endl;
+		cout << "deadlinetask" << endl;
 		for(int i = 0; i < byPosition-1; i++){
 			_taskContent += inputs[i] + " ";
 		}
@@ -309,7 +307,7 @@ bool Parser::processAddContent(vector<string> inputs) {
 		parsedInputs.push_back(_endTime);
 
 	} else if(checkFloating()) {
-		cout<<"floatingtask"<<endl;
+		cout << "floatingtask" << endl;
 		for(int i = 0; i < size; i++){
 			_taskContent += inputs[i] + " ";
 		}

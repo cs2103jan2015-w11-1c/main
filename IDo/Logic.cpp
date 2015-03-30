@@ -1,9 +1,5 @@
 #include "Logic.h"
-#include <sstream>
-#include <iostream>
-#include <iomanip>
-#include <assert.h>
-#include <string>
+
 
 const string SUCCESSFULLY_MARKED = "[Marked Successfully]";
 const string SUCCESSFULLY_ADDED = "[Added Successfully]";
@@ -12,7 +8,7 @@ const string SUCCESSFULLY_CLEARED = "[Cleared Successfully]";
 const string ERROR_WRONG_INPUT = "Error: Wrong Input!";
 
 void Logic::updateStorage () {
-	saveToDisk.updateFile (_listOfTasks);
+	storage.updateFile (_listOfTasks);
 }
 
 void Logic::getParsedInformation(string line) {
@@ -96,6 +92,11 @@ void Logic::viewDecider() {
 		viewCommands();
 	}
 }
+
+void Logic::storeChange() {
+	storage.editStorageFileName(parsedInformation[1]);
+}
+
 // Processes the command and inputs passed from UI
 bool Logic::process(string line) {
 
@@ -116,6 +117,9 @@ bool Logic::process(string line) {
 		markTask();
 	} else if (commandChoice == "view") {
 		viewDecider();
+	} else if (commandChoice == "store") {
+		storeChange();
+		updateStorage();
 	} else if (commandChoice == "exit") {
 		updateStorage();
 		return false;

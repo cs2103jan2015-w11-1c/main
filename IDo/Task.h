@@ -4,10 +4,6 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "UserInterface.h"
-#include "Parser.h"
-#include "Logic.h"
-#include "Storage.h"
 
 using namespace std;
 

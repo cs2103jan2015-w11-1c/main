@@ -45,7 +45,10 @@ bool Mark::isValidInput(vector <string> parsedInformation, int taskListSize) {
 	}
 	if (!(parsedInformation[size] == "done" || parsedInformation[size] == "notdone" || 
 		parsedInformation[size] == "high" || parsedInformation[size] == "medium" || 
-		parsedInformation[size] == "low" || parsedInformation[size] == "none")) {
+		parsedInformation[size] == "low" || parsedInformation[size] == "none" ||
+		parsedInformation[size] == "studies" || parsedInformation[size] == "CCA" ||
+		parsedInformation[size] == "friends" || parsedInformation[size] == "family" ||
+		parsedInformation[size] == "misc")) {
 			return false;
 	}
 	return validNumber;
@@ -62,7 +65,7 @@ void Mark::execute(vector<string> parsedInformation, vector<Task> &taskListFromL
 			markStatus(taskListFromLogic[_indexToMark]);
 		} else if (_contentToMark == "high" || _contentToMark == "medium" || _contentToMark == "low" || _contentToMark == "none") {
 			markPriority(taskListFromLogic[_indexToMark]);
-		} else if (_contentToMark == "studies" || _contentToMark == "cca" || _contentToMark == "friends" || _contentToMark == "family" || _contentToMark == "misc") {
+		} else if (_contentToMark == "studies" || _contentToMark == "CCA" || _contentToMark == "friends" || _contentToMark == "family" || _contentToMark == "misc") {
 			markLabel(taskListFromLogic[_indexToMark]);
 		}
 	}

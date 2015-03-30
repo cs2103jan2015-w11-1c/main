@@ -5,6 +5,9 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
+#include <sstream>
+#include <assert.h>
+
 #include "Parser.h"
 #include "Add.h"
 #include "Delete.h"
@@ -12,12 +15,13 @@
 #include "Edit.h"
 #include "Mark.h"
 #include "View.h"
+#include "Storage.h"
 
 using namespace std;
 
 class Logic {
 private:
-	Storage saveToDisk;
+	Storage storage;
 
 	string commandChoice;
 	vector<string> parsedInformation;
@@ -32,6 +36,7 @@ private:
 	void markTask();
 	void viewCommands();
 	void viewDecider();
+	void storeChange();
 
 public:
 	bool process(string);

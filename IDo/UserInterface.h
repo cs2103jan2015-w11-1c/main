@@ -5,14 +5,13 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <Windows.h>
+#include <iomanip>
 #include <ctime>
 #include <time.h>
 #include <Windows.h>
-#include "Parser.h"
 #include "Logic.h"
-#include "Task.h"
-#include "Storage.h"
-#include "Log.h"
+
 
 using namespace std;
 
@@ -20,6 +19,7 @@ using namespace std;
 class UserInterface {
 private:
 	string _userInput;
+	Logic logic;
 
 public:
 	UserInterface();

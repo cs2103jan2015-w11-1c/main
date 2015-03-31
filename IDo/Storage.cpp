@@ -14,6 +14,9 @@ string Storage::getStorageFileName () {
 
 void Storage::editStorageFileName (string name) {
 	storageFileName=name;
+	ofstream writeFile ("filename.txt");
+	writeFile << storageFileName << endl;
+	writeFile.close();
 }
 
 void Storage::updateFile (vector <Task> &temp) {

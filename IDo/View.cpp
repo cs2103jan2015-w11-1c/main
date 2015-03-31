@@ -132,6 +132,18 @@ void View::viewNotDoneTasks(vector <Task> &list) {
 	}
 	cout << endl;
 }
+
+void View::viewSelected(vector<Task> list, vector<int> taskNum) {
+	printMessage();
+	printHeader();
+	int size = list.size();
+	for (int i = 0; i < size; i++) {
+		cout << taskNum[i] << "." << setw(3) << "   ";
+		display(list[i]);
+	}
+	cout << endl;
+}
+
 /*
 // Default view after every command
 void View::viewDefault() {

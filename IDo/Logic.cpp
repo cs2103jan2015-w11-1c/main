@@ -5,6 +5,7 @@ const string SUCCESSFULLY_MARKED = "[Marked Successfully]";
 const string SUCCESSFULLY_ADDED = "[Added Successfully]";
 const string SUCCESSFULLY_DELETED = "[Deleted Successfully]";
 const string SUCCESSFULLY_CLEARED = "[Cleared Successfully]";
+const string TASK_NOT_FOUND = "[Task Not Found]";
 const string ERROR_WRONG_INPUT = "Error: Wrong Input!";
 
 void Logic::updateStorage () {
@@ -137,6 +138,8 @@ bool Logic::process(string line) {
 	} else if (commandChoice == "sort") {
 		sortTask();
 		updateStorage();
+	} else if (commandChoice == "search") {
+		searchWord();
 	} else if (commandChoice == "exit") {
 		updateStorage();
 		return false;
@@ -146,6 +149,26 @@ bool Logic::process(string line) {
 		cout << ERROR_WRONG_INPUT << endl;
 	}
 	return true;
+}
+
+void Logic::searchWord() {
+    Search search;
+
+    search.setSearchWord(parsedInformation[1]);
+    search.execute(_listOfTasks);
+    
+	if (search.getNoOfFoundTasks() != 0) {
+		vector <Task> listOfFoundTasks;
+		vector <int> listOfFoundTaskNum;
+		listOfFoundTasks = search.getListOfFoundTasks();
+		listOfFoundTaskNum = search.getListOfFoundTaskNum();
+		
+		//cout << "found task\n";
+		View printFoundTasks;
+		printFoundTasks.viewSelected(listOfFoundTasks, listOfFoundTaskNum);
+	} else {
+		printMessage(TASK_NOT_FOUND);
+	}
 }
 
 vector<Task> Logic::getListofTasks(){

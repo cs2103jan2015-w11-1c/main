@@ -17,6 +17,7 @@
 #include "View.h"
 #include "Storage.h"
 #include "Sort.h"
+#include "Search.h"
 
 using namespace std;
 
@@ -39,6 +40,7 @@ private:
 	void viewDecider();
 	void storeChange();
 	void sortTask();
+	void searchWord();
 
 public:
 	void readFromFile();

@@ -23,6 +23,7 @@ public:
 	void viewAll(vector <Task> &list);
 	void viewDoneTasks(vector <Task> &list);
 	void viewNotDoneTasks(vector <Task> &list);
+	void viewSelected(vector<Task>, vector<int>);
 };
 
 #endif

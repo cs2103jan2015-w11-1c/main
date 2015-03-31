@@ -13,6 +13,7 @@ class Search {
 private:
 	string _searchword;
 	vector <Task> _listOfFoundTasks;
+	vector <int> _listOfFoundTaskNum;
 	int _noOfFoundTasks;
 
 public:
@@ -20,6 +21,7 @@ public:
 	void execute(vector<Task>);
 	bool foundWord(string);
 	vector<Task> getListOfFoundTasks();
+	vector <int> getListOfFoundTaskNum();
 	int getNoOfFoundTasks();
 };
 

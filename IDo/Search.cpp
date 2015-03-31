@@ -8,12 +8,19 @@ void Search::setSearchWord(string userInput) {
 //Pre-condition: takes in a vector of task objects from logic
 //looks through the tasks according to task name
 void Search::execute(vector <Task> taskListFromLogic) {
-	vector <Task>::iterator iter;
-	for (iter = taskListFromLogic.begin(); iter != taskListFromLogic.end(); iter++)
-	{
-		if (foundWord((*iter).getTaskName()))
-		{
-			_listOfFoundTasks.push_back((*iter));
+	//vector <Task>::iterator iter;
+	//for (iter = taskListFromLogic.begin(); iter != taskListFromLogic.end(); iter++)
+	//{
+	//	if (foundWord((*iter).getTaskName()))
+	//	{
+	//		_listOfFoundTasks.push_back((*iter));
+	//	}
+	//}
+	int i;
+	for (i = 0; i < taskListFromLogic.size(); i++) {
+		if (foundWord(taskListFromLogic[i].getTaskName())) {
+			_listOfFoundTasks.push_back(taskListFromLogic[i]);
+			_listOfFoundTaskNum.push_back(i+1);
 		}
 	}
 	_noOfFoundTasks = _listOfFoundTasks.size();
@@ -48,6 +55,10 @@ bool Search::foundWord(string taskname) {
 
 vector <Task> Search::getListOfFoundTasks() {
 	return _listOfFoundTasks;
+}
+
+vector <int> Search::getListOfFoundTaskNum() {
+	return _listOfFoundTaskNum;
 }
 
 int Search::getNoOfFoundTasks() {

@@ -321,7 +321,7 @@ bool Parser::processAddContent(vector<string> inputs) {
 }
 
 //This sorts out the information that an edit function requires i.e. task index, type and details
-bool Parser::processEditContent(vector<string> inputs){
+bool Parser::processEditContent(vector<string> inputs) {
 	
 	int inputSize = inputs.size();
 
@@ -329,8 +329,12 @@ bool Parser::processEditContent(vector<string> inputs){
 		parsedInputs.push_back(inputs[FIRST_WORD]); //task index to be edited
 		parsedInputs.push_back(inputs[SECOND_WORD]); //task type to be edited
 	
-		for(int i = 2; i < inputSize ; i++){
-			_taskContent += inputs[i] + " "; //task details to be edited
+		for(int i = 2; i < inputSize ; i++) {
+			if (i = inputSize - 1) {
+				_taskContent += inputs[i]; //task details to be edited
+			} else {
+				_taskContent += inputs[i] + " ";
+			}
 		}
 		parsedInputs.push_back(_taskContent);
 

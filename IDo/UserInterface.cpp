@@ -17,7 +17,11 @@ void UserInterface::SetColor1(int value){
 void UserInterface::displayDate() {
     char date[9];
 	_strdate_s(date);
-	cout << "------------------------- " << date << " -------------------------" << endl;
+	cout << "------------------------- ";
+	SetColor1(14); // bright yellow
+	cout << date;
+	SetColor1(7); // default white
+	cout << " -------------------------" << endl;
 }
 
 // displays commands available at launch of program
@@ -37,12 +41,12 @@ void UserInterface::instructMessage() {
 	SetColor1(5);
 	cout << setw(15) << "mark";
 	SetColor1(5);
-	cout << setw(15) << "view" << endl;
+	cout << setw(15) << "view" << endl << endl;
 
 	SetColor1(7);
-	cout << "Let's get started!" << endl;
+	cout << "Data will be stored by default in output.txt in the same" << endl 
+		 << "folder as the program." << endl << endl << "Let's get started!" << endl;
 }
-
 // displays quote of the day at the launch of the program
 void UserInterface::qotd() {
     int lineCount = 0;
@@ -73,6 +77,7 @@ void UserInterface::displayDivider() {
 	cout << " " << endl;
 	SetColor1(3); // cyan
     cout << "*************************************************************" << endl;
+	SetColor1(7); // default white
 	cout << " " << endl;
 }
 
@@ -83,9 +88,14 @@ string UserInterface::welcomeMessage() {
 	return welcome;
 }
 
+void UserInterface::readFile() {
+	logic.readFromFile();
+}
+
 void UserInterface::process() {
 	bool carryOn = true;
 
+	readFile();
 	while(carryOn){
 		carryOn = logic.process(receiveInput());
 	}

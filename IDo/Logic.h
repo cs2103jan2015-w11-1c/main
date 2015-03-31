@@ -6,7 +6,6 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-#include <fstream>
 #include <assert.h>
 
 #include "Parser.h"
@@ -16,8 +15,8 @@
 #include "Edit.h"
 #include "Mark.h"
 #include "View.h"
-#include "Search.h"
 #include "Storage.h"
+#include "Sort.h"
 
 using namespace std;
 
@@ -38,11 +37,11 @@ private:
 	void markTask();
 	void viewCommands();
 	void viewDecider();
-	void searchWord();
-	void storeChange(string directory);
-	void exitProgram();
+	void storeChange();
+	void sortTask();
 
 public:
+	void readFromFile();
 	bool process(string);
 	vector<Task> getListofTasks();
 	vector<Task> setListOfTasks(vector<Task> newList);

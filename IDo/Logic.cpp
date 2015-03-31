@@ -5,7 +5,6 @@ const string SUCCESSFULLY_MARKED = "[Marked Successfully]";
 const string SUCCESSFULLY_ADDED = "[Added Successfully]";
 const string SUCCESSFULLY_DELETED = "[Deleted Successfully]";
 const string SUCCESSFULLY_CLEARED = "[Cleared Successfully]";
-const string TASK_NOT_FOUND = "[Task Not Found]";
 const string ERROR_WRONG_INPUT = "Error: Wrong Input!";
 
 void Logic::updateStorage () {
@@ -94,14 +93,22 @@ void Logic::viewDecider() {
 	}
 }
 
-void Logic::storeChange(string directory) {
+void Logic::storeChange() {
 	storage.editStorageFileName(parsedInformation[1]);
 }
 
-void Logic::exitProgram() {
-	ofstream writeFile ("filename.txt");
-	writeFile << storage.getStorageFileName();
-	writeFile.close();
+void Logic::sortTask() {
+	Sort sort;
+	if(sort.execute(parsedInformation, _listOfTasks)) {
+		_listOfTasks = sort.getSortedList();
+		cout<< endl << "Sort Successfully"<< endl;
+	} else {
+		printMessage(ERROR_WRONG_INPUT);
+	}
+}
+
+void Logic::readFromFile() {
+	storage.readFile(_listOfTasks);
 }
 
 // Processes the command and inputs passed from UI
@@ -125,15 +132,14 @@ bool Logic::process(string line) {
 	} else if (commandChoice == "view") {
 		viewDecider();
 	} else if (commandChoice == "store") {
-		storeChange(parsedInformation[1]);
+		storeChange();
+		updateStorage();
+	} else if (commandChoice == "sort") {
+		sortTask();
 		updateStorage();
 	} else if (commandChoice == "exit") {
 		updateStorage();
-		exitProgram();
 		return false;
-	}
-	else if (commandChoice == "search") {
-		searchWord();
 	} else if (commandChoice == "invalid") {
 		cout << ERROR_WRONG_INPUT << endl;
 	} else {
@@ -149,23 +155,4 @@ vector<Task> Logic::getListofTasks(){
 vector<Task> Logic::setListOfTasks(vector<Task> newList) {
 	_listOfTasks = newList;
 	return _listOfTasks;
-}
-
-void Logic::searchWord() {
-	Search search;
-
-	search.setSearchWord(parsedInformation[1]);
-	search.execute(_listOfTasks);
-	
-	vector <Task> listOfFoundTasks;
-	if (search.getNoOfFoundTasks() != 0) {
-		listOfFoundTasks = search.getListOfFoundTasks();
-		
-		
-		//cout << "found task\n";
-		View printFoundTasks;
-		printFoundTasks.viewAll(listOfFoundTasks);
-	} else {
-		printMessage(TASK_NOT_FOUND);
-	}
 }

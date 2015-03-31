@@ -25,7 +25,6 @@ void Storage::updateFile (vector <Task> &temp) {
 	for (int i = 0 ; i < _size ; i++) {
 		writeFile << temp[i].getTaskName() << endl;
 		if (!temp[i].getStartDate().empty()) {
-			cout << "write start date" << endl;
 			writeFile << temp[i].getStartDate() << endl;
 			writeFile << temp[i].getStartTime() << endl;
 		}
@@ -107,78 +106,80 @@ void Storage::readFile (vector <Task> &temp) {
 	vector <string> tempTask;
 
 	getline(readFile,line);
-	while (line != "_____") {
-		while (line != "__________") {
-			tempTask.push_back(line);
-			getline (readFile,line);
+	if (!line.empty()) {
+		while (line != "_____") {
+			while (line != "__________") {
+				tempTask.push_back(line);
+				getline (readFile,line);
+			}
+	
+			Task task;
+			int size = tempTask.size();
+			taskName = tempTask[0];
+			task.setTaskName(taskName);
+	
+			if (size == 8) {
+				startDate = tempTask[1];
+				startTime = tempTask[2];
+				endDate = tempTask[3];
+				endTime = tempTask[4];
+				task.setStartDate(startDate);
+				task.setStartTime(startTime);
+			}
+	
+			if (size == 6) {
+				endDate = tempTask[1];
+				endTime = tempTask[2];
+			}
+	
+			status = tempTask[size-3];
+			priority = tempTask[size-2];
+			label = tempTask[size-1];
+	
+			task.setEndDate(endDate);
+			task.setEndTime(endTime);
+	
+			if (status == "done") {
+				task.setStatus(done);
+	
+			} else {
+				task.setStatus(notdone);
+			}
+	
+	
+			if (priority == "high") {
+				task.setPriority(high);
+	
+			} else if (priority == "medium") {
+				task.setPriority(medium);
+	
+			} else if (priority == "low") {
+				task.setPriority(low);
+	
+			} else {
+				task.setPriority(medium);
+			}
+			
+	
+			if (label == "studies") {
+				task.setLabel(studies);
+	
+			} else if (label == "cca") {
+				task.setLabel(cca);
+	
+			} else if (label == "friends") {
+				task.setLabel(friends);
+	
+			} else if (label == "family") {
+				task.setLabel(family);
+	
+			}  else {
+				task.setLabel(misc);
+			}
+	
+			temp.push_back(task);
+			tempTask.clear();
+			getline(readFile,line);
 		}
-
-		Task task;
-		int size = tempTask.size();
-		taskName = tempTask[0];
-		task.setTaskName(taskName);
-
-		if (size == 8) {
-			startDate = tempTask[1];
-			startTime = tempTask[2];
-			endDate = tempTask[3];
-			endTime = tempTask[4];
-			task.setStartDate(startDate);
-			task.setStartTime(startTime);
-		}
-
-		if (size == 6) {
-			endDate = tempTask[1];
-			endTime = tempTask[2];
-		}
-
-		status = tempTask[size-3];
-		priority = tempTask[size-2];
-		label = tempTask[size-1];
-
-		task.setEndDate(endDate);
-		task.setEndTime(endTime);
-
-		if (status == "done") {
-			task.setStatus(done);
-
-		} else {
-			task.setStatus(notdone);
-		}
-
-
-		if (priority == "high") {
-			task.setPriority(high);
-
-		} else if (priority == "medium") {
-			task.setPriority(medium);
-
-		} else if (priority == "low") {
-			task.setPriority(low);
-
-		} else {
-			task.setPriority(medium);
-		}
-		
-
-		if (label == "studies") {
-			task.setLabel(studies);
-
-		} else if (label == "cca") {
-			task.setLabel(cca);
-
-		} else if (label == "friends") {
-			task.setLabel(friends);
-
-		} else if (label == "family") {
-			task.setLabel(family);
-
-		}  else {
-			task.setLabel(misc);
-		}
-
-		temp.push_back(task);
-		tempTask.clear();
-		getline(readFile,line);
 	}
 }

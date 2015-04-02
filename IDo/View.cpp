@@ -64,17 +64,8 @@ void View::display(Task task) {
 		cout << setw(8) << "[DONE]" << setw(7) << " ";
 	}
 
-	if (task.getLabel() == misc) {
-		cout << "[MISC]" << setw(6) << " ";
-	} else if (task.getLabel() == studies) {
-		cout << "[STUDIES]" << setw(3) << " ";
-	} else if (task.getLabel() == cca) {
-		cout << "[CCA]" << setw(7) << " ";
-	} else if (task.getLabel() == friends) {
-		cout << "[FRIENDS]" << setw(3) << " ";
-	} else {
-		cout << "[FAMILY]" << setw(4) << " ";
-	}
+	int size = task.getLabel().size();
+	cout << "[" << task.getLabel() << "]" << setw(10-size) << " ";
 
 	if (task.getPriority() == high) {
 		SetColor(12); // red
@@ -138,7 +129,8 @@ void View::viewSelected(vector<Task> list, vector<int> taskNum) {
 	printHeader();
 	int size = list.size();
 	for (int i = 0; i < size; i++) {
-		cout << taskNum[i] << "." << setw(3) << "   ";
+		cout << setw(3) << taskNum[i] << ".";
+		//cout << taskNum[i] << "." << setw(3) << "   ";
 		display(list[i]);
 	}
 	cout << endl;

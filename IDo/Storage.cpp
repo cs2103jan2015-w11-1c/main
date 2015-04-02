@@ -23,7 +23,7 @@ void Storage::updateFile (vector <Task> &temp) {
 	ofstream writeFile (storageFileName);
 	Status status;
 	Priority priority;
-	Label label;
+	string label;
 	int _size = temp.size();
 	for (int i = 0 ; i < _size ; i++) {
 		writeFile << temp[i].getTaskName() << endl;
@@ -67,27 +67,7 @@ void Storage::updateFile (vector <Task> &temp) {
 		}
 
 		label = temp[i].getLabel();
-		switch (label) {
-		case studies:
-			writeFile << "studies" << endl;
-			break;
-
-		case cca:
-			writeFile << "cca" << endl;
-			break;
-
-		case friends:
-			writeFile << "friends" << endl;
-			break;
-
-		case family:
-			writeFile << "family" << endl;
-			break;
-
-		case misc:
-			writeFile << "misc" << endl;
-			break;
-		}
+		writeFile << label << endl;
 
 		writeFile << "__________" << endl;
 	}
@@ -163,22 +143,22 @@ void Storage::readFile (vector <Task> &temp) {
 				task.setPriority(medium);
 			}
 			
+			task.setLabel(label);
+			//if (label == "studies") {
+			//	task.setLabel(studies);
 	
-			if (label == "studies") {
-				task.setLabel(studies);
+			//} else if (label == "cca") {
+			//	task.setLabel(cca);
 	
-			} else if (label == "cca") {
-				task.setLabel(cca);
+			//} else if (label == "friends") {
+			//	task.setLabel(friends);
 	
-			} else if (label == "friends") {
-				task.setLabel(friends);
+			//} else if (label == "family") {
+			//	task.setLabel(family);
 	
-			} else if (label == "family") {
-				task.setLabel(family);
-	
-			}  else {
-				task.setLabel(misc);
-			}
+			//}  else {
+			//	task.setLabel(misc);
+			//}
 	
 			temp.push_back(task);
 			tempTask.clear();

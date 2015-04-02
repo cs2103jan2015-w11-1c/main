@@ -15,10 +15,6 @@ enum Priority {
 	high, medium, low, none
 };
 
-enum Label {
-	studies, cca, friends, family, misc
-};
-
 class Task {
 private:
 	string _taskName;
@@ -29,7 +25,7 @@ private:
 	string _deadline;
 	Status _status;
 	Priority _priority;
-	Label _label;
+	string _label;
 	string _extra;
 
 public:
@@ -43,7 +39,7 @@ public:
 	string getDeadline();
 	Status getStatus();
 	Priority getPriority();
-	Label getLabel();
+	string getLabel();
 	string getExtra();
 	void setTaskName(string name);
 	void setStartDate(string date);
@@ -53,7 +49,7 @@ public:
 	void setDeadline(string date);
 	void setStatus(Status state);
 	void setPriority(Priority priority);
-	void setLabel(Label label);
+	void setLabel(string label);
 	void setExtra(string extra);
 };
 

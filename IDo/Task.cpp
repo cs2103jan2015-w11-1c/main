@@ -3,7 +3,7 @@
 Task::Task(){
 	_status = notdone;
 	_priority = low;
-	_label = misc;
+	_label = "misc";
 }
 
 Task::~Task(){
@@ -41,7 +41,7 @@ Priority Task::getPriority() {
 	return _priority;
 }
 
-Label Task::getLabel() {
+string Task::getLabel() {
 	return _label;
 }
 
@@ -81,7 +81,7 @@ void Task::setPriority(Priority priority) {
 	_priority = priority;
 } 
 
-void Task::setLabel(Label label) {
+void Task::setLabel(string label) {
 	_label = label;
 }
 

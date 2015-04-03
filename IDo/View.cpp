@@ -59,7 +59,9 @@ void View::display(Task task) {
 	}
 
 	if (task.getStatus() == notdone) {
+		SetColor(15); // bright white
 		cout << setw(12) << "[NOT DONE]" << setw(3) << " ";
+		SetColor(7); // default white
 	} else {
 		cout << setw(8) << "[DONE]" << setw(7) << " ";
 	}

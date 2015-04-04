@@ -74,30 +74,26 @@ bool Sort::sortTaskName(){
 
 
 bool Sort::sortFrom() {
-	vector <Task> swap;
+
 	int listSize = sortList.size();
 
 	//Ascending Sort
 	for (int i = 0; i < listSize - 1; i++ ) {
 		for(int j = 0; j < listSize - i - 1; j++) {
-			if(sortList[j].getStartDate() > sortList[j+1].getStartDate()) {
-				swap.push_back(sortList[j]);
-				sortList[j]= sortList[j+1];
-				sortList[j+1] = swap[0];
-				swap.clear();
-			}
-		}
-	}
+			if(!sortList[j].getStartDate().empty() && !sortList[j+1].getStartDate().empty()) {
 
-	sortStartTime();
+				date startDate(from_simple_string(sortList[j].getStartDate()));
+				date startDate2(from_simple_string(sortList[j+1].getStartDate()));
 
-	for (int i = 0; i < listSize - 1; i++ ) {
-		for(int j = 0; j < listSize - i - 1; j++) {
-			if(sortList[j].getStartDate().empty()) {
-				swap.push_back(sortList[j]);
-				sortList[j]= sortList[j+1];
-				sortList[j+1] = swap[0];
-				swap.clear();
+				if (startDate > startDate2) {
+					swap(j, j+1);
+				} else if (startDate == startDate2) {
+					if (sortList[j].getStartTime() > sortList[j+1].getStartTime()) {
+						swap(j, j+1);
+					}
+				}
+			} else if(sortList[j].getStartDate().empty()) {
+				swap(j, j+1);
 			}
 		}
 	}
@@ -125,22 +121,27 @@ bool Sort::sortStartTime() {
 }
 
 bool Sort::sortToBy() {
-	vector <Task> swap;
+
 	int listSize = sortList.size();
 
 	//Ascending Sort
 	for (int i = 0; i < listSize - 1; i++ ) {
 		for(int j = 0; j < listSize - i - 1; j++) {
-			if(sortList[j].getEndDate() > sortList[j+1].getEndDate()) {
-				swap.push_back(sortList[j]);
-				sortList[j]= sortList[j+1];
-				sortList[j+1] = swap[0];
-				swap.clear();
+
+			date endDate(from_simple_string(sortList[j].getEndDate()));
+			date endDate2(from_simple_string(sortList[j+1].getEndDate()));
+
+			if(endDate > endDate2) {
+				swap(j, j+1);
+			} else if (endDate == endDate2) {
+				if (sortList[j].getEndTime() > sortList[j+1].getEndTime()) {
+						swap(j, j+1);
+				}
+			} else if(sortList[j].getEndDate().empty()) {
+				swap(j, j+1);
 			}
 		}
 	}
-
-	sortEndTime();
 
 	return true;
 }
@@ -166,65 +167,59 @@ bool Sort::sortEndTime() {
 
 bool Sort::sortDeadLine() {
 
-	vector <Task> swap;
 	int listSize = sortList.size();
 
 	for (int i = 0; i < listSize - 1; i++ ) {
 		for(int j = 0; j < listSize - i - 1; j++) {
+
 			if(!sortList[j].getStartDate().empty() && !sortList[j+1].getStartDate().empty()) {
-				if (sortList[j].getStartDate() > sortList[j+1].getStartDate()) {
-					swap.push_back(sortList[j]);
-					sortList[j]= sortList[j+1];
-					sortList[j+1] = swap[0];
-					swap.clear();
-				} else if (sortList[j].getStartDate() == sortList[j+1].getStartDate()) {
+
+				date startDate(from_simple_string(sortList[j].getStartDate()));
+				date startDate2(from_simple_string(sortList[j+1].getStartDate()));
+
+				if (startDate > startDate2) {
+					swap(j, j+1);
+				} else if (startDate == startDate2) {
 					if (sortList[j].getStartTime() > sortList[j+1].getStartTime()) {
-					swap.push_back(sortList[j]);
-					sortList[j]= sortList[j+1];
-					sortList[j+1] = swap[0];
-					swap.clear();
+						swap(j, j+1);
 					}
 				}
+
 			} else if (!sortList[j].getStartDate().empty() && sortList[j+1].getStartDate().empty()) {
-				if(sortList[j].getStartDate() > sortList[j+1].getEndDate()) {
-					swap.push_back(sortList[j]);
-					sortList[j]= sortList[j+1];
-					sortList[j+1] = swap[0];
-					swap.clear();
-				} else if (sortList[j].getStartDate() == sortList[j+1].getEndDate()) {
+
+				date startDate(from_simple_string(sortList[j].getStartDate()));
+				date endDate(from_simple_string(sortList[j+1].getEndDate()));
+
+				if(startDate > endDate) {
+					swap(j, j+1);
+				} else if (startDate == endDate) {
 					if (sortList[j].getStartTime() > sortList[j+1].getEndTime()) {
-						swap.push_back(sortList[j]);
-						sortList[j]= sortList[j+1];
-						sortList[j+1] = swap[0];
-						swap.clear();
+						swap(j, j+1);
 					}
 				}
+
 			} else if (sortList[j].getStartDate().empty() && sortList[j+1].getStartDate().empty()) {
-				if(sortList[j].getEndDate() > sortList[j+1].getEndDate()) {
-					swap.push_back(sortList[j]);
-					sortList[j]= sortList[j+1];
-					sortList[j+1] = swap[0];
-					swap.clear();
-				} else if (sortList[j].getEndDate() == sortList[j+1].getEndDate()) {
+
+				date endDate(from_simple_string(sortList[j].getEndDate()));
+				date endDate2(from_simple_string(sortList[j+1].getEndDate()));
+
+				if(endDate > endDate2) {
+					swap(j, j+1);
+				} else if (endDate == endDate2) {
 					if (sortList[j].getEndTime() > sortList[j+1].getEndTime()) {
-						swap.push_back(sortList[j]);
-						sortList[j]= sortList[j+1];
-						sortList[j+1] = swap[0];
-						swap.clear();
+						swap(j, j+1);
 					}
 				}
 			} else if (sortList[j].getStartDate().empty() && !sortList[j+1].getStartDate().empty()) {
-				if(sortList[j].getEndDate() > sortList[j+1].getStartDate()) {
-					swap.push_back(sortList[j]);
-					sortList[j]= sortList[j+1];
-					sortList[j+1] = swap[0];
-					swap.clear();
-				} else if (sortList[j].getEndDate() == sortList[j+1].getStartDate()) {
+
+				date endDate(from_simple_string(sortList[j].getEndDate()));
+				date startDate(from_simple_string(sortList[j+1].getStartDate()));
+
+				if(endDate > startDate) {
+					swap(j, j+1);
+				} else if (endDate == startDate) {
 					if (sortList[j].getEndTime() > sortList[j+1].getStartTime()) {
-						swap.push_back(sortList[j]);
-						sortList[j]= sortList[j+1];
-						sortList[j+1] = swap[0];
-						swap.clear();
+						swap(j, j+1);
 					}
 				}
 			} else {
@@ -233,10 +228,20 @@ bool Sort::sortDeadLine() {
 		}
 	}
 
-
 	return true;
 }
 
+bool Sort::swap(int current, int next) {
+
+	vector <Task> swap;
+
+	swap.push_back(sortList[current]);
+	sortList[current]= sortList[next];
+	sortList[next] = swap[0];
+	swap.clear();
+
+	return true;
+}
 
 vector<Task> Sort::getSortedList() {
 	return sortList;

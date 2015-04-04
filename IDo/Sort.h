@@ -4,10 +4,11 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "Logic.h"
 #include "Task.h"
+#include "boost/date_time/gregorian/gregorian.hpp" 
 
 using namespace std;
+using namespace boost::gregorian;
 
 class Sort {
 private:
@@ -27,6 +28,8 @@ private:
 	bool sortToBy();
 	bool sortEndTime();
 	bool sortDeadLine();
+
+	bool swap(int current, int next);
 
 public:
 	bool execute(vector <string> parsedInformation, vector <Task> list);

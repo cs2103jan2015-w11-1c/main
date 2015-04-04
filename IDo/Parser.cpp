@@ -48,7 +48,7 @@ Parser::CommandType Parser::userCommand(){
 		return INVALID;
 	}
 }
-
+  
 //This splits a string into words and stores them in a vector. Spacing is removed.
 vector<string> Parser::split(string userInput){
 	vector<string> tokens;
@@ -266,7 +266,7 @@ bool Parser::processAddContent(vector<string> inputs) {
 	int size = inputs.size();
 
 	if(checkTimedTask()){
-		cout << "timetask" << endl;
+	//	cout << "timetask" << endl;
 		for(int i = 0; i < fromPosition-1; i++){
 		_taskContent += inputs[i] + " ";
 		}
@@ -289,7 +289,7 @@ bool Parser::processAddContent(vector<string> inputs) {
 		parsedInputs.push_back(_endTime);
 
 	} else if (checkDeadlineTask()) {
-		cout << "deadlinetask" << endl;
+	//	cout << "deadlinetask" << endl;
 		for(int i = 0; i < byPosition-1; i++){
 			_taskContent += inputs[i] + " ";
 		}
@@ -307,7 +307,7 @@ bool Parser::processAddContent(vector<string> inputs) {
 		parsedInputs.push_back(_endTime);
 
 	} else if(checkFloating()) {
-		cout << "floatingtask" << endl;
+	//	cout << "floatingtask" << endl;
 		for(int i = 0; i < size; i++){
 			_taskContent += inputs[i] + " ";
 		}
@@ -328,14 +328,16 @@ bool Parser::processEditContent(vector<string> inputs) {
 	if(inputSize >= 3){
 		parsedInputs.push_back(inputs[FIRST_WORD]); //task index to be edited
 		parsedInputs.push_back(inputs[SECOND_WORD]); //task type to be edited
-	
+		
+
 		for(int i = 2; i < inputSize ; i++) {
-			if (i = inputSize - 1) {
+			if (i == inputSize - 1) {
 				_taskContent += inputs[i]; //task details to be edited
 			} else {
 				_taskContent += inputs[i] + " ";
 			}
 		}
+		cout<<_taskContent;
 		parsedInputs.push_back(_taskContent);
 
 	} else {

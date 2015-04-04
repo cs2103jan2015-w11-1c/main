@@ -3,6 +3,7 @@
 
 const string SUCCESSFULLY_MARKED = "[Marked Successfully]";
 const string SUCCESSFULLY_ADDED = "[Added Successfully]";
+const string SUCCESSFULLY_EDITED = "[Edited Successfully]";
 const string SUCCESSFULLY_DELETED = "[Deleted Successfully]";
 const string SUCCESSFULLY_CLEARED = "[Cleared Successfully]";
 const string TASK_NOT_FOUND = "[Task Not Found]";
@@ -25,8 +26,12 @@ void Logic::printMessage(string message) {
 
 void Logic::addTask() {
 	Add add;
+	View view;
 	if (add.execute(parsedInformation)) {
 		_listOfTasks.push_back(add.getTask());
+		system("CLS");
+		view.viewDefault(_listOfTasks);
+		view.viewSelected2(_listOfTasks, _listOfTasks.size());
 		printMessage(SUCCESSFULLY_ADDED);
 		updateStorage();
 	}
@@ -41,12 +46,20 @@ void Logic::deleteTask() {
 	} else {
 		cout<<"Task List is empty/Wrong task input!"<<endl;
 	}
-}
+} 
 
 void Logic::editTask() {
 	Edit edit;
+	View view;
+
+	int editedTaskNumber;
 	if (edit.execute(parsedInformation, getListofTasks())) {
 		setListOfTasks(edit.getNewList());
+		editedTaskNumber = atoi(parsedInformation[1].c_str());
+		system("CLS");
+		view.viewDefault(_listOfTasks);
+		view.viewSelected2(_listOfTasks, editedTaskNumber);
+		printMessage(SUCCESSFULLY_EDITED);
 		updateStorage();
 	} else {
 		cout<<"Task NOT edited"<<endl;
@@ -148,6 +161,7 @@ bool Logic::process(string line) {
 	} else {
 		cout << ERROR_WRONG_INPUT << endl;
 	}
+
 	return true;
 }
 

@@ -15,11 +15,23 @@ void Mark::markPriority (Task &taskToMark) {
 		taskToMark.setPriority(medium);
 	} else if (_contentToMark == "low") {
 		taskToMark.setPriority(low);
-	} 
+	} else if (_contentToMark == "none") {
+		taskToMark.setPriority(none);
+	}
 }
 
 void Mark::markLabel (Task &taskToMark) {
-	taskToMark.setLabel(_contentToMark);
+	if (_contentToMark == "studies") {
+		taskToMark.setLabel(studies);
+	} else if (_contentToMark == "CCA") {
+		taskToMark.setLabel(cca);
+	} else if (_contentToMark == "family") {
+		taskToMark.setLabel(family);
+	} else if (_contentToMark == "friends") {
+		taskToMark.setLabel(friends);
+	} else if (_contentToMark == "misc") {
+		taskToMark.setLabel(misc);
+	}
 }
 
 //checks if input number falls within size of task list
@@ -31,14 +43,14 @@ bool Mark::isValidInput(vector <string> parsedInformation, int taskListSize) {
 			return false;
 		}
 	}
-	//if (!(parsedInformation[size] == "done" || parsedInformation[size] == "notdone" || 
-	//	parsedInformation[size] == "high" || parsedInformation[size] == "medium" || 
-	//	parsedInformation[size] == "low" || parsedInformation[size] == "none" ||
-	//	parsedInformation[size] == "studies" || parsedInformation[size] == "CCA" ||
-	//	parsedInformation[size] == "friends" || parsedInformation[size] == "family" ||
-	//	parsedInformation[size] == "misc")) {
-	//		return false;
-	//}
+	if (!(parsedInformation[size] == "done" || parsedInformation[size] == "notdone" || 
+		parsedInformation[size] == "high" || parsedInformation[size] == "medium" || 
+		parsedInformation[size] == "low" || parsedInformation[size] == "none" ||
+		parsedInformation[size] == "studies" || parsedInformation[size] == "CCA" ||
+		parsedInformation[size] == "friends" || parsedInformation[size] == "family" ||
+		parsedInformation[size] == "misc")) {
+			return false;
+	}
 	return validNumber;
 }
 
@@ -51,10 +63,9 @@ void Mark::execute(vector<string> parsedInformation, vector<Task> &taskListFromL
 
 		if (_contentToMark == "done" || _contentToMark == "notdone") {
 			markStatus(taskListFromLogic[_indexToMark]);
-		} else if (_contentToMark == "high" || _contentToMark == "medium" || _contentToMark == "low") {
+		} else if (_contentToMark == "high" || _contentToMark == "medium" || _contentToMark == "low" || _contentToMark == "none") {
 			markPriority(taskListFromLogic[_indexToMark]);
-		} else //if (_contentToMark == "studies" || _contentToMark == "CCA" || _contentToMark == "friends" || _contentToMark == "family" || _contentToMark == "misc") {
-		{
+		} else if (_contentToMark == "studies" || _contentToMark == "CCA" || _contentToMark == "friends" || _contentToMark == "family" || _contentToMark == "misc") {
 			markLabel(taskListFromLogic[_indexToMark]);
 		}
 	}

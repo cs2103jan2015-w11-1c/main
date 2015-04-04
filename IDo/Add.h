@@ -6,16 +6,18 @@
 #include <iostream>
 #include "Logic.h"
 #include "Task.h"
+#include "RecurringTask.h"
 
 using namespace std;
 
+template <class T>
 class Add {
 private:
-	Task _task;
+	T _task;
 
 public:
-	Task getTask();
-	bool execute(vector<string> parsedInformation);
+	T getTask();
+	bool execute(vector<string> parsedInformation);	//for adding nrtask
+	bool executeR(vector<string>);
 };
-
 #endif

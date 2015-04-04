@@ -1,6 +1,7 @@
 #include "Add.h"
 
-bool Add::execute(vector<string> parsedInformation){
+template <class T>
+bool Add<T>::execute(vector<string> parsedInformation){
 	int size = parsedInformation.size();
 	
 	if (size == 2) {
@@ -21,7 +22,28 @@ bool Add::execute(vector<string> parsedInformation){
 	return true;
 }
 
-Task Add::getTask(){
+template <class T>
+T Add<T>::getTask(){
 	return _task;
 }
 
+template <class T>
+bool Add<T>::executeR(vector<string> parsedInfo) {
+	int size = parsedInfo.size();
+
+	if (size == 7) {	//deadline reccuring task
+		_task.setAbstrInfo(parsedInfo);
+		_task.setEndDate(parsedInfo[2]);
+		_task.setEndTime(parsedInfo[3]);
+	} else if (size == 9) {
+		_task.setAbstrInfo(parsedInfo);
+		_task.setStartDate(parsedInformation[2]);
+		_task.setStartTime(parsedInformation[3]);
+		_task.setEndDate(parsedInfo[4]);
+		_task.setEndTime(parsedInfo[5]);
+	} else {
+		return false;
+	}
+	_task.setNextOccurrence(parsedInfo);
+	return true;
+}

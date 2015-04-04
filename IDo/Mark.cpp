@@ -1,25 +1,49 @@
 #include "Mark.h"
 
-void Mark::markStatus (Task &taskToMark){
-	if (_contentToMark == "done") {
-		taskToMark.setStatus(done);
-	} else if (_contentToMark == "notdone") {
-		taskToMark.setStatus(notdone);
-	} 
+void Mark::markStatus (AllTasks &taskToMark){
+	if (taskToMark.type == 1) {
+		if (_contentToMark == "done") {
+			(taskToMark.rtask).setStatus(done);
+		} else if (_contentToMark == "notdone") {
+			(taskToMark.rtask).setStatus(notdone);
+		}
+	} else if (taskToMark.type == 2) {
+		if (_contentToMark == "done") {
+			(taskToMark.task).setStatus(done);
+		} else if (_contentToMark == "notdone") {
+			(taskToMark.task).setStatus(notdone);
+		}
+	}
 }
 
-void Mark::markPriority (Task &taskToMark) {
-	if (_contentToMark == "high") {
-		taskToMark.setPriority(high);
-	} else if (_contentToMark == "medium") {
-		taskToMark.setPriority(medium);
-	} else if (_contentToMark == "low") {
-		taskToMark.setPriority(low);
-	} 
+void Mark::markPriority(AllTasks &taskToMark) {
+	if (taskToMark.type == 1) {
+		if (_contentToMark == "high") {
+			(taskToMark.rtask).setPriority(high);
+		} else if (_contentToMark == "medium") {
+			(taskToMark.rtask).setPriority(medium);
+		} else if (_contentToMark == "low") {
+			(taskToMark.rtask).setPriority(low);
+		}
+	} else if (taskToMark.type == 2) {
+		if (_contentToMark == "high") {
+			(taskToMark.task).setPriority(high);
+		} else if (_contentToMark == "medium") {
+			(taskToMark.task).setPriority(medium);
+		} else if (_contentToMark == "low") {
+			(taskToMark.task).setPriority(low);
+		}
+	}
+	 
 }
 
-void Mark::markLabel (Task &taskToMark) {
-	taskToMark.setLabel(_contentToMark);
+void Mark::markLabel (AllTasks &taskToMark) {
+	if (taskToMark.type == 1) {
+		(taskToMark.rtask).setLabel(_contentToMark);
+	} else if (taskToMark.type == 2) {
+		(taskToMark.task).setLabel(_contentToMark);
+	}
+	
 }
 
 //checks if input number falls within size of task list
@@ -31,31 +55,30 @@ bool Mark::isValidInput(vector <string> parsedInformation, int taskListSize) {
 			return false;
 		}
 	}
-	//if (!(parsedInformation[size] == "done" || parsedInformation[size] == "notdone" || 
-	//	parsedInformation[size] == "high" || parsedInformation[size] == "medium" || 
-	//	parsedInformation[size] == "low" || parsedInformation[size] == "none" ||
-	//	parsedInformation[size] == "studies" || parsedInformation[size] == "CCA" ||
-	//	parsedInformation[size] == "friends" || parsedInformation[size] == "family" ||
-	//	parsedInformation[size] == "misc")) {
-	//		return false;
-	//}
 	return validNumber;
 }
 
-void Mark::execute(vector<string> parsedInformation, vector<Task> &taskListFromLogic) {
+void Mark::execute(vector<string> parsedInformation, vector<AllTasks> &taskListFromLogic) {
 	int size = parsedInformation.size();
 	_contentToMark = parsedInformation[size - 1];
 	
-	for (int i = 1 ; i < size - 1 ; i++) {
+	for (int i = 1; i < size - 1; i++) {
 		_indexToMark = atoi(parsedInformation[i].c_str()) - 1;
 
+		AllTasks taskToMark;
+
+		if (taskListFromLogic[_indexToMark].type == 1) {	//rtask
+			taskToMark.rtask = taskListFromLogic[_indexToMark];
+		} else if (taskListFromLogic[_indexToMark].type == 2) {	//nrtask
+			taskToMark.task = taskListFromLogic[_indexToMark];
+		}
+
 		if (_contentToMark == "done" || _contentToMark == "notdone") {
-			markStatus(taskListFromLogic[_indexToMark]);
+			markStatus(taskToMark);
 		} else if (_contentToMark == "high" || _contentToMark == "medium" || _contentToMark == "low") {
-			markPriority(taskListFromLogic[_indexToMark]);
-		} else //if (_contentToMark == "studies" || _contentToMark == "CCA" || _contentToMark == "friends" || _contentToMark == "family" || _contentToMark == "misc") {
-		{
-			markLabel(taskListFromLogic[_indexToMark]);
+			markPriority(taskToMark);
+		} else {
+			markLabel(taskToMark);
 		}
 	}
 }

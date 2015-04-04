@@ -18,8 +18,15 @@
 #include "Storage.h"
 #include "Sort.h"
 #include "Search.h"
+#include "RecurringTask.h"
 
 using namespace std;
+
+union AllTasks {
+	int type;	//1 = rtask. 2 = nrtask
+	RTask rtask;
+	Task task;
+};
 
 class Logic {
 private:
@@ -28,7 +35,7 @@ private:
 	string commandChoice;
 	vector<string> parsedInformation;
 	string userInput;
-	vector<Task> _listOfTasks;
+	vector<AllTasks> _listOfTasks;
 	void updateStorage ();
 	void getParsedInformation(string);
 	void printMessage(string message);
@@ -45,8 +52,8 @@ private:
 public:
 	void readFromFile();
 	bool process(string);
-	vector<Task> getListofTasks();
-	vector<Task> setListOfTasks(vector<Task> newList);
+	vector<AllTasks> getListofTasks();
+	vector<AllTasks> setListOfTasks(vector<AllTasks> newList);
 };
 
 #endif

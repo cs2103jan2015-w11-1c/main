@@ -267,3 +267,25 @@ namespace Microsoft{
 		}
 	}
 }
+
+namespace LogicTest
+{
+	TEST_CLASS(Add)
+	{
+	public:
+		TEST_METHOD(execute)
+		{
+			vector <string> parsedInfo;
+			parsedInfo.push_back("add");
+			parsedInfo.push_back("cut nails");
+
+			vector <Task> listOfTasks;
+			Logic add;
+			add.setListOfTasks(listOfTasks);
+			Add adding;
+			adding.execute();
+
+			}
+		};
+	};
+}

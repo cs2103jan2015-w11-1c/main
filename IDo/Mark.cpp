@@ -54,6 +54,11 @@ bool Mark::isValidInput(vector <string> parsedInformation, int taskListSize) {
 		if (atoi(parsedInformation[i].c_str()) > taskListSize || atoi(parsedInformation[i].c_str()) < 0) {
 			return false;
 		}
+		if (!(parsedInformation[size] == "done" || parsedInformation[size] == "notdone" ||
+			parsedInformation[size] == "high" || parsedInformation[size] == "medium" ||
+			parsedInformation[size] == "low")) {
+			return false;
+		}
 	}
 	return validNumber;
 }

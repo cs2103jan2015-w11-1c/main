@@ -3,13 +3,14 @@
 
 const string SUCCESSFULLY_MARKED = "[Marked Successfully]";
 const string SUCCESSFULLY_ADDED = "[Added Successfully]";
+const string SUCCESSFULLY_EDITED = "[Edited Successfully]";
 const string SUCCESSFULLY_DELETED = "[Deleted Successfully]";
 const string SUCCESSFULLY_CLEARED = "[Cleared Successfully]";
 const string TASK_NOT_FOUND = "[Task Not Found]";
 const string ERROR_WRONG_INPUT = "Error: Wrong Input!";
 
-void Logic::updateStorage () {
-	storage.updateFile (_listOfTasks);
+void Logic::updateStorage() {
+	storage.updateFile(_listOfTasks);
 }
 
 void Logic::getParsedInformation(string line) {
@@ -20,30 +21,43 @@ void Logic::getParsedInformation(string line) {
 }
 
 void Logic::printMessage(string message) {
-	cout << endl <<  message <<  endl << endl;
+	cout << endl << message << endl << endl;
 }
 
 void Logic::addTask() {
+
 	AllTasks taskToAdd;
+	View view;
 	//if (reccurring) //check with user input string
 	//	
 	//
-	Add<RTask> addrtask;
-	if (addrtask.executeR(parsedInformation)) {
-		taskToAdd.rtask = addrtask.getTask();
-		taskToAdd.type = 1;
-		_listOfTasks.push_back(taskToAdd);
-		printMessage(SUCCESSFULLY_ADDED);
+	int size = parsedInformation.size();
+	if (size != 2 || size != 4 || size != 6) {
+		Add<RTask> addrtask;
+		if (addrtask.executeR(parsedInformation)) {
+			taskToAdd.rtask = addrtask.getTask();
+			taskToAdd.type = 1;
+			_listOfTasks.push_back(taskToAdd);
+			system("CLS");
+			view.viewDefault(_listOfTasks);
+			view.viewSelected2(_listOfTasks, _listOfTasks.size());
+		}
 	}
+	else {
+		Add<Task> addtask;
+		if (addtask.execute(parsedInformation)) {
+			taskToAdd.task = addtask.getTask();
+			taskToAdd.type = 2;
+			_listOfTasks.push_back(taskToAdd);
 
-	Add<Task> addtask;
-	if (addtask.execute(parsedInformation)) {
-		taskToAdd.task = addtask.getTask();
-		taskToAdd.type = 2;
-		_listOfTasks.push_back(taskToAdd);
-		printMessage(SUCCESSFULLY_ADDED);
-		updateStorage();
+			system("CLS");
+			view.viewDefault(_listOfTasks);
+			view.viewSelected2(_listOfTasks, _listOfTasks.size());
+		}
+
 	}
+	printMessage(SUCCESSFULLY_ADDED);
+	updateStorage();
 }
 
 void Logic::deleteTask() {
@@ -52,18 +66,27 @@ void Logic::deleteTask() {
 		_listOfTasks = remove.getNewList();
 		printMessage(SUCCESSFULLY_DELETED);
 		updateStorage();
-	} else {
-		cout<<"Task List is empty/Wrong task input!"<<endl;
+	}
+	else {
+		cout << "Task List is empty/Wrong task input!" << endl;
 	}
 }
 
 void Logic::editTask() {
 	Edit edit;
+	View view;
+
+	int editedTaskNumber;
 	if (edit.execute(parsedInformation, getListofTasks())) {
 		setListOfTasks(edit.getNewList());
+		editedTaskNumber = atoi(parsedInformation[1].c_str());
+		system("CLS");
+		view.viewDefault(_listOfTasks);
+		view.viewSelected2(_listOfTasks, editedTaskNumber);
+		printMessage(SUCCESSFULLY_EDITED);
 		updateStorage();
 	} else {
-		cout<<"Task NOT edited"<<endl;
+		cout << "Task NOT edited" << endl;
 	}
 }
 
@@ -73,7 +96,8 @@ void Logic::markTask() {
 		mark.execute(parsedInformation, _listOfTasks);
 		printMessage(SUCCESSFULLY_MARKED);
 		updateStorage();
-	} else {	
+	}
+	else {
 		printMessage(ERROR_WRONG_INPUT);
 	}
 	updateStorage();
@@ -114,10 +138,11 @@ void Logic::storeChange() {
 
 void Logic::sortTask() {
 	Sort sort;
-	if(sort.execute(parsedInformation, _listOfTasks)) {
+	if (sort.execute(parsedInformation, _listOfTasks)) {
 		_listOfTasks = sort.getSortedList();
-		cout<< endl << "Sort Successfully"<< endl;
-	} else {
+		cout << endl << "Sort Successfully" << endl;
+	}
+	else {
 		printMessage(ERROR_WRONG_INPUT);
 	}
 }
@@ -131,8 +156,8 @@ bool Logic::process(string line) {
 
 	getParsedInformation(line);
 	commandChoice = parsedInformation[0];
-	
-	if(commandChoice == "add") {
+
+	if (commandChoice == "add") {
 		addTask();
 	} else if (commandChoice == "delete") {
 		deleteTask();
@@ -162,21 +187,22 @@ bool Logic::process(string line) {
 	} else {
 		cout << ERROR_WRONG_INPUT << endl;
 	}
+
 	return true;
 }
 
 void Logic::searchWord() {
-    Search search;
+	Search search;
 
-    search.setSearchWord(parsedInformation[1]);
-    search.execute(_listOfTasks);
-    
+	search.setSearchWord(parsedInformation[1]);
+	search.execute(_listOfTasks);
+
 	if (search.getNoOfFoundTasks() != 0) {
 		vector <Task> listOfFoundTasks;
 		vector <int> listOfFoundTaskNum;
 		listOfFoundTasks = search.getListOfFoundTasks();
 		listOfFoundTaskNum = search.getListOfFoundTaskNum();
-		
+
 		//cout << "found task\n";
 		View printFoundTasks;
 		printFoundTasks.viewSelected(listOfFoundTasks, listOfFoundTaskNum);

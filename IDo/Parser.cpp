@@ -40,10 +40,12 @@ Parser::CommandType Parser::userCommand(){
 		return MARK;
 	} else if (_userCommand == CHOICE_SORT) {
         return SORT;
-    } else if (_userCommand == CHOICE_EXIT) {
-		return EXIT;
-	} else if (_userCommand == CHOICE_STORE) {
+    } else if (_userCommand == CHOICE_STORE) {
 		return STORE;
+	} else if (_userCommand == CHOICE_UNDO) {
+		return UNDO;
+	} else if (_userCommand == CHOICE_EXIT) {
+		return EXIT;
 	} else {
 		return INVALID;
 	}
@@ -109,6 +111,11 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 		case STORE:
 			parsedInputs.push_back("store");
 			parsedInputs.push_back(splittedUserInputs[0]);
+			break;
+
+		case UNDO:
+			parsedInputs.push_back("undo");
+			break;
 
 		case EXIT:
 			parsedInputs.push_back("exit");
@@ -255,6 +262,116 @@ bool Parser::checkFloating(){
 	return valid;
 }
 
+//Post: Returns true if it's recurring task
+//		Returns false if it's not a recurring task
+bool Parser::checkRecurring() {
+
+	bool validRecurring = false;
+
+	string firstKeyword = "every";
+	string secondKeyword;
+	string thirdKeyword;
+
+	int size = splittedUserInputs.size();
+
+	for (int i = 0; i < size; size++) {
+		if(splittedUserInputs[i] == firstKeyword && i != size - 1) {
+			if(checkSecondWord (i + 1) && checkThirdWord (i+2)) {
+				secondKeyword = splittedUserInputs[i+1];
+				thirdKeyword = splittedUserInputs[i+2];
+				validRecurring = true;
+			} else if (checkSecondWord(i+1) &&  !checkThirdWord(i+2)) {
+				secondKeyword = splittedUserInputs[i+1];
+				validRecurring = true;
+			} 
+		} 
+	}
+
+	if(validRecurring == true) {
+		parsedInputs.push_back(firstKeyword);
+		parsedInputs.push_back(secondKeyword);
+		if(!thirdKeyword.empty())
+			parsedInputs.push_back(thirdKeyword);
+	}
+
+	return validRecurring;
+}
+
+bool Parser::checkRecurringLimit() {
+
+	string keyWord = "for";
+	string duration;
+	string dayMthYear;
+	int size = splittedUserInputs.size();
+
+	bool valid = false;
+
+	for(int i = 0 ; i < size; i++){
+		if(splittedUserInputs[i] == keyWord) {
+			if(checkNumberOfRepeats(i+1) && checkThirdWord(i+2)) { 
+				duration = splittedUserInputs[i+1];
+				dayMthYear = splittedUserInputs[i+2];
+				valid = true;
+			}
+		}
+	}
+	return valid;
+}
+
+bool Parser::checkSecondWord(int index) {
+	string secondKeyword[3] = {"day", "month" , "year"};
+	int size = splittedUserInputs.size();
+
+	//check vector boundary
+	if(index >= size) {
+		return false;
+	}
+
+	bool valid = false;
+	   
+	for(int i = 0; i < 3; i++) {
+		if(splittedUserInputs[index] == secondKeyword[i]) {
+			return true;
+		} else if(checkNumberOfRepeats(index)) {
+			return true;
+		}
+	}
+	return valid;
+}
+
+bool Parser::checkNumberOfRepeats(int index) {
+	int size1 = splittedUserInputs.size();
+
+	//check vector boundary
+	if(index >= size1) {
+		return false;
+	}
+
+	int size = splittedUserInputs[index].size();
+	
+	for (int j = 0; j < size; j++) {
+		if(!isdigit(splittedUserInputs[index][j]))
+			return false;
+	}
+	return true;
+}
+
+bool Parser::checkThirdWord(int index) {
+	string thirdKeyword[3] = {"day", "month" , "year"};
+	int size = splittedUserInputs.size();
+
+	//check vector boundary
+	if(index >= size) {
+		return false;
+	}
+
+	for(int i = 0; i < 3; i++) {
+		if(splittedUserInputs[index] == thirdKeyword[i]) {
+			return true;
+		} 
+	}
+	return false;
+}
 //This sorts out the correct information for add function
 //Pre: Takes in the content of userinputs less the command
 //Post: Returns false if userinput is invalid
@@ -268,7 +385,7 @@ bool Parser::processAddContent(vector<string> inputs) {
 	if(checkTimedTask()){
 		cout << "timetask" << endl;
 		for(int i = 0; i < fromPosition-1; i++){
-		_taskContent += inputs[i] + " ";
+			_taskContent += inputs[i] + " ";
 		}
 		parsedInputs.push_back(_taskContent);
 
@@ -288,6 +405,10 @@ bool Parser::processAddContent(vector<string> inputs) {
 		parsedInputs.push_back(_endDate);
 		parsedInputs.push_back(_endTime);
 
+		if(checkRecurring()){
+			checkRecurringLimit();
+		}
+
 	} else if (checkDeadlineTask()) {
 		cout << "deadlinetask" << endl;
 		for(int i = 0; i < byPosition-1; i++){
@@ -305,6 +426,10 @@ bool Parser::processAddContent(vector<string> inputs) {
 
 		parsedInputs.push_back(_endDate);
 		parsedInputs.push_back(_endTime);
+
+		if(checkRecurring()){
+			checkRecurringLimit();
+		}
 
 	} else if(checkFloating()) {
 		cout << "floatingtask" << endl;

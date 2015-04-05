@@ -27,6 +27,7 @@ private:
 	static const string CHOICE_VIEW;
 	static const string CHOICE_SORT;
 	static const string CHOICE_STORE;
+	static const string CHOICE_UNDO;
 	static const string CHOICE_ERROR;
 	static const string CHOICE_EXIT;
 
@@ -47,7 +48,7 @@ private:
 	string _endTime;
 		
 	enum CommandType{
-		ADD, DEL, EDIT, CLEAR, SEARCH, VIEW, MARK, SORT, INVALID, STORE, EXIT, 
+		ADD, DEL, EDIT, CLEAR, SEARCH, VIEW, MARK, SORT, INVALID, STORE, UNDO, EXIT
 	};
 	CommandType userCommand();
 
@@ -64,11 +65,19 @@ private:
 	bool checkTimedTask();
 	bool checkDeadlineTask();
 	bool checkFloating();
+	bool checkRecurring();
+	bool checkRecurringLimit();
 
 	//Functions to check for validity
 	bool compareDates(string date, string date2);
 	bool isPossibleTime(string time);
 	bool isTimeFormat(string time);
+
+	//Functions for Recurring Feature
+	bool checkSecondWord(int);
+	bool checkNumberOfRepeats(int);
+	bool checkThirdWord(int);
+
 
 	bool isDateValid(string date);
 	bool timecheck(string input);

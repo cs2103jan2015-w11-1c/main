@@ -1,9 +1,6 @@
-#include "RecurringTask.h"
+#include "RTask.h"
 
 RTask::RTask(){
-	_status = notdone;
-	_label = "misc";
-	_priority = low;
 }
 
 RTask::~RTask(){
@@ -11,109 +8,93 @@ RTask::~RTask(){
 
 void RTask::setAbstrInfo(vector <string> parsedInfo) {
 	//initialise abstract task attributes
-	setTaskName(parsedInfo[1]);
-	setInterval(1);	//parsedInfo[6]
-	setLastDate("2015/12/12");	//parsedInfo[8]
-	setPeriod("day");	//parsedInfo[7]
-}
-
-string RTask::getStartDate() {
-	return _startDate;
-}
-
-string RTask::getStartTime() {
-	return _startTime;
-}
-
-string RTask::getEndDate() {
-	return _endDate;
-}
-
-string RTask::getEndTime() {
-	return _endTime;
-}
-
-Status RTask::getStatus() {
-	return _status;
-}
-
-Priority RTask::getPriority() {
-	return _priority;
-}
-
-string RTask::getLabel() {
-	return _label;
-}
-
-void RTask::setStartDate(string date) {
-	_startDate = date;
-}
-
-void RTask::setStartTime(string time) {
-	_startTime = time;
-}
-
-void RTask::setEndDate(string date) {
-	_endDate = date;
-}
-
-void RTask::setEndTime(string time) {
-	_endTime = time;
-}
-
-void RTask::setStatus(Status state) {
-	_status = state;
-}
-
-void RTask::setPriority(Priority priority) {
-	_priority = priority;
-}
-
-void RTask::setLabel(string label) {
-	_label = label;
-}
-
-RTask RTask::getNextOccurrence() {
-	return *(_nextOccurrence);
-}
-
-void RTask::setNextOccurrence(vector <string> parsedInfo) {
-	if (_endDate != getLastDate())  {
-		//create new occurrence 
-		//
-
-		RTask *nextR;
-		nextR = new RTask;
-		(*nextR).setAbstrInfo(parsedInfo);	//the same info as current occurrence
-
-		if (getPeriod() == hour) {
-			int taskDuration = stoi(_endTime) - stoi(_startTime);
-			int endtime = stoi(_endTime);
-			int starttime = stoi(_startTime);
-			endtime += (taskDuration + getIntervalBtwPeriod());
-			(*nextR).setEndTime(to_string(endtime));
-			starttime += (taskDuration + getIntervalBtwPeriod());
-			(*nextR).setStartTime(to_string(starttime));
-			(*nextR).setStartDate(_startDate);
-			(*nextR).setEndDate(_endDate);
-		}
-		else if (getPeriod() == day) {	//task duration must be in same month
-			int i = _endDate.find_last_of("/");
-			int enddate = stoi(_endDate.substr(i + 1));
-			i = _startDate.find_last_of("/");
-			int startdate = stoi(_startDate.substr(i + 1));
-			int taskDuration = enddate - startdate;
-
-			enddate += (taskDuration + getIntervalBtwPeriod());
-			(*nextR).setEndDate(to_string(enddate));
-			startdate += (taskDuration + getIntervalBtwPeriod());
-			(*nextR).setStartDate(to_string(startdate));
-			(*nextR).setStartTime(_startTime);
-			(*nextR).setEndTime(_endTime);
-		}
-		_nextOccurrence = nextR;	//save in private
-
-		delete nextR;
+	_abstract.setTaskName(parsedInfo[1]);
+	if (parsedInfo[4] == "every"){	//deadline recurring task
+		_abstract.setEndTime(parsedInfo[3]);
 	}
-	
+	else if (parsedInfo[6] == "every") {	
+		_abstract.setEndTime(parsedInfo[5]);
+		_abstract.setStartTime(parsedInfo[3]);
+	}
+}
+
+void RTask::setNoOfOccurrences(int noOfOccurrences) {
+	_noOfOccurrences = noOfOccurrences;
+}
+
+void RTask::setPeriod(Period period) {
+	_period = period;
+}
+
+void RTask::setInterval(int interval) {
+	_intervalBtwPeriod = interval;
+}
+
+void RTask::setFirstOccur(vector<string> parsedInfo){
+	_occur.setTaskName(_abstract.getTaskName());
+	if (parsedInfo.size() == 7) {	//deadline recurring task
+		_occur.setEndTime(_abstract.getStartTime());
+		_occur.setEndDate(parsedInfo[3]);
+	} else if (parsedInfo.size() == 9) {
+		_occur.setStartTime(_abstract.getStartTime());
+		_occur.setEndTime(_abstract.getEndTime());
+		_occur.setStartDate(parsedInfo[3]);
+		_occur.setEndDate(parsedInfo[5]);
+	}
+}
+
+void RTask::stringToIntDate(string date, int *day, int *month, int *yr) {
+	int pos = date.find_first_of("/");
+	int pos2 = date.find_last_of("/");
+	*day = stoi(date.substr(pos2 + 1));
+	*month = stoi(date.substr(pos + 1, pos2 - pos));	//eg 2 or 10
+	*yr = stoi(date.substr(0, 4));	//eg 2014
+
+}
+
+void RTask::generateOccurs() {
+
+	_listOfOccurrences.push_back(_occur);
+	int count = 1;
+	int currEndDay, currEndMonth, currEndYr;
+	int currStartDay, currStartMonth, currStartYr;
+
+	stringToIntDate(_occur.getEndDate(), &currEndDay, &currEndMonth, &currEndYr);
+	stringToIntDate(_occur.getStartDate(), &currStartDay, &currStartMonth, &currStartYr);
+
+	Task next = _occur;
+
+	while (count < _noOfOccurrences) {
+		if (_period == day) {	//for deadline task
+
+			currEndDay = currEndDay + _intervalBtwPeriod;
+			string newEndDate = to_string(currEndYr) + "/"
+				+ to_string(currEndMonth) + "/" + to_string(currEndDay);
+			next.setEndDate(newEndDate);
+
+
+			_listOfOccurrences.push_back(next);
+		}
+		else if (_period == month) {
+			currEndMonth = currEndMonth + _intervalBtwPeriod;
+			string newEndDate = to_string(currEndYr) + "/"
+				+ to_string(currEndMonth) + "/" + to_string(currEndDay);
+			next.setEndDate(newEndDate);
+
+			next.setEndDate(newEndDate);
+
+			_listOfOccurrences.push_back(next);
+		}
+		else if (_period == year) {
+			currEndYr = currEndYr + _intervalBtwPeriod;
+			string newEndDate = to_string(currEndYr) + "/"
+				+ to_string(currEndMonth) + "/" + to_string(currEndDay);
+			next.setEndDate(newEndDate);
+
+			next.setEndDate(newEndDate);
+
+			_listOfOccurrences.push_back(next);
+		}
+		count++;
+	}
 }

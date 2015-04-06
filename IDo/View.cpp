@@ -21,7 +21,9 @@ void View::printHeader() {
 		<< center("Label", 7) << " "
 		<< center("Task", 15) << endl;
 
+	SetColor(3);
 	cout << string(80, '-') << endl;
+	SetColor(7);
 }
 
 string View::center(string heading, const int w) {
@@ -161,20 +163,52 @@ void View::viewSelected2(vector<Task> list, int taskNumber) {
 
 // Default view after every command
 void View::viewDefault(vector<Task> &list) {
+	
 	string todayDate = date.getTodayDate();
-	cout << "[" << todayDate << "]" << " Timed-Task" << endl << endl;
+	SetColor(15);
+	cout << "[" << todayDate << "]" << endl;
+	SetColor(13);
+	cout << "** Today's Timed-Tasks **" << endl << endl;
+	SetColor(7);
 
 	printTimedTaskHeader();
 
 	int size = list.size();
 
-	for (int i = 0; i < size; i++) {
-		if (list[i].getStartDate() == todayDate) {
-			cout << setw(3) << i + 1 << ".";
+	for(int i = 0; i < size; i++) {
+		if(list[i].getStartDate() == todayDate) {
+			cout << setw(3) << i+1 << ".";
 			displayWithoutDates(list[i]);
+			cout << endl << endl;
 		}
 	}
 
+	SetColor(13);
+	cout << "** Upcoming Deadline Tasks **" << endl << endl; 
+	SetColor(7);
+
+	printDeadlineTaskHeader();
+
+	for (int i = 0; i < size; i++) {
+		if((list[i].getStartDate().empty()) && !list[i].getEndDate().empty()) {
+			cout << setw(3) << i+1 << ".   ";
+			displayWithoutDates2(list[i]);
+	    	cout << endl << endl;
+	}	
+
+}	SetColor(13);
+	cout << "** Floating Tasks **" << endl << endl;
+	SetColor(7);
+
+	printTimedTaskHeader();
+	for (int i = 0; i< size; i++) {
+		if((list[i].getStartDate().empty()) && list[i].getEndDate().empty()) {
+			cout << setw(3) << i+1 << ".              ";
+			displayWithoutDates(list[i]);
+	    	cout << endl << endl;
+	}	
+
+	}
 }
 
 void View::printTimedTaskHeader() {
@@ -185,9 +219,23 @@ void View::printTimedTaskHeader() {
 		<< "Label" << setw(6) << " "
 		<< "Task" << endl;
 
+	SetColor(3);
 	cout << string(80, '-') << endl;
+	SetColor(7);
 }
 
+void View::printDeadlineTaskHeader() {
+	cout << " " 
+		 << setw(3) << "No." << setw(7) << " "
+		 << "Due Date" << setw(8) << " "
+	     << "Status"<< setw(5) << " "
+		 << "Label" << setw(6) << " "
+		 << "Task" << endl;
+
+	SetColor(3);
+	cout << string(80, '-') << endl;
+	SetColor(7);
+}
 
 
 // Print out one event without dates 
@@ -241,6 +289,50 @@ void View::displayWithoutDates(Task task) {
 		SetColor(7); // default white
 	}
 	else {
+		SetColor(7); // default white
+		cout << task.getTaskName() << endl;
+	}
+}
+
+// Print out event with deadline
+void View::displayWithoutDates2(Task task) {
+
+	cout << " ";
+	if(task.getStartTime().empty() && !task.getEndTime().empty()){
+		cout << task.getEndDate() << " " << task.getEndTime();
+	} 
+
+	if (task.getStatus() == notdone) {
+		cout << setw(12) << "[NOT DONE]" << setw(3) << " ";
+	} else {
+		cout << setw(8) << "[DONE]" << setw(7) << " ";
+	}
+
+	if (task.getLabel() == misc) {
+		cout << "[MISC]" << setw(5) << " ";
+	} else if (task.getLabel() == studies) {
+		cout << "[STUDIES]" << setw(2) << " ";
+	} else if (task.getLabel() == cca) {
+		cout << "[CCA]" << setw(6) << " ";
+	} else if (task.getLabel() == friends) {
+		cout << "[FRIENDS]" << setw(2) << " ";
+	} else {
+		cout << "[FAMILY]" << setw(3) << " ";
+	}
+
+	if (task.getPriority() == high) {
+		SetColor(12); // red
+		cout << task.getTaskName() << endl;
+		SetColor(7); // default white
+	} else if (task.getPriority() == medium) {
+		SetColor(14); // bright yellow
+		cout << task.getTaskName() << endl;
+		SetColor(7); // default white
+	} else if (task.getPriority() == low) {
+		SetColor(10); // bright green
+		cout << task.getTaskName() << endl;
+		SetColor(7); // default white
+	} else {
 		SetColor(7); // default white
 		cout << task.getTaskName() << endl;
 	}

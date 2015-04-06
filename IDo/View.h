@@ -21,9 +21,11 @@ private:
 	void printMessage(string);
 	void printHeader();
 	void printTimedTaskHeader();
+	void printDeadlineTaskHeader();
 	string center(string heading, const int w);
 	void display(Task task);
 	void displayWithoutDates(Task task);
+	void displayWithoutDates2(Task task);
 	void SetColor(int value);
 
 public:

@@ -14,6 +14,7 @@ class Mark {
 private:
 	int _indexToMark;
 	string _contentToMark;
+	
 	void markStatus (Task &taskToMark);
 	void markPriority (Task &taskToMark);
 	void markLabel (Task &taskToMark);

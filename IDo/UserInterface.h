@@ -19,7 +19,11 @@ using namespace std;
 class UserInterface {
 private:
 	string _userInput;
-	Logic logic;
+	Logic _logic;
+
+	void SetColor1(int value);
+	void readFile();
+	string receiveInput();
 
 public:
 	UserInterface();
@@ -29,12 +33,9 @@ public:
 	void qotd();
 	void displayDivider();
 	string welcomeMessage();
-	void readFile();
-	void process();
-	string receiveInput();
-	string getUserInputs();
-	void SetColor1(int value);
 	void instructMessage();
+	void process();
+	string getUserInputs();
 };
 
 #endif

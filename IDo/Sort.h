@@ -14,7 +14,7 @@ class Sort {
 private:
 	Task _task;
 	string _sortChoice;
-	vector<Task> sortList;
+	vector<Task> _sortList;
 
 	enum SortChoice{
 		FROM, TO, BY, DEADLINE, DONE, NOTDONE, PRIORITY, TASKNAME, INVALID

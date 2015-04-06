@@ -11,17 +11,15 @@ using namespace std;
 
 class Edit {
 private:
-	vector<Task> taskList;
-	vector<string> parsedInformation;
-	int editNumber;
-	string editType;
-	string editContent;
-	int numberOfTasks;
-	int parsedInfoSize;
+	vector<Task> _taskList;
+	vector<string> _parsedInformation;
+	int _editNumber;
+	string _editType;
+	string _editContent;
+	int _numberOfTasks;
+	int _parsedInfoSize;
 
 public:
-	Task _task;
-	Task getTask();
 	bool execute(vector<string> parsedInformation, vector<Task> taskList);
 	bool checkAndProcess();
 	vector<Task> getNewList();

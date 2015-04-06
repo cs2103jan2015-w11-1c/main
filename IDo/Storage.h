@@ -13,14 +13,15 @@ class Task;
 
 class Storage {
 private:
-	string storageFileName;
+	string _storageFileName;
+	static const string BACKUP;
 
 public:
 	Storage();
 	string getStorageFileName ();
 	void editStorageFileName (string name);
-	void updateFile (vector <Task> &temp);
-	void readFile (vector <Task> &temp);
+	void updateFile (vector <Task> &temp, bool isUndoTrue);
+	void readFile (vector <Task> &temp, bool isUndoTrue);
 };
 
 #endif

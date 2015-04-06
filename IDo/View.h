@@ -17,7 +17,8 @@ using namespace std;
 class View {
 private:
 	Task _task;
-	Dates date;
+	Dates _date;
+
 	void printMessage(string);
 	void printHeader();
 	void printTimedTaskHeader();

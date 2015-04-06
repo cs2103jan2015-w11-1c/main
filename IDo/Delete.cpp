@@ -18,10 +18,10 @@ void Delete::getTaskIndexToBeDeleted(vector<string> parsedInformation){
 
 void Delete::findAndDeleteTask(vector<Task> taskList){
 	
-	newList = taskList;
-	newList.erase(newList.begin() + _taskIndex - 1);
+	_newList = taskList;
+	_newList.erase(_newList.begin() + _taskIndex - 1);
 }
 
 vector<Task> Delete::getNewList(){
-	return newList;
+	return _newList;
 }

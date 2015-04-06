@@ -20,7 +20,6 @@ private:
 
 	vector <Task> _listOfOccurrences;
 
-
 public:
 	RTask();
 	~RTask();
@@ -30,8 +29,8 @@ public:
 	void setTotPeriod(Period);
 	void setInterval(int);
 	void setFirstOccur(vector <string>);
-	void generateOccurs();
 	void stringToIntDate(string, int *day, int *month, int *yr);
+	void generateOccurs();
 };
 
 #endif

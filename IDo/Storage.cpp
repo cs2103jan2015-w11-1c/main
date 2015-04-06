@@ -1,29 +1,37 @@
 #include "Storage.h"
 #include <assert.h>
 
+const string Storage::BACKUP = "backup.txt";
+
 Storage::Storage () {
 	ifstream readFile ("filename.txt");
 	string directory;
 	getline (readFile,directory);
-	storageFileName=directory;
+	_storageFileName=directory;
 }
 
 string Storage::getStorageFileName () {
-	return storageFileName;
+	return _storageFileName;
 }
 
 void Storage::editStorageFileName (string name) {
-	storageFileName=name;
+	_storageFileName=name;
 	ofstream writeFile ("filename.txt");
-	writeFile << storageFileName << endl;
+	writeFile << _storageFileName << endl;
 	writeFile.close();
 }
 
-void Storage::updateFile (vector <Task> &temp) {
-	ofstream writeFile (storageFileName);
+void Storage::updateFile (vector <Task> &temp, bool isUndoTrue) {
+	string fileName;
+	if (!isUndoTrue) {
+		fileName = _storageFileName;
+	} else {
+		fileName = BACKUP;
+	}
+	ofstream writeFile (fileName);
 	Status status;
 	Priority priority;
-	string label;
+//	Label label;
 	int _size = temp.size();
 	for (int i = 0 ; i < _size ; i++) {
 		writeFile << temp[i].getTaskName() << endl;
@@ -65,18 +73,38 @@ void Storage::updateFile (vector <Task> &temp) {
 			writeFile << "none" << endl;
 			break;
 		}
-
+/*
 		label = temp[i].getLabel();
-		writeFile << label << endl;
+		switch (label) {
+		case studies:
+			writeFile << "studies" << endl;
+			break;
 
+		case cca:
+			writeFile << "cca" << endl;
+			break;
+
+		case friends:
+			writeFile << "friends" << endl;
+			break;
+
+		case family:
+			writeFile << "family" << endl;
+			break;
+
+		case misc:
+			writeFile << "misc" << endl;
+			break;
+		}
+*/
 		writeFile << "__________" << endl;
 	}
 	writeFile << "_____" << endl;
 	writeFile.close();
 }
 
-void Storage::readFile (vector <Task> &temp) {
-	ifstream readFile (storageFileName);
+void Storage::readFile (vector <Task> &temp, bool isUndoTrue) {
+	string fileName;
 	string line;
 	string taskName;
 	string startDate;
@@ -87,6 +115,15 @@ void Storage::readFile (vector <Task> &temp) {
 	string priority;
 	string label;
 	vector <string> tempTask;
+
+	if (!isUndoTrue) {
+		fileName = _storageFileName;
+	} else {
+		fileName = BACKUP;
+	}
+	ifstream readFile (fileName);
+	
+	
 
 	getline(readFile,line);
 	if (!line.empty()) {
@@ -143,23 +180,23 @@ void Storage::readFile (vector <Task> &temp) {
 				task.setPriority(medium);
 			}
 			
-			task.setLabel(label);
-			//if (label == "studies") {
-			//	task.setLabel(studies);
+/*	
+			if (label == "studies") {
+				task.setLabel(studies);
 	
-			//} else if (label == "cca") {
-			//	task.setLabel(cca);
+			} else if (label == "cca") {
+				task.setLabel(cca);
 	
-			//} else if (label == "friends") {
-			//	task.setLabel(friends);
+			} else if (label == "friends") {
+				task.setLabel(friends);
 	
-			//} else if (label == "family") {
-			//	task.setLabel(family);
+			} else if (label == "family") {
+				task.setLabel(family);
 	
-			//}  else {
-			//	task.setLabel(misc);
-			//}
-	
+			}  else {
+				task.setLabel(misc);
+			}
+*/	
 			temp.push_back(task);
 			tempTask.clear();
 			getline(readFile,line);

@@ -24,13 +24,16 @@ using namespace std;
 
 class Logic {
 private:
-	Storage storage;
+	Storage _storage;
 
-	string commandChoice;
-	vector<string> parsedInformation;
-	string userInput;
+	string _commandChoice;
+	vector<string> _parsedInformation;
+	string _userInput;
 	vector<Task> _listOfTasks;
-	void updateStorage ();
+	
+	void updateStorage();
+	void undo();
+	void backup();
 	void getParsedInformation(string);
 	void printMessage(string message);
 	void addTask();

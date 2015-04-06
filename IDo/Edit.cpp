@@ -2,16 +2,16 @@
 
 bool Edit::execute(vector<string> parsedInfo, vector<Task> taskListFromLogic){
 
-	parsedInformation = parsedInfo;
-	taskList = taskListFromLogic;
+	_parsedInformation = parsedInfo;
+	_taskList = taskListFromLogic;
 
-	parsedInfoSize = parsedInformation.size();
-	numberOfTasks = taskList.size();
+	_parsedInfoSize = _parsedInformation.size();
+	_numberOfTasks = _taskList.size();
 
-	if(parsedInfoSize == 4){
-		editNumber = atoi(parsedInformation[1].c_str());
-		editType = parsedInformation[2];
-		editContent = parsedInformation[3];
+	if(_parsedInfoSize == 4){
+		_editNumber = atoi(_parsedInformation[1].c_str());
+		_editType = _parsedInformation[2];
+		_editContent = _parsedInformation[3];
 		if(checkAndProcess()){
 			cout<< endl << "Edited Successfully"<<endl;
 		} else {
@@ -28,23 +28,23 @@ bool Edit::execute(vector<string> parsedInfo, vector<Task> taskListFromLogic){
 bool Edit::checkAndProcess(){
 	
 	//check if task number is available
-	if(editNumber > numberOfTasks){
+	if(_editNumber > _numberOfTasks){
 		return false;
 	}
 
 	//edit task type
-	if(editType == "taskname"){
-		taskList[editNumber-1].setTaskName(editContent);
-	} else if(editType == "startdate"){
-		taskList[editNumber-1].setStartDate(editContent);
-	} else if(editType == "starttime"){
-		taskList[editNumber-1].setStartTime(editContent);
-	} else if(editType == "enddate"){
-		taskList[editNumber-1].setEndDate(editContent);
-	} else if(editType == "endtime"){
-		taskList[editNumber-1].setEndTime(editContent);
-	} else if(editType == "deadline"){
-		taskList[editNumber-1].setDeadline(editContent);
+	if(_editType == "taskname"){
+		_taskList[_editNumber-1].setTaskName(_editContent);
+	} else if(_editType == "startdate"){
+		_taskList[_editNumber-1].setStartDate(_editContent);
+	} else if(_editType == "starttime"){
+		_taskList[_editNumber-1].setStartTime(_editContent);
+	} else if(_editType == "enddate"){
+		_taskList[_editNumber-1].setEndDate(_editContent);
+	} else if(_editType == "endtime"){
+		_taskList[_editNumber-1].setEndTime(_editContent);
+	} else if(_editType == "deadline"){
+		_taskList[_editNumber-1].setDeadline(_editContent);
 	} else {
 		return false;
 	}
@@ -53,5 +53,5 @@ bool Edit::checkAndProcess(){
 }
 
 vector<Task> Edit::getNewList(){
-	return taskList;
+	return _taskList;
 }

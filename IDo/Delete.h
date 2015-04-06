@@ -12,7 +12,7 @@ using namespace std;
 class Delete{
 private:
 	int _taskIndex;
-	vector<Task> newList;
+	vector<Task> _newList;
 
 public:
 	bool execute(vector<string> parsedInformation, vector<Task> taskList);

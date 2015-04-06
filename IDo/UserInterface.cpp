@@ -13,6 +13,19 @@ void UserInterface::SetColor1(int value){
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),  value);
 }
 
+void UserInterface::readFile() {
+	_logic.readFromFile();
+}
+
+// Take in user inputs
+string UserInterface::receiveInput() {
+	string fromUser;
+
+	getline(cin, fromUser);
+	_userInput = fromUser;
+	return _userInput;
+}
+
 // displays today's date at the launch of the program
 void UserInterface::displayDate() {
     char date[9];
@@ -24,29 +37,6 @@ void UserInterface::displayDate() {
 	cout << " -------------------------" << endl;
 }
 
-// displays commands available at launch of program
-void UserInterface::instructMessage() {
-	cout << "Here are some commands: " << endl; 
-
-	SetColor1(2);
-	cout << setw(15) << "add";
-	SetColor1(2);
-	cout << setw(15) << "edit";
-	SetColor1(2);
-	cout << setw(15) << "delete";
-	SetColor1(2);
-	cout << setw(15) << "clear" << endl;
-	SetColor1(5);
-	cout << setw(22) << "search";
-	SetColor1(5);
-	cout << setw(15) << "mark";
-	SetColor1(5);
-	cout << setw(15) << "view" << endl << endl;
-
-	SetColor1(7);
-	cout << "Data will be stored by default in output.txt in the same" << endl 
-		 << "folder as the program." << endl << endl << "Let's get started!" << endl;
-}
 // displays quote of the day at the launch of the program
 void UserInterface::qotd() {
     int lineCount = 0;
@@ -88,8 +78,28 @@ string UserInterface::welcomeMessage() {
 	return welcome;
 }
 
-void UserInterface::readFile() {
-	logic.readFromFile();
+// displays commands available at launch of program
+void UserInterface::instructMessage() {
+	cout << "Here are some commands: " << endl; 
+
+	SetColor1(2);
+	cout << setw(15) << "add";
+	SetColor1(2);
+	cout << setw(15) << "edit";
+	SetColor1(2);
+	cout << setw(15) << "delete";
+	SetColor1(2);
+	cout << setw(15) << "clear" << endl;
+	SetColor1(5);
+	cout << setw(22) << "search";
+	SetColor1(5);
+	cout << setw(15) << "mark";
+	SetColor1(5);
+	cout << setw(15) << "view" << endl << endl;
+
+	SetColor1(7);
+	cout << "Data will be stored by default in output.txt in the same" << endl 
+		 << "folder as the program." << endl << endl << "Let's get started!" << endl;
 }
 
 void UserInterface::process() {
@@ -97,17 +107,8 @@ void UserInterface::process() {
 
 	readFile();
 	while(carryOn){
-		carryOn = logic.process(receiveInput());
+		carryOn = _logic.process(receiveInput());
 	}
-}
-
-// Take in user inputs
-string UserInterface::receiveInput() {
-	string fromUser;
-
-	getline(cin, fromUser);
-	_userInput = fromUser;
-	return _userInput;
 }
 
 // Getter for UserInputs

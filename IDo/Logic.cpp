@@ -10,14 +10,23 @@ const string TASK_NOT_FOUND = "[Task Not Found]";
 const string ERROR_WRONG_INPUT = "Error: Wrong Input!";
 
 void Logic::updateStorage() {
-	storage.updateFile(_listOfTasks);
+	_storage.updateFile(_listOfTasks,0);
+}
+
+void Logic::undo() {
+	_listOfTasks.clear();
+	_storage.readFile(_listOfTasks,1);
+}
+
+void Logic::backup() {
+	_storage.updateFile(_listOfTasks,1);
 }
 
 void Logic::getParsedInformation(string line) {
 	Parser parser;
-	userInput = line;
+	_userInput = line;
 	//pass to parser and process
-	parsedInformation = parser.completeParsing(userInput);
+	_parsedInformation = parser.completeParsing(_userInput);
 }
 
 void Logic::printMessage(string message) {
@@ -27,7 +36,8 @@ void Logic::printMessage(string message) {
 void Logic::addTask() {
 	Add add;
 	View view;
-	if (add.execute(parsedInformation)) {
+	backup();
+	if (add.execute(_parsedInformation)) {
 		_listOfTasks.push_back(add.getTask());
 		system("CLS");
 		view.viewDefault(_listOfTasks);
@@ -41,7 +51,8 @@ void Logic::addTask() {
 
 void Logic::deleteTask() {
 	Delete remove;
-	if (remove.execute(parsedInformation, getListofTasks())) {
+	backup();
+	if (remove.execute(_parsedInformation, _listOfTasks)) {
 		_listOfTasks = remove.getNewList();
 		printMessage(SUCCESSFULLY_DELETED);
 		updateStorage();
@@ -54,11 +65,12 @@ void Logic::deleteTask() {
 void Logic::editTask() {
 	Edit edit;
 	View view;
+	backup();
 
 	int editedTaskNumber;
-	if (edit.execute(parsedInformation, getListofTasks())) {
+	if (edit.execute(_parsedInformation, _listOfTasks)) {
 		setListOfTasks(edit.getNewList());
-		editedTaskNumber = atoi(parsedInformation[1].c_str());
+		editedTaskNumber = atoi(_parsedInformation[1].c_str());
 		system("CLS");
 		view.viewDefault(_listOfTasks);
 		view.viewSelected2(_listOfTasks, editedTaskNumber);
@@ -71,8 +83,10 @@ void Logic::editTask() {
 
 void Logic::markTask() {
 	Mark mark;
-	if (mark.isValidInput(parsedInformation, _listOfTasks.size())) {
-		mark.execute(parsedInformation, _listOfTasks);
+	backup();
+
+	if (mark.isValidInput(_parsedInformation, _listOfTasks.size())) {
+		mark.execute(_parsedInformation, _listOfTasks);
 		printMessage(SUCCESSFULLY_MARKED);
 		updateStorage();
 	}
@@ -100,24 +114,26 @@ void Logic::viewCommands() {
 void Logic::viewDecider() {
 	View view;
 	system("CLS");
-	if (parsedInformation[1] == "all") {
+	if (_parsedInformation[1] == "all") {
 		view.viewAll(_listOfTasks);
-	} else if (parsedInformation[1] == "done") {
+	} else if (_parsedInformation[1] == "done") {
 		view.viewDoneTasks(_listOfTasks);
-	} else if (parsedInformation[1] == "notdone") {
+	} else if (_parsedInformation[1] == "notdone") {
 		view.viewNotDoneTasks(_listOfTasks);
-	} else if (parsedInformation[1] == "commands") {
+	} else if (_parsedInformation[1] == "commands") {
 		viewCommands();
 	}
 }
 
 void Logic::storeChange() {
-	storage.editStorageFileName(parsedInformation[1]);
+	_storage.editStorageFileName(_parsedInformation[1]);
 }
 
 void Logic::sortTask() {
 	Sort sort;
-	if (sort.execute(parsedInformation, _listOfTasks)) {
+	backup();
+
+	if (sort.execute(_parsedInformation, _listOfTasks)) {
 		_listOfTasks = sort.getSortedList();
 		cout << endl << "Sort Successfully" << endl;
 	}
@@ -126,54 +142,10 @@ void Logic::sortTask() {
 	}
 }
 
-void Logic::readFromFile() {
-	storage.readFile(_listOfTasks);
-}
-
-// Processes the command and inputs passed from UI
-bool Logic::process(string line) {
-
-	getParsedInformation(line);
-	commandChoice = parsedInformation[0];
-
-	if (commandChoice == "add") {
-		addTask();
-	} else if (commandChoice == "delete") {
-		deleteTask();
-	} else if (commandChoice == "edit") {
-		editTask();
-	} else if (commandChoice == "clear") {
-		_listOfTasks.clear();
-		printMessage(SUCCESSFULLY_CLEARED);
-		updateStorage();
-	} else if (commandChoice == "mark") {
-		markTask();
-	} else if (commandChoice == "view") {
-		viewDecider();
-	} else if (commandChoice == "store") {
-		storeChange();
-		updateStorage();
-	} else if (commandChoice == "sort") {
-		sortTask();
-		updateStorage();
-	} else if (commandChoice == "search") {
-		searchWord();
-	} else if (commandChoice == "exit") {
-		updateStorage();
-		return false;
-	} else if (commandChoice == "invalid") {
-		cout << ERROR_WRONG_INPUT << endl;
-	} else {
-		cout << ERROR_WRONG_INPUT << endl;
-	}
-
-	return true;
-}
-
 void Logic::searchWord() {
 	Search search;
 
-	search.setSearchWord(parsedInformation[1]);
+	search.setSearchWord(_parsedInformation[1]);
 	search.execute(_listOfTasks);
 
 	if (search.getNoOfFoundTasks() != 0) {
@@ -188,6 +160,52 @@ void Logic::searchWord() {
 	} else {
 		printMessage(TASK_NOT_FOUND);
 	}
+}
+
+void Logic::readFromFile() {
+	_storage.readFile(_listOfTasks,0);
+}
+
+// Processes the command and inputs passed from UI
+bool Logic::process(string line) {
+
+	getParsedInformation(line);
+	_commandChoice = _parsedInformation[0];
+
+	if (_commandChoice == "undo") {
+		undo();
+	} else if (_commandChoice == "add") {
+		addTask();
+	} else if (_commandChoice == "delete") {
+		deleteTask();
+	} else if (_commandChoice == "edit") {
+		editTask();
+	} else if (_commandChoice == "clear") {
+		_listOfTasks.clear();
+		printMessage(SUCCESSFULLY_CLEARED);
+		updateStorage();
+	} else if (_commandChoice == "mark") {
+		markTask();
+	} else if (_commandChoice == "view") {
+		viewDecider();
+	} else if (_commandChoice == "store") {
+		storeChange();
+		updateStorage();
+	} else if (_commandChoice == "sort") {
+		sortTask();
+		updateStorage();
+	} else if (_commandChoice == "search") {
+		searchWord();
+	} else if (_commandChoice == "exit") {
+		updateStorage();
+		return false;
+	} else if (_commandChoice == "invalid") {
+		cout << ERROR_WRONG_INPUT << endl;
+	} else {
+		cout << ERROR_WRONG_INPUT << endl;
+	}
+
+	return true;
 }
 
 vector<Task> Logic::getListofTasks(){

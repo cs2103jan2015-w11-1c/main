@@ -60,7 +60,7 @@ void View::display(Task task) {
 	else {
 		cout << setw(8) << "[DONE]" << setw(7) << " ";
 	}
-
+/*
 	if (task.getLabel() == misc) {
 		cout << "[MISC]" << setw(6) << " ";
 	}
@@ -76,7 +76,7 @@ void View::display(Task task) {
 	else {
 		cout << "[FAMILY]" << setw(4) << " ";
 	}
-
+*/
 	if (task.getPriority() == high) {
 		SetColor(12); // red
 		cout << task.getTaskName() << endl;
@@ -208,7 +208,7 @@ void View::displayWithoutDates(Task task) {
 	else {
 		cout << setw(8) << "[DONE]" << setw(7) << " ";
 	}
-
+/*
 	if (task.getLabel() == misc) {
 		cout << "[MISC]" << setw(5) << " ";
 	}
@@ -224,7 +224,7 @@ void View::displayWithoutDates(Task task) {
 	else {
 		cout << "[FAMILY]" << setw(3) << " ";
 	}
-
+*/
 	if (task.getPriority() == high) {
 		SetColor(12); // red
 		cout << task.getTaskName() << endl;

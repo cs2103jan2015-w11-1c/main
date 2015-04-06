@@ -10,7 +10,7 @@ bool Add::isRecurring(vector <string> parsedInfo) {
 bool Add::execute(vector<string> parsedInformation){
 	int size = parsedInformation.size();
 	
-	if (isRecurring) {	//recurring
+	if (isRecurring(parsedInformation)) {	//recurring
 		RTask rtask;
 		rtask.setAbstrInfo(parsedInformation);
 		if (size == 9) {

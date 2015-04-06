@@ -13,6 +13,7 @@ const string Parser::CHOICE_VIEW = "view";
 const string Parser::CHOICE_MARK = "mark";
 const string Parser::CHOICE_SORT = "sort";
 const string Parser::CHOICE_ERROR = "details not parsed";
+const string Parser::CHOICE_UNDO = "undo";
 const string Parser::CHOICE_STORE = "store";
 const string Parser::CHOICE_EXIT = "exit";
 const string Parser::MESSAGE_INVALID_TIME = "Invalid Time Input";

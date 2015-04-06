@@ -5,7 +5,6 @@
 #include <vector>
 #include <iostream>
 #include "Logic.h"
-#include "Task.h"
 #include "RTask.h"
 
 using namespace std;

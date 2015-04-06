@@ -315,11 +315,17 @@ bool Parser::checkRecurringLimit() {
 			}
 		}
 	}
+
+	if(valid == true) {
+		parsedInputs.push_back(duration);
+		parsedInputs.push_back(dayMthYear);
+	}
+
 	return valid;
 }
 
 bool Parser::checkSecondWord(int index) {
-	string secondKeyword[3] = {"day", "month" , "year"};
+	string secondKeyword[6] = {"day", "month" , "year", "days", "months", "years"};
 	int size = splittedUserInputs.size();
 
 	//check vector boundary
@@ -329,7 +335,7 @@ bool Parser::checkSecondWord(int index) {
 
 	bool valid = false;
 	   
-	for(int i = 0; i < 3; i++) {
+	for(int i = 0; i < 6; i++) {
 		if(splittedUserInputs[index] == secondKeyword[i]) {
 			return true;
 		} else if(checkNumberOfRepeats(index)) {
@@ -357,7 +363,7 @@ bool Parser::checkNumberOfRepeats(int index) {
 }
 
 bool Parser::checkThirdWord(int index) {
-	string thirdKeyword[3] = {"day", "month" , "year"};
+	string thirdKeyword[6] = {"day", "month" , "year", "days", "months", "years"};
 	int size = splittedUserInputs.size();
 
 	//check vector boundary
@@ -365,7 +371,7 @@ bool Parser::checkThirdWord(int index) {
 		return false;
 	}
 
-	for(int i = 0; i < 3; i++) {
+	for(int i = 0; i < 6; i++) {
 		if(splittedUserInputs[index] == thirdKeyword[i]) {
 			return true;
 		} 
@@ -439,6 +445,7 @@ bool Parser::processAddContent(vector<string> inputs) {
 		parsedInputs.push_back(_taskContent);
 
 	} else {
+		cout << "[Error] Invalid Input" << endl;
 		return false;
 	}
 	

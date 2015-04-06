@@ -1,6 +1,6 @@
 #include "Delete.h"
 
-bool Delete::execute(vector<string> parsedInformation, vector<AllTasks> taskList){
+bool Delete::execute(vector<string> parsedInformation, vector<Task> taskList){
 	int size = parsedInformation.size();
 
 	if(size == 2) {//delete TaskIndex
@@ -16,12 +16,12 @@ void Delete::getTaskIndexToBeDeleted(vector<string> parsedInformation){
 	_taskIndex = atoi(parsedInformation[1].c_str());
 }
 
-void Delete::findAndDeleteTask(vector<AllTasks> taskList){
+void Delete::findAndDeleteTask(vector<Task> taskList){
 	
 	newList = taskList;
 	newList.erase(newList.begin() + _taskIndex - 1);
 }
 
-vector<AllTasks> Delete::getNewList(){
+vector<Task> Delete::getNewList(){
 	return newList;
 }

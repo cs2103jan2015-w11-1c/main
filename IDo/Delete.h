@@ -12,13 +12,13 @@ using namespace std;
 class Delete{
 private:
 	int _taskIndex;
-	vector<AllTasks> newList;
+	vector<Task> newList;
 
 public:
-	bool execute(vector<string> parsedInformation, vector<AllTasks> taskList);
+	bool execute(vector<string> parsedInformation, vector<Task> taskList);
 	void getTaskIndexToBeDeleted(vector<string> parsedInformation);
-	void findAndDeleteTask(vector<AllTasks> listOfTasks);
-	vector<AllTasks> getNewList();
+	void findAndDeleteTask(vector<Task> listOfTasks);
+	vector<Task> getNewList();
 };
 
 #endif

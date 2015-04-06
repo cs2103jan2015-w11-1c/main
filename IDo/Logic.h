@@ -22,12 +22,6 @@
 
 using namespace std;
 
-union AllTasks {
-	int type;	//1 = rtask. 2 = nrtask
-	RTask rtask;
-	Task task;
-};
-
 class Logic {
 private:
 	Storage storage;
@@ -35,7 +29,7 @@ private:
 	string commandChoice;
 	vector<string> parsedInformation;
 	string userInput;
-	vector<AllTasks> _listOfTasks;
+	vector<Task> _listOfTasks;
 	void updateStorage ();
 	void getParsedInformation(string);
 	void printMessage(string message);
@@ -52,8 +46,8 @@ private:
 public:
 	void readFromFile();
 	bool process(string);
-	vector<AllTasks> getListofTasks();
-	vector<AllTasks> setListOfTasks(vector<AllTasks> newList);
+	vector<Task> getListofTasks();
+	vector<Task> setListOfTasks(vector<Task> newList);
 };
 
 #endif

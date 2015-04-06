@@ -25,36 +25,15 @@ void Logic::printMessage(string message) {
 }
 
 void Logic::addTask() {
-
-	AllTasks taskToAdd;
+	Add add;
 	View view;
-	//if (reccurring) //check with user input string
-	//	
-	//
-	int size = parsedInformation.size();
-	if (size != 2 || size != 4 || size != 6) {
-		Add<RTask> addrtask;
-		if (addrtask.executeR(parsedInformation)) {
-			taskToAdd.rtask = addrtask.getTask();
-			taskToAdd.type = 1;
-			_listOfTasks.push_back(taskToAdd);
-			system("CLS");
-			view.viewDefault(_listOfTasks);
-			view.viewSelected2(_listOfTasks, _listOfTasks.size());
-		}
-	}
-	else {
-		Add<Task> addtask;
-		if (addtask.execute(parsedInformation)) {
-			taskToAdd.task = addtask.getTask();
-			taskToAdd.type = 2;
-			_listOfTasks.push_back(taskToAdd);
-
-			system("CLS");
-			view.viewDefault(_listOfTasks);
-			view.viewSelected2(_listOfTasks, _listOfTasks.size());
-		}
-
+	if (add.execute(parsedInformation)) {
+		_listOfTasks.push_back(add.getTask());
+		system("CLS");
+		view.viewDefault(_listOfTasks);
+		view.viewSelected2(_listOfTasks, _listOfTasks.size());
+		printMessage(SUCCESSFULLY_ADDED);
+		updateStorage();	
 	}
 	printMessage(SUCCESSFULLY_ADDED);
 	updateStorage();
@@ -211,11 +190,11 @@ void Logic::searchWord() {
 	}
 }
 
-vector<AllTasks> Logic::getListofTasks(){
+vector<Task> Logic::getListofTasks(){
 	return _listOfTasks;
 }
 
-vector<AllTasks> Logic::setListOfTasks(vector<AllTasks> newList) {
+vector<Task> Logic::setListOfTasks(vector<Task> newList) {
 	_listOfTasks = newList;
 	return _listOfTasks;
 }

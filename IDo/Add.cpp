@@ -1,4 +1,5 @@
 #include "Add.h"
+
 bool Add::isRecurring(vector <string> parsedInfo) {
 	if (parsedInfo[4] == "every" || parsedInfo[6] == "every") {
 		return true;

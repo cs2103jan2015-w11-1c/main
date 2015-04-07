@@ -18,7 +18,7 @@
 #include "Storage.h"
 #include "Sort.h"
 #include "Search.h"
-#include "RecurringTask.h"
+#include "RTask.h"
 
 using namespace std;
 
@@ -50,7 +50,6 @@ public:
 	void readFromFile();
 	bool process(string);
 	vector<Task> getListofTasks();
-	vector<Task> setListOfTasks(vector<Task> newList);
 };
 
 #endif

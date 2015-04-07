@@ -11,14 +11,10 @@ using namespace std;
 
 class Delete{
 private:
-	int _taskIndex;
-	vector<Task> _newList;
 
 public:
-	bool execute(vector<string> parsedInformation, vector<Task> taskList);
-	void getTaskIndexToBeDeleted(vector<string> parsedInformation);
-	void findAndDeleteTask(vector<Task> listOfTasks);
-	vector<Task> getNewList();
+	bool isValidInput(vector <string> parsedInformation, int taskListSize);
+	void execute(vector<string> parsedInformation, vector<Task> &taskList);
 };
 
 #endif

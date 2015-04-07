@@ -1,27 +1,27 @@
 #include "Delete.h"
 
-bool Delete::execute(vector<string> parsedInformation, vector<Task> taskList){
-	int size = parsedInformation.size();
-
-	if(size == 2) {//delete TaskIndex
-		getTaskIndexToBeDeleted(parsedInformation);
-		findAndDeleteTask(taskList);
-	} else { 
-		return false;
+bool Delete::isValidInput(vector <string> parsedInformation, int taskListSize) {
+	bool validNumber = true;
+	int size = parsedInformation.size(); 
+	for (int i = 1 ; i < size ; i++) {
+		if (atoi(parsedInformation[i].c_str()) > taskListSize || atoi(parsedInformation[i].c_str()) <= 0) {
+			return false;
+		}
 	}
-	return true;
+	return validNumber;
 }
 
-void Delete::getTaskIndexToBeDeleted(vector<string> parsedInformation){
-	_taskIndex = atoi(parsedInformation[1].c_str());
-}
+void Delete::execute(vector<string> parsedInformation, vector<Task> &taskList){
+	int size = parsedInformation.size();
+	vector <int> listToDelete;
+	for (int i = 1 ; i < size ; i++) {
+		listToDelete.push_back((atoi(parsedInformation[i].c_str()))-1);
+	}
 
-void Delete::findAndDeleteTask(vector<Task> taskList){
+	sort(listToDelete.begin(),listToDelete.end());
 	
-	_newList = taskList;
-	_newList.erase(_newList.begin() + _taskIndex - 1);
-}
-
-vector<Task> Delete::getNewList(){
-	return _newList;
+	size = listToDelete.size();
+	for (int i = size - 1; i >= 0; i--) {
+		 taskList.erase(taskList.begin() + listToDelete[i]);
+	}
 }

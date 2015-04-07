@@ -77,7 +77,7 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 
 		case DEL:
 			parsedInputs.push_back("delete");
-			parsedInputs.push_back(splittedUserInputs[0]);
+			processDeleteContent(splittedUserInputs);
 			break;
 
 		case EDIT:
@@ -135,18 +135,31 @@ bool Parser::checkTimedTask(){
 
 	int size = splittedUserInputs.size();
 	int toPosition = -1;
+	int everyPosition = -1;
 	bool valid = true;
 
 	fromPosition = keywordPos("from");
 	toPosition = keywordPos("to");
+	everyPosition = keywordPos("every");
 
-	if(fromPosition !=-1 && toPosition != -1) {
+	if(fromPosition !=-1 && toPosition != -1 && everyPosition != -1) {
 		for(int i = fromPosition+1; i < toPosition; i ++ ) {
 			if(!check.isDateValid(splittedUserInputs[i]) && !isPossibleTime(splittedUserInputs[i])) {
 				valid = false;
 			}
 		}
-		for(int i = toPosition+1 ; i <size ; i++) {
+		for(int i = toPosition+1 ; i < everyPosition ; i++) {
+			if(!check.isDateValid(splittedUserInputs[i]) && !isPossibleTime(splittedUserInputs[i])) {
+				valid = false;
+			}
+		}
+	} else if ( fromPosition !=-1 && toPosition != -1 && everyPosition == -1) {
+		for(int i = fromPosition+1; i < toPosition; i ++ ) {
+			if(!check.isDateValid(splittedUserInputs[i]) && !isPossibleTime(splittedUserInputs[i])) {
+				valid = false;
+			}
+		}
+		for(int i = toPosition+1 ; i < size ; i++) {
 			if(!check.isDateValid(splittedUserInputs[i]) && !isPossibleTime(splittedUserInputs[i])) {
 				valid = false;
 			}
@@ -155,7 +168,6 @@ bool Parser::checkTimedTask(){
 		return false;
 	}
 	
-
 	if(valid == true) {
 		for(int i = fromPosition+1; i < toPosition; i ++ ) {
 			if(check.isDateValid(splittedUserInputs[i])) {
@@ -197,7 +209,10 @@ bool Parser::checkTimedTask(){
 }
 
 bool Parser::setMissingDateTime() {
-	if(_startTime.empty()) {
+
+	if(_startTime.empty() && _startDate == check.getTodayDate()) {
+		_startTime = getTodayTime();
+	} else if(_startTime.empty()){
 		_startTime = "0000";
 	}
 
@@ -206,14 +221,12 @@ bool Parser::setMissingDateTime() {
 	}
 
 	if(_startDate.empty()){
-		Dates date;
-		_startDate = date.getTodayDate();
+		_startDate = check.getTodayDate();
 	}
 
 	if(_endDate.empty()) {
 		_endDate = _startDate;
 	}
-
 	return true;
 }
 
@@ -223,22 +236,25 @@ bool Parser::checkDeadlineTask(){
 
 	int size = splittedUserInputs.size();
 	byPosition = -1;
+	int everyPosition = -1;
 	bool valid = true;
 
-	for(int i = 0; i < size; i ++) {
-		if(splittedUserInputs[i] == "by") {
-			byPosition = i;
-		}
-	}
+	everyPosition = keywordPos("every");
+	byPosition = keywordPos("by");
 
-	if(byPosition != -1) {
+	if(byPosition != -1 && everyPosition != -1) {
+		for(int i = byPosition+1; i < everyPosition; i ++ ) {
+			if(!check.isDateValid(splittedUserInputs[i]) && !isPossibleTime(splittedUserInputs[i])) {
+				valid = false;
+			}
+		}
+	} else if (byPosition != -1 && everyPosition == -1) {
 		for(int i = byPosition+1; i < size; i ++ ) {
 			if(!check.isDateValid(splittedUserInputs[i]) && !isPossibleTime(splittedUserInputs[i])) {
 				valid = false;
 			}
 		}
-	}
-	else if (byPosition == -1) {
+	} else if (byPosition == -1) {
 		return false;
 	}
 	else {
@@ -255,6 +271,19 @@ bool Parser::checkDeadlineTask(){
 				_endTime = splittedUserInputs[i];
 			}
 		}
+
+		if(_endDate.empty()) {
+			_endDate = check.getTodayDate();
+		}
+
+		if(_endTime.empty()) {
+			_endTime = "2359";
+		}
+	}
+
+	if(!checkTimeIfDateIsToday(_endDate, _endTime)){
+		cout << "You Missed Your DEADLINE!" <<endl;
+		valid = false;
 	}
 
 	return valid;
@@ -290,7 +319,7 @@ bool Parser::checkFloating(){
 //Post: Returns true if it's recurring task
 //		Returns false if it's not a recurring task
 bool Parser::checkRecurring() {
-
+	
 	bool validRecurring = false;
 
 	string firstKeyword = "every";
@@ -300,7 +329,6 @@ bool Parser::checkRecurring() {
 	int size = splittedUserInputs.size();
 
 	for (int i = 0; i < size; i++) {
-		
 		if(splittedUserInputs[i] == firstKeyword && i != size - 1) {
 			if(checkSecondWord (i + 1) && checkThirdWord (i+2)) {
 				secondKeyword = splittedUserInputs[i+1];
@@ -342,6 +370,7 @@ bool Parser::checkRecurringLimit() {
 	}
 
 	if(valid == true) {
+		parsedInputs.push_back(keyWord);
 		parsedInputs.push_back(duration);
 		parsedInputs.push_back(dayMthYear);
 	}
@@ -424,7 +453,7 @@ bool Parser::processAddContent(vector<string> inputs) {
 	int size = inputs.size();
 
 	if(checkTimedTask()){
-		cout << "timetask" << endl;
+//		cout << "timetask" << endl;
 		storeTaskContent(0, fromPosition-1, inputs);
 		parsedInputs.push_back(_taskContent);
 		parsedInputs.push_back(_startDate);
@@ -432,32 +461,25 @@ bool Parser::processAddContent(vector<string> inputs) {
 		parsedInputs.push_back(_endDate);
 		parsedInputs.push_back(_endTime);
 
-	if(checkRecurring()){
-		checkRecurringLimit();
-	}
-
-	} else if (checkDeadlineTask()) {
-		cout << "deadlinetask" << endl;
-		storeTaskContent(0, byPosition-1, inputs);
-		parsedInputs.push_back(_taskContent);
-
-		if(_endTime.empty()) {
-			_endTime = "2359";
-		}
-		
-		if(_endDate.empty()) {
-			_endDate = check.getTodayDate();
-		}
-
-		parsedInputs.push_back(_endDate);
-		parsedInputs.push_back(_endTime);
-
 		if(checkRecurring()){
 			checkRecurringLimit();
 		}
 
+	} else if (checkDeadlineTask()) {
+//		cout << "inputisdeadlinetask" << endl;
+		storeTaskContent(0, byPosition-1, inputs);
+//		cout << "taskcontent:" << _taskContent << endl;
+		parsedInputs.push_back(_taskContent);
+		parsedInputs.push_back(_endDate);
+		parsedInputs.push_back(_endTime);
+
+		if(checkRecurring()){
+//			cout << "checkRecurring is true" << endl;
+			checkRecurringLimit();
+		}
+
 	} else if(checkFloating()) {
-		cout << "floatingtask" << endl;
+//		cout << "floatingtask" << endl;
 		storeTaskContent(0, size, inputs);
 		parsedInputs.push_back(_taskContent);
 
@@ -492,6 +514,18 @@ bool Parser::processEditContent(vector<string> inputs) {
 
 	return true;
 } 
+
+//This processes all words if delete function is called
+bool Parser::processDeleteContent(vector<string> inputs){
+
+	int size = inputs.size();
+
+	for(int i = 0; i < size ; i++) {
+		parsedInputs.push_back(inputs[i]);
+	}
+
+	return true;
+}
 
 //This processes all words if mark function is called
 bool Parser::processMarkContent(vector<string> inputs){
@@ -622,7 +656,6 @@ bool Parser::checkTimeIfDateIsToday(string date, string time) {
 
 	if(date == check.getTodayDate()) {
 		if(time < getTodayTime()) {
-			cout<<getTodayTime()<<endl;
 			return false;
 		}
 	}
@@ -640,9 +673,9 @@ string Parser::getTodayTime() {
 
 	int hour = localTime.tm_hour;
 	int min  = localTime.tm_min;
-	
+
 	if(hour < 10) {
-		todayTime = to_string(hour * 1000 + min);
+		todayTime = '0' + to_string(hour * 100 + min);
 	} else {
 		todayTime = to_string(hour * 100 + min);
 	}

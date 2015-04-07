@@ -31,7 +31,7 @@ void Storage::updateFile (vector <Task> &temp, bool isUndoTrue) {
 	ofstream writeFile (fileName);
 	Status status;
 	Priority priority;
-//	Label label;
+	string label;
 	int _size = temp.size();
 	for (int i = 0 ; i < _size ; i++) {
 		writeFile << temp[i].getTaskName() << endl;
@@ -73,32 +73,13 @@ void Storage::updateFile (vector <Task> &temp, bool isUndoTrue) {
 			writeFile << "none" << endl;
 			break;
 		}
-/*
-		label = temp[i].getLabel();
-		switch (label) {
-		case studies:
-			writeFile << "studies" << endl;
-			break;
 
-		case cca:
-			writeFile << "cca" << endl;
-			break;
-
-		case friends:
-			writeFile << "friends" << endl;
-			break;
-
-		case family:
-			writeFile << "family" << endl;
-			break;
-
-		case misc:
-			writeFile << "misc" << endl;
-			break;
-		}
-*/
-		writeFile << "__________" << endl;
+	label = temp[i].getLabel();
+	writeFile << label << endl;
+	
+	writeFile << "__________" << endl;
 	}
+
 	writeFile << "_____" << endl;
 	writeFile.close();
 }
@@ -145,19 +126,20 @@ void Storage::readFile (vector <Task> &temp, bool isUndoTrue) {
 				endTime = tempTask[4];
 				task.setStartDate(startDate);
 				task.setStartTime(startTime);
+				task.setEndDate(endDate);
+				task.setEndTime(endTime);
 			}
 	
 			if (size == 6) {
 				endDate = tempTask[1];
 				endTime = tempTask[2];
+				task.setEndDate(endDate);
+				task.setEndTime(endTime);
 			}
 	
 			status = tempTask[size-3];
 			priority = tempTask[size-2];
 			label = tempTask[size-1];
-	
-			task.setEndDate(endDate);
-			task.setEndTime(endTime);
 	
 			if (status == "done") {
 				task.setStatus(done);
@@ -179,24 +161,9 @@ void Storage::readFile (vector <Task> &temp, bool isUndoTrue) {
 			} else {
 				task.setPriority(medium);
 			}
-			
-/*	
-			if (label == "studies") {
-				task.setLabel(studies);
-	
-			} else if (label == "cca") {
-				task.setLabel(cca);
-	
-			} else if (label == "friends") {
-				task.setLabel(friends);
-	
-			} else if (label == "family") {
-				task.setLabel(family);
-	
-			}  else {
-				task.setLabel(misc);
-			}
-*/	
+		
+			task.setLabel(label);
+
 			temp.push_back(task);
 			tempTask.clear();
 			getline(readFile,line);

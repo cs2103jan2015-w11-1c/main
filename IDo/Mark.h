@@ -6,13 +6,12 @@
 #include <iostream>
 #include "Logic.h"
 #include "Task.h"
-#include "RecurringTask.h"
+#include "RTask.h"
 
 using namespace std;
 
 class Mark {
 private:
-	int _indexToMark;
 	string _contentToMark;
 	
 	void markStatus (Task &taskToMark);

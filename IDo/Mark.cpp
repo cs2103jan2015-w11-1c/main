@@ -30,30 +30,24 @@ bool Mark::isValidInput(vector <string> parsedInformation, int taskListSize) {
 		if (atoi(parsedInformation[i].c_str()) > taskListSize || atoi(parsedInformation[i].c_str()) < 0) {
 			return false;
 		}
-		if (!(parsedInformation[size] == "done" || parsedInformation[size] == "notdone" ||
-			parsedInformation[size] == "high" || parsedInformation[size] == "medium" ||
-			parsedInformation[size] == "low")) {
-			return false;
-		}
 	}
 	return validNumber;
 }
 
 void Mark::execute(vector<string> parsedInformation, vector<Task> &taskListFromLogic) {
 	int size = parsedInformation.size();
+	int _indexToMark;
 	_contentToMark = parsedInformation[size - 1];
 	
 	for (int i = 1; i < size - 1; i++) {
 		_indexToMark = atoi(parsedInformation[i].c_str()) - 1;
 
-		Task taskToMark;
-
 		if (_contentToMark == "done" || _contentToMark == "notdone") {
-			markStatus(taskToMark);
+			markStatus(taskListFromLogic[_indexToMark]);
 		} else if (_contentToMark == "high" || _contentToMark == "medium" || _contentToMark == "low") {
-			markPriority(taskToMark);
+			markPriority(taskListFromLogic[_indexToMark]);
 		} else {
-			markLabel(taskToMark);
+			markLabel(taskListFromLogic[_indexToMark]);
 		}
 	}
 }

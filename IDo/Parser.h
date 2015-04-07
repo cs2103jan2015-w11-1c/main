@@ -58,6 +58,7 @@ private:
 	vector<string> split(string userInput);
 	bool parseActions(vector<string> inputs);	
 	bool processAddContent(vector<string> inputs);
+	bool processDeleteContent(vector<string> inputs);
 	bool processEditContent(vector<string> inputs);
 	bool processMarkContent(vector<string> inputs);
 	bool processView(vector<string> inputs);

@@ -6,6 +6,7 @@ const string SUCCESSFULLY_ADDED = "[Added Successfully]";
 const string SUCCESSFULLY_EDITED = "[Edited Successfully]";
 const string SUCCESSFULLY_DELETED = "[Deleted Successfully]";
 const string SUCCESSFULLY_CLEARED = "[Cleared Successfully]";
+const string SUCCESSFULLY_SORTED = "[Sorted Successfully]";
 const string TASK_NOT_FOUND = "[Task Not Found]";
 const string ERROR_WRONG_INPUT = "Error: Wrong Input!";
 
@@ -14,8 +15,10 @@ void Logic::updateStorage() {
 }
 
 void Logic::undo() {
+	View view;
 	_listOfTasks.clear();
 	_storage.readFile(_listOfTasks,1);
+	view.viewDefault(_listOfTasks);
 }
 
 void Logic::backup() {
@@ -38,22 +41,33 @@ void Logic::addTask() {
 	View view;
 	backup();
 	if (add.execute(_parsedInformation)) {
-		_listOfTasks.push_back(add.getTask());
+		if(!add.isRecurring(_parsedInformation)){
+			_listOfTasks.push_back(add.getTask());
+		} else {
+			int size = add.getOccurrences().size();
+			for(int i = 0; i < size; i++) {
+				_listOfTasks.push_back(add.getOccurrences()[i]);
+			}
+		}
 		system("CLS");
 		view.viewDefault(_listOfTasks);
-		view.viewSelected2(_listOfTasks, _listOfTasks.size());
+		view.viewSelectedOne(_listOfTasks, _listOfTasks.size());
 		printMessage(SUCCESSFULLY_ADDED);
 		updateStorage();	
+	} else {
+		printMessage(ERROR_WRONG_INPUT);
 	}
-	printMessage(SUCCESSFULLY_ADDED);
-	updateStorage();
 }
 
 void Logic::deleteTask() {
 	Delete remove;
+	View view;
 	backup();
-	if (remove.execute(_parsedInformation, _listOfTasks)) {
-		_listOfTasks = remove.getNewList();
+
+	if (remove.isValidInput(_parsedInformation, _listOfTasks.size())) {
+		remove.execute(_parsedInformation, _listOfTasks);
+		system("CLS");
+		view.viewDefault(_listOfTasks);
 		printMessage(SUCCESSFULLY_DELETED);
 		updateStorage();
 	}
@@ -69,11 +83,11 @@ void Logic::editTask() {
 
 	int editedTaskNumber;
 	if (edit.execute(_parsedInformation, _listOfTasks)) {
-		setListOfTasks(edit.getNewList());
+		_listOfTasks=edit.getNewList();
 		editedTaskNumber = atoi(_parsedInformation[1].c_str());
 		system("CLS");
 		view.viewDefault(_listOfTasks);
-		view.viewSelected2(_listOfTasks, editedTaskNumber);
+		view.viewSelectedOne(_listOfTasks, editedTaskNumber);
 		printMessage(SUCCESSFULLY_EDITED);
 		updateStorage();
 	} else {
@@ -83,10 +97,13 @@ void Logic::editTask() {
 
 void Logic::markTask() {
 	Mark mark;
+	View view;
 	backup();
 
 	if (mark.isValidInput(_parsedInformation, _listOfTasks.size())) {
 		mark.execute(_parsedInformation, _listOfTasks);
+		system("CLS");
+		view.viewDefault(_listOfTasks);
 		printMessage(SUCCESSFULLY_MARKED);
 		updateStorage();
 	}
@@ -135,7 +152,7 @@ void Logic::sortTask() {
 
 	if (sort.execute(_parsedInformation, _listOfTasks)) {
 		_listOfTasks = sort.getSortedList();
-		cout << endl << "Sort Successfully" << endl;
+		cout << endl << SUCCESSFULLY_SORTED << endl;
 	}
 	else {
 		printMessage(ERROR_WRONG_INPUT);
@@ -154,9 +171,8 @@ void Logic::searchWord() {
 		listOfFoundTasks = search.getListOfFoundTasks();
 		listOfFoundTaskNum = search.getListOfFoundTaskNum();
 
-		//cout << "found task\n";
 		View printFoundTasks;
-		printFoundTasks.viewSelected(listOfFoundTasks, listOfFoundTaskNum);
+		printFoundTasks.viewSelectedFew(listOfFoundTasks, listOfFoundTaskNum);
 	} else {
 		printMessage(TASK_NOT_FOUND);
 	}
@@ -209,10 +225,5 @@ bool Logic::process(string line) {
 }
 
 vector<Task> Logic::getListofTasks(){
-	return _listOfTasks;
-}
-
-vector<Task> Logic::setListOfTasks(vector<Task> newList) {
-	_listOfTasks = newList;
 	return _listOfTasks;
 }

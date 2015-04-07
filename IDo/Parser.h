@@ -14,6 +14,8 @@ using namespace std;
 
 class Parser {
 private:
+	Dates check;
+
 	vector<string> splittedUserInputs;
 	vector<string> parsedInputs;
 
@@ -69,18 +71,22 @@ private:
 	bool checkRecurringLimit();
 
 	//Functions to check for validity
-	bool compareDates(string date, string date2);
+	bool compareDates(string date1, string date2);
+	bool compareTimes(string time1, string time2); 
 	bool isPossibleTime(string time);
 	bool isTimeFormat(string time);
+	bool checkTimeIfDateIsToday(string date, string time);
 
 	//Functions for Recurring Feature
 	bool checkSecondWord(int);
 	bool checkNumberOfRepeats(int);
 	bool checkThirdWord(int);
 
+	string getTodayTime();
+	int keywordPos(string keyword);
 
-	bool isDateValid(string date);
-	bool timecheck(string input);
+	bool setMissingDateTime();
+	bool storeTaskContent(int, int, vector<string>);
 	
 public:
 	//Stores information that has been parsed

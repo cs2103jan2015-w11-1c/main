@@ -132,20 +132,13 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 //Post: Returns true if it's a timed-task i.e. add...from <date/time> to <date/time>
 //		Returns false if it's not a timed-task
 bool Parser::checkTimedTask(){
-	Dates check;
+
 	int size = splittedUserInputs.size();
-	fromPosition = -1;
 	int toPosition = -1;
 	bool valid = true;
 
-	for(int i = 0; i < size; i ++) {
-		if(splittedUserInputs[i] == "from") {
-			fromPosition = i;
-		} 
-		if(splittedUserInputs[i] == "to") {
-			toPosition = i;
-		}
-	}
+	fromPosition = keywordPos("from");
+	toPosition = keywordPos("to");
 
 	if(fromPosition !=-1 && toPosition != -1) {
 		for(int i = fromPosition+1; i < toPosition; i ++ ) {
@@ -181,21 +174,53 @@ bool Parser::checkTimedTask(){
 				_endTime = splittedUserInputs[i];
 			}
 		}
+
+		setMissingDateTime();
 	}
 
-	if(!_startDate.empty() && !_endDate.empty()) { 
-		if(compareDates(_startDate,_endDate)) {
-			valid = false;
-		}
+	//Return false if start date is larger than end date
+	if(compareDates(_startDate,_endDate)) {
+		valid = false;
+	}
+	
+	//Return false if start time is larger than end time
+	if(_startDate == _endDate && compareTimes(_startTime,_endTime)) {
+		valid = false;
+	}
+
+	if(!checkTimeIfDateIsToday(_startDate, _startTime)){
+		cout << "Error: You should start on your task NOW!" <<endl;
+		valid = false;
 	}
 
 	return valid;
 }
 
+bool Parser::setMissingDateTime() {
+	if(_startTime.empty()) {
+		_startTime = "0000";
+	}
+
+	if(_endTime.empty()) {
+		_endTime = "2359";
+	}
+
+	if(_startDate.empty()){
+		Dates date;
+		_startDate = date.getTodayDate();
+	}
+
+	if(_endDate.empty()) {
+		_endDate = _startDate;
+	}
+
+	return true;
+}
+
 //Post: Returns true if it's a deadline task i.e. add...by <date/time>
 //		Returns false if it's not a deadline task
 bool Parser::checkDeadlineTask(){
-	Dates check;
+
 	int size = splittedUserInputs.size();
 	byPosition = -1;
 	bool valid = true;
@@ -239,7 +264,6 @@ bool Parser::checkDeadlineTask(){
 //		Returns false if it's not a floating task
 bool Parser::checkFloating(){
 	int size = splittedUserInputs.size();
-	Dates check;
 	bool valid = true;
 
 	if(fromPosition!=size-1 && fromPosition!=-1) {
@@ -275,7 +299,8 @@ bool Parser::checkRecurring() {
 
 	int size = splittedUserInputs.size();
 
-	for (int i = 0; i < size; size++) {
+	for (int i = 0; i < size; i++) {
+		
 		if(splittedUserInputs[i] == firstKeyword && i != size - 1) {
 			if(checkSecondWord (i + 1) && checkThirdWord (i+2)) {
 				secondKeyword = splittedUserInputs[i+1];
@@ -303,17 +328,16 @@ bool Parser::checkRecurringLimit() {
 	string keyWord = "for";
 	string duration;
 	string dayMthYear;
-	int size = splittedUserInputs.size();
 
 	bool valid = false;
 
-	for(int i = 0 ; i < size; i++){
-		if(splittedUserInputs[i] == keyWord) {
-			if(checkNumberOfRepeats(i+1) && checkThirdWord(i+2)) { 
-				duration = splittedUserInputs[i+1];
-				dayMthYear = splittedUserInputs[i+2];
-				valid = true;
-			}
+	int position = keywordPos(keyWord);
+
+	if(position != - 1) {
+		if(checkNumberOfRepeats(position+1) && checkThirdWord(position+2)) { 
+			duration = splittedUserInputs[position+1];
+			dayMthYear = splittedUserInputs[position+2];
+			valid = true;
 		}
 	}
 
@@ -328,7 +352,7 @@ bool Parser::checkRecurringLimit() {
 bool Parser::checkSecondWord(int index) {
 	string secondKeyword[6] = {"day", "month" , "year", "days", "months", "years"};
 	int size = splittedUserInputs.size();
-
+	cout<<index<<endl;
 	//check vector boundary
 	if(index >= size) {
 		return false;
@@ -379,48 +403,42 @@ bool Parser::checkThirdWord(int index) {
 	}
 	return false;
 }
+
+bool Parser::storeTaskContent(int start, int end, vector<string> inputs) {
+	for(int i = start; i < end; i++) {
+		if(end != inputs.size()){
+			_taskContent += inputs[i] + " ";
+		} else {
+			_taskContent += inputs[i];
+		}
+	}
+	return true;
+}
+
 //This sorts out the correct information for add function
 //Pre: Takes in the content of userinputs less the command
 //Post: Returns false if userinput is invalid
 bool Parser::processAddContent(vector<string> inputs) {
-
-	Dates check;
 
 	bool addResultValid = true;
 	int size = inputs.size();
 
 	if(checkTimedTask()){
 		cout << "timetask" << endl;
-		for(int i = 0; i < fromPosition-1; i++){
-			_taskContent += inputs[i] + " ";
-		}
+		storeTaskContent(0, fromPosition-1, inputs);
 		parsedInputs.push_back(_taskContent);
-
-		if(_startDate.empty() && _endDate.empty()) {
-			_startDate = check.getTodayDate();
-			_endDate = check.getTodayDate();
-		}
-		if(!_startDate.empty() && _endDate.empty()){
-			_endDate = _startDate;
-		}
-		if(_startDate.empty() && !_endDate.empty()){
-			_startDate = check.getTodayDate();
-		}
-
 		parsedInputs.push_back(_startDate);
 		parsedInputs.push_back(_startTime);
 		parsedInputs.push_back(_endDate);
 		parsedInputs.push_back(_endTime);
 
-		if(checkRecurring()){
-			checkRecurringLimit();
-		}
+	if(checkRecurring()){
+		checkRecurringLimit();
+	}
 
 	} else if (checkDeadlineTask()) {
 		cout << "deadlinetask" << endl;
-		for(int i = 0; i < byPosition-1; i++){
-			_taskContent += inputs[i] + " ";
-		}
+		storeTaskContent(0, byPosition-1, inputs);
 		parsedInputs.push_back(_taskContent);
 
 		if(_endTime.empty()) {
@@ -440,14 +458,11 @@ bool Parser::processAddContent(vector<string> inputs) {
 
 	} else if(checkFloating()) {
 		cout << "floatingtask" << endl;
-		for(int i = 0; i < size; i++){
-			_taskContent += inputs[i] + " ";
-		}
+		storeTaskContent(0, size, inputs);
 		parsedInputs.push_back(_taskContent);
 
 	} else {
-		cout << "[Error] Invalid Input" << endl;
-		return false;
+		addResultValid = false;
 	}
 	
 	return addResultValid;
@@ -522,26 +537,17 @@ vector<string> Parser::getParsedInputs(){
 	return parsedInputs;
 }
 
-//Post: Return true if date is a larger date than date2
-bool Parser::compareDates(string date, string date2) {
-	int size = date.size();
-	int size2 = date2.size();
+//Post: Return true if date1 is a larger date than date2
+bool Parser::compareDates(string date1, string date2) {
 
-	for(int i = 0; i < size ; i++) {
-		if(date[i] == '/') {
-			date.erase(date.begin()+i);
-			size = date.size();
-		}
-	}
-	
-	for(int i = 0; i < size2 ; i++) {
-		if(date2[i] == '/') {
-			date2.erase(date2.begin()+i);
-			size2 = date2.size();
-		}
-	}
+	if(date1.empty() || date2.empty()) {
+		return false;
+	} 
 
-	if(atoi(date.c_str()) > atoi(date2.c_str())) {
+	date d1(from_simple_string(date1));
+	date d2(from_simple_string(date1));
+
+	if(d1 > d2) {
 		cout << endl << "[Error] End Date is before Start Date??" << endl <<endl;
 		return true;
 	} else {
@@ -549,15 +555,25 @@ bool Parser::compareDates(string date, string date2) {
 	}
 }
 
-//This checks if time is valid
+//Post: Return true if time1 is a larger time than time2
+bool Parser::compareTimes(string time1, string time2) {
+
+	if(time1.empty() || time2.empty()) {
+		return false;
+	}
+
+	if(time1 > time2) {
+		cout << endl << "[Error] End Time is before Start Time??" << endl;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//This checks if timeformat i.e. HHMM and time value is valid
 //Post: Returns true if valid, Returns false if invalid
 bool Parser::isPossibleTime(string time){
 	
-	size_t found = time.find_first_of(",");
-	if(found != string::npos && found != 0){
-		time = time.substr(found+1,time.size()-1);
-	}
-
 	if(time.size()>4) {
 		return false;
 	}
@@ -571,7 +587,7 @@ bool Parser::isPossibleTime(string time){
 	int minute = atoi(time.c_str());
 	
 	if(minute > 2359) {
-		cout << "Error: Outside time range 0000 to 2359" << endl;
+		cout << "[Error] Outside time range 0000 to 2359" << endl;
 		return false;
 	}
 
@@ -596,6 +612,58 @@ bool Parser::isTimeFormat(string time) {
 	return true;
 }
 
+
+//Return false if time is before today's time
+bool Parser::checkTimeIfDateIsToday(string date, string time) {
+	
+	if(date.empty() || time.empty()) {
+		return false;
+	}
+
+	if(date == check.getTodayDate()) {
+		if(time < getTodayTime()) {
+			cout<<getTodayTime()<<endl;
+			return false;
+		}
+	}
+	return true;
+}
+
+string Parser::getTodayTime() {
+
+	string todayTime;
+	time_t currentTime;
+	struct tm localTime;
+
+	time( &currentTime );					  // Get the current time
+	localtime_s( &localTime , &currentTime );  // Convert the current time to the local time
+
+	int hour = localTime.tm_hour;
+	int min  = localTime.tm_min;
+	
+	if(hour < 10) {
+		todayTime = to_string(hour * 1000 + min);
+	} else {
+		todayTime = to_string(hour * 100 + min);
+	}
+
+	return todayTime;
+}
+
+//Return the position of keyword in splittedUserInputs
+int Parser::keywordPos(string keyword) {
+	int position = -1;
+
+	int size = splittedUserInputs.size();
+
+	for(int i = 0; i < size; i++) {
+		if(keyword == splittedUserInputs[i]) {
+			position = i;
+		}
+	}
+
+	return position;
+}
 
 //Pre: A string that takes in userinputs
 //Post: Returns a vector of inputs which have been parsed

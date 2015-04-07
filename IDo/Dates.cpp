@@ -27,29 +27,25 @@ string Dates::getTodayDate(){
 	_itoa_s(year,buffer,10);
 	string year1 = buffer;
 
-	todayDate = year1 + '/' + month1 + '/'+ day1;
+	date d(year, month, day);
+	todayDate = to_simple_string(d);
+//	todayDate = year1 + '/' + month1 + '/'+ day1;
 
 	return todayDate;
 }
 
-//Post: Returns true if string contains the required delimiters for dates i.e. 10/10,2359 2009/10/10,2359
+//Post: Returns true if string contains the required delimiters for dates i.e. 10/10, 2009/10/10
 bool Dates::checkDelimiters(string date){
 	
 	store.clear();
 	string input = date;
 	string temp;
-	string delimiters = "./-";
-	string delimiter = ",";
+	string delimiters = "./";
+
 	int count=0;
 
-	//Extract the date from datetime string
-	size_t found = input.find_first_of(delimiter);
-	if(found != string::npos && found != 0){
-		input = input.substr(0,found);
-	}
-
 	//Extract the year month day of date
-	found = input.find_first_of(delimiters);
+	size_t found = input.find_first_of(delimiters);
 	while(found!=string::npos && found!=0) {
 		temp = input.substr(0,found);
 
@@ -149,7 +145,10 @@ bool Dates::checkDateFormat(string input){
 		_itoa_s(year,buffer,10);
 		string year1 = buffer;
 
-		dateCheckedFormat =  year1 + '/' + month1 + '/' + day1;
+		date d(year, month, day);
+
+		dateCheckedFormat = to_simple_string(d);
+		//dateCheckedFormat =  year1 + '/' + month1 + '/' + day1;
 	}
 
 	return true;
@@ -162,7 +161,7 @@ bool Dates::isDateValid(string dateinput){
 	if(!checkDateFormat(dateinput)) {
 		return false;
 	} 
-
+	
 	date today = day_clock::local_day();
 
 	int size = dateCheckedFormat.size();
@@ -182,6 +181,7 @@ bool Dates::isDateValid(string dateinput){
 	
 	return true;
 }
+
 
 string Dates::getFormattedDates(){
 	return dateCheckedFormat;

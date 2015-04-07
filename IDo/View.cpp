@@ -96,7 +96,7 @@ void View::displayDeadline(vector <Task> &list, int size) {
 	parsedInformation.push_back("deadline");
 	
 	for (int i = 0; i < size; i++) {
-		if((list[i].getStartDate().empty()) && !list[i].getEndDate().empty()) {
+		if((list[i].getStartDate().empty()) && !list[i].getEndDate().empty() && list[i].getStatus() == notdone) {
 			deadlineList.push_back(list[i]);
 			indexList.push_back(i+1);
 		}

@@ -435,7 +435,7 @@ bool Parser::checkThirdWord(int index) {
 
 bool Parser::storeTaskContent(int start, int end, vector<string> inputs) {
 	for(int i = start; i < end; i++) {
-		if(end != inputs.size()){
+		if(i == inputs.size()){
 			_taskContent += inputs[i];
 		} else {
 			_taskContent += inputs[i] + " ";

@@ -102,7 +102,7 @@ void View::displayDeadline(vector <Task> &list, int size) {
 		}
 	}
 
-	if(sort.execute(parsedInformation, deadlineList)) {
+	if (sort.execute(parsedInformation, deadlineList)) {
 		deadlineList = sort.getSortedList();
 	}
 
@@ -316,6 +316,7 @@ void View::viewSelectedOne(vector<Task> list, int taskNumber) {
 
 // Default view after every command
 void View::viewDefault(vector<Task> &list) {
+	system("CLS");
 	displayToday(list,list.size());
 	displayDeadline(list,list.size());
 	displayFloating(list,list.size());

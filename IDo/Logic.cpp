@@ -49,7 +49,6 @@ void Logic::addTask() {
 				_listOfTasks.push_back(add.getOccurrences()[i]);
 			}
 		}
-		system("CLS");
 		view.viewDefault(_listOfTasks);
 		view.viewSelectedOne(_listOfTasks, _listOfTasks.size());
 		printMessage(SUCCESSFULLY_ADDED);
@@ -66,7 +65,6 @@ void Logic::deleteTask() {
 
 	if (remove.isValidInput(_parsedInformation, _listOfTasks.size())) {
 		remove.execute(_parsedInformation, _listOfTasks);
-		system("CLS");
 		view.viewDefault(_listOfTasks);
 		printMessage(SUCCESSFULLY_DELETED);
 		updateStorage();
@@ -85,7 +83,6 @@ void Logic::editTask() {
 	if (edit.execute(_parsedInformation, _listOfTasks)) {
 		_listOfTasks=edit.getNewList();
 		editedTaskNumber = atoi(_parsedInformation[1].c_str());
-		system("CLS");
 		view.viewDefault(_listOfTasks);
 		view.viewSelectedOne(_listOfTasks, editedTaskNumber);
 		printMessage(SUCCESSFULLY_EDITED);
@@ -102,7 +99,6 @@ void Logic::markTask() {
 
 	if (mark.isValidInput(_parsedInformation, _listOfTasks.size())) {
 		mark.execute(_parsedInformation, _listOfTasks);
-		system("CLS");
 		view.viewDefault(_listOfTasks);
 		printMessage(SUCCESSFULLY_MARKED);
 		updateStorage();

@@ -75,7 +75,6 @@ void RTask::setFirstOccur(vector<string> parsedInfo){
 	_occur.setTaskName(_abstract.getTaskName());
 	if (parsedInfo.size() == 7) {	//deadline recurring task without limit
 		_occur.setEndTime(_abstract.getEndTime());
-		cout << "parsedinformation two : " << parsedInfo[2] << endl;
 		_occur.setEndDate(parsedInfo[2]);
 	} else if(parsedInfo.size() == 9) { //timed task recurring without limit
 		_occur.setStartTime(_abstract.getStartTime());
@@ -108,7 +107,6 @@ void RTask::generateOccurs() {
 
 	_listOfOccurrences.push_back(_occur);
 	int count = 1;
-	cout << "_noOfOccurrences: " << _noOfOccurrences << endl;
 
 	Task next = _occur;
 

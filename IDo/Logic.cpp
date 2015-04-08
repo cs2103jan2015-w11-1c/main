@@ -81,7 +81,7 @@ void Logic::editTask() {
 
 	int editedTaskNumber;
 	if (edit.execute(_parsedInformation, _listOfTasks)) {
-		_listOfTasks=edit.getNewList();
+		_listOfTasks=edit.getList();
 		editedTaskNumber = atoi(_parsedInformation[1].c_str());
 		view.viewDefault(_listOfTasks);
 		view.viewSelectedOne(_listOfTasks, editedTaskNumber);

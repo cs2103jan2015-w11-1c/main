@@ -8,16 +8,16 @@ bool Edit::execute(vector<string> parsedInfo, vector<Task> taskListFromLogic){
 	_parsedInfoSize = _parsedInformation.size();
 	_numberOfTasks = _taskList.size();
 
-	if(_parsedInfoSize == 4){
+	if(_parsedInfoSize == 4) {
 		_editNumber = atoi(_parsedInformation[1].c_str());
 		_editType = _parsedInformation[2];
 		_editContent = _parsedInformation[3];
 		if(checkAndProcess()){
-			cout<< endl << "Edited Successfully"<<endl;
+			cout << endl << "Edited Successfully";
 		} else {
-			cout<< endl << "Edit Unsuccessful!"<<endl;
+			cout << endl << "Edit Unsuccessful!";
 		}
-		cout << endl;
+		cout << endl << endl;
 	} else {
 		return false;
 	}
@@ -52,6 +52,6 @@ bool Edit::checkAndProcess(){
 	return true;
 }
 
-vector<Task> Edit::getNewList(){
+vector<Task> Edit::getList(){
 	return _taskList;
 }

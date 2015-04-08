@@ -22,7 +22,7 @@ private:
 public:
 	bool execute(vector<string> parsedInformation, vector<Task> taskList);
 	bool checkAndProcess();
-	vector<Task> getNewList();
+	vector<Task> getList();
 };
 
 #endif

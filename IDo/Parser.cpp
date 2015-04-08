@@ -435,10 +435,10 @@ bool Parser::checkThirdWord(int index) {
 
 bool Parser::storeTaskContent(int start, int end, vector<string> inputs) {
 	for(int i = start; i < end; i++) {
-		if(end != inputs.size()){
-			_taskContent += inputs[i] + " ";
-		} else {
+		if(i == inputs.size()){
 			_taskContent += inputs[i];
+		} else {
+			_taskContent += inputs[i] + " ";
 		}
 	}
 	return true;
@@ -481,6 +481,7 @@ bool Parser::processAddContent(vector<string> inputs) {
 	} else if(checkFloating()) {
 //		cout << "floatingtask" << endl;
 		storeTaskContent(0, size, inputs);
+		cout<<_taskContent << endl;
 		parsedInputs.push_back(_taskContent);
 
 	} else {
@@ -499,13 +500,7 @@ bool Parser::processEditContent(vector<string> inputs) {
 		parsedInputs.push_back(inputs[FIRST_WORD]); //task index to be edited
 		parsedInputs.push_back(inputs[SECOND_WORD]); //task type to be edited
 	
-		for(int i = 2; i < inputSize ; i++) {
-			if (i = inputSize - 1) {
-				_taskContent += inputs[i]; //task details to be edited
-			} else {
-				_taskContent += inputs[i] + " ";
-			}
-		}
+		storeTaskContent(2, inputSize, inputs);
 		parsedInputs.push_back(_taskContent);
 
 	} else {

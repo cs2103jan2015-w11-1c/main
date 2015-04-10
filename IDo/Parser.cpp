@@ -539,10 +539,11 @@ bool Parser::processView(vector<string> inputs) {
 
 	int size = inputs.size();
 
-	if(size == 1 && check.checkDay(inputs[FIRST_WORD]) == 8) {
-		parsedInputs.push_back(inputs[FIRST_WORD]); //notdone, done, commands 
-	} else if (size == 1 && inputs[FIRST_WORD] == "tmr") {
+	if(size == 1 && inputs[FIRST_WORD] == "tmr") {
 		parsedInputs.push_back(check.datesFromToday(1));
+		cout << check.datesFromToday(1) << endl;
+	} else if (size == 1 && check.checkDay(inputs[FIRST_WORD]) == 8) {
+		parsedInputs.push_back(inputs[FIRST_WORD]); //notdone, done, commands 
 	} else if(size == 1 && check.checkDay(inputs[FIRST_WORD]) < 8) {
 		parsedInputs.push_back(check.datesGivenDays(check.getTodayDate(),inputs[FIRST_WORD]));
 	} else if (size == 2 && check.checkDay(inputs[SECOND_WORD]) != 0 && inputs[FIRST_WORD] == "next") {
@@ -716,6 +717,9 @@ vector<string> Parser::completeParsing(string line){
 
 	//Process Parsing 
 	parseActions(splittedUserInputs);
+	for(int i = 0; i <parsedInputs.size();i++) {
+		cout<< parsedInputs[i]<<endl;
+	}
 
 	return parsedInputs;
 }

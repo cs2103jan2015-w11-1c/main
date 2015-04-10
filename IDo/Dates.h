@@ -34,8 +34,9 @@ public:
 	bool checkDateWithToday();
 	string getFormattedDates();
 	string getTodayDate();
-
-
+	int checkDay(string);
+	string datesGivenDays(string, string);
+	string datesFromToday(int);
 };
 
 #endif

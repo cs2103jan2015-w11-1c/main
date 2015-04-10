@@ -88,6 +88,8 @@ private:
 
 	bool setMissingDateTime();
 	bool storeTaskContent(int, int, vector<string>);
+
+
 	
 public:
 	//Stores information that has been parsed

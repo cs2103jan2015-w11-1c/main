@@ -15,10 +15,12 @@ private:
 	vector <Task> _listOfFoundTasks;
 	vector <int> _listOfFoundTaskNum;
 	int _noOfFoundTasks;
+	int searchForWord(vector<string>);
 
 public:
 	void setSearchWord(string);
 	void execute(vector<Task>);
+	vector<string> stringToTokens(string);
 	bool foundWord(string);
 	vector<Task> getListOfFoundTasks();
 	vector <int> getListOfFoundTaskNum();

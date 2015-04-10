@@ -8,16 +8,10 @@ void Search::setSearchWord(string userInput) {
 //Pre-condition: takes in a vector of task objects from logic
 //looks through the tasks according to task name
 void Search::execute(vector <Task> taskListFromLogic) {
-	//vector <Task>::iterator iter;
-	//for (iter = taskListFromLogic.begin(); iter != taskListFromLogic.end(); iter++)
-	//{
-	//	if (foundWord((*iter).getTaskName()))
-	//	{
-	//		_listOfFoundTasks.push_back((*iter));
-	//	}
-	//}
+	
 	int i;
 	for (i = 0; i < taskListFromLogic.size(); i++) {
+		//cout << "searching in " << taskListFromLogic[i].getTaskName() << endl;
 		if (foundWord(taskListFromLogic[i].getTaskName())) {
 			_listOfFoundTasks.push_back(taskListFromLogic[i]);
 			_listOfFoundTaskNum.push_back(i+1);
@@ -26,32 +20,108 @@ void Search::execute(vector <Task> taskListFromLogic) {
 	_noOfFoundTasks = _listOfFoundTasks.size();
 }
 
+vector <string> Search::stringToTokens(string taskname) {
+	vector<string> tokenisedTaskName;
+	char* ptr = (char*)taskname.c_str();
+	char *tokens;
+	tokens = strtok(ptr, " ,-");
+	while (tokens != NULL) {
+		//cout << "tokens: " << tokens << endl;
+		tokenisedTaskName.push_back(tokens);
+		tokens = strtok(NULL, " ,-");
+	}
+	return tokenisedTaskName;
+}
+
+int Search::searchForWord(vector<string> tokenisedTaskName) {
+	vector <string>::iterator iter = tokenisedTaskName.begin();
+	int foundIndex = 0;
+	while (iter != tokenisedTaskName.end()) {
+		int size = (*iter).size();	//length of 1 word
+		int i = 0;
+		
+		while (i < size) {
+			foundIndex = ((*iter).substr(i)).find(_searchword);
+			//cout << "foundIndex : " << foundIndex << endl;
+			if (foundIndex != -1) {
+				 return foundIndex;
+			} else {
+				i++;
+			}
+		}
+
+		iter++;
+	}
+	return foundIndex;
+}
+
 //Pre condition: takes in the task name of task in list
 //conducts the matching of task name with the word to be searched
 //returns true if word is found, false otherwise
 bool Search::foundWord(string taskname) {
-	bool found = false;
 
-	vector <string> tokenisedTaskName;
-
-	char* ptr = (char*)taskname.c_str();
-	char *tokens;
-	tokens = strtok(ptr, " ,.-");
-	while (tokens != NULL) {
-		//cout << "tokens: " << tokens << endl;
-		tokenisedTaskName.push_back(tokens);
-		tokens = strtok(NULL, " ,.-");
-	}
-	
-	vector <string>::iterator iter = tokenisedTaskName.begin();
-	while (iter != tokenisedTaskName.end() && !found) {
-		if (*(iter) == _searchword) {
-			found = true;
+	int whiteSpaceIndex;
+	//cout << _searchword << "search word size: " << _searchword.size() << endl;
+	if (_searchword.size() == 1) {	//single first character search
+		if (taskname[0] == _searchword[0]) {
+			return true;
+		} else {
+			return false;
 		}
-		iter++;
 	}
-	return found;
+	else if (_searchword.size() > 1) {
+
+		vector <string> tokenisedTaskName;;
+		tokenisedTaskName = stringToTokens(taskname);
+
+		whiteSpaceIndex = _searchword.find_first_of(" ");
+
+		//cout << "whitespace index" << whiteSpaceIndex << endl;
+
+		if (whiteSpaceIndex == -1) {	//search word is 1 word
+			int i = searchForWord(tokenisedTaskName);
+			if (i != -1) {
+				return true;
+			} else {
+				return false;
+			}
+
+		}
+		else {	//search more than 1 word
+			int i = 0;
+			vector<string> tokenisedSearchWord = stringToTokens(_searchword);
+			int size = tokenisedSearchWord.size();
+			int size2 = tokenisedTaskName.size();
+
+			//cout << "i " << i << endl;
+			bool foundfirst = false;
+			while (!foundfirst && i < size2) {
+				if (tokenisedSearchWord[0] == tokenisedTaskName[i]) {
+					foundfirst = true;
+				}
+				else {
+					i++;
+				}
+			}
+			//cout << "i " << i << endl;
+			if (foundfirst && i < size2 - 1) {
+				bool running = true;
+				for (int j = 0; j < size && running && i < size2; j++) {
+					if (tokenisedSearchWord[j] == tokenisedTaskName[i]) {
+						i++;
+					}
+					else {
+						running = false;
+					}
+				}
+				return running;
+			} else {
+				return false;
+			}
+		}
+	}
 }
+
 
 vector <Task> Search::getListOfFoundTasks() {
 	return _listOfFoundTasks;

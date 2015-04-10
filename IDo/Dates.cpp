@@ -19,17 +19,8 @@ string Dates::getTodayDate(){
 	month  = localTime.tm_mon + 1;
 	year   = localTime.tm_year + 1900;
 
-	char buffer [10];
-	_itoa_s(day,buffer,10);
-	string day1 = buffer;
-	_itoa_s(month,buffer,10);
-	string month1 = buffer;
-	_itoa_s(year,buffer,10);
-	string year1 = buffer;
-
 	date d(year, month, day);
 	todayDate = to_simple_string(d);
-//	todayDate = year1 + '/' + month1 + '/'+ day1;
 
 	return todayDate;
 }
@@ -126,6 +117,47 @@ bool Dates::storeDates(string tempYear, string tempMth, string tempDay){
 	return true;
 }
 
+
+int Dates::checkDay(string daysInName) {
+	if(daysInName == "mon" || daysInName == "monday") {
+		return 1;
+	} else if (daysInName == "tues" || daysInName == "tuesday") {
+		return 2;
+	} else if (daysInName == "wed" || daysInName == "wednesday") {
+		return 3;
+	} else if (daysInName == "thurs" || daysInName == "thursday") {
+		return 4;
+	} else if (daysInName == "fri" || daysInName == "friday") {
+		return 5;
+	} else if (daysInName == "sat" || daysInName == "saturday") {
+		return 6;
+	} else if (daysInName == "sun" || daysInName == "sunday") {
+		return 7;
+	} else {
+		return 8;
+	}
+}
+
+string Dates::datesGivenDays(string inputDate, string daysInName) {
+
+	date d(from_string(inputDate));
+
+	greg_weekday day(checkDay(daysInName));
+	
+	string date = to_simple_string(next_weekday(d, day));
+
+	return date;
+}
+
+string Dates::datesFromToday(int numberOfDays){
+	date d1(from_simple_string(todayDate));
+	date_duration dd(numberOfDays);
+	string newDate;
+	newDate = to_simple_string(d1 + dd);
+
+	return newDate;
+}
+
 //Post: Returns a string of date in the format of year/month/day
 bool Dates::checkDateFormat(string input){
 	
@@ -137,13 +169,6 @@ bool Dates::checkDateFormat(string input){
 //		cout << "Error: Date format1 is wrong." <<endl;
 		return false;
 	} else {
-		char buffer [10];
-		_itoa_s(day,buffer,10);
-		string day1 = buffer;
-		_itoa_s(month,buffer,10);
-		string month1 = buffer;
-		_itoa_s(year,buffer,10);
-		string year1 = buffer;
 
 		date d(year, month, day);
 

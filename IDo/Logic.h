@@ -37,6 +37,7 @@ private:
 	void getParsedInformation(string);
 	void printMessage(string message);
 	void addTask();
+	int searchNextRecurringIndex();
 	void deleteTask();
 	void editTask();
 	void markTask();

@@ -35,6 +35,7 @@ void Storage::updateFile (vector <Task> &temp, bool isUndoTrue) {
 	int _size = temp.size();
 	for (int i = 0 ; i < _size ; i++) {
 		writeFile << temp[i].getTaskName() << endl;
+		writeFile << temp[i].getRecurringIndex() << endl;
 		if (!temp[i].getStartDate().empty()) {
 			writeFile << temp[i].getStartDate() << endl;
 			writeFile << temp[i].getStartTime() << endl;
@@ -80,7 +81,9 @@ void Storage::updateFile (vector <Task> &temp, bool isUndoTrue) {
 	writeFile << "__________" << endl;
 	}
 
-	writeFile << "_____" << endl;
+	if (_size > 0) {
+		writeFile << "_____" << endl;
+	}
 	writeFile.close();
 }
 
@@ -88,6 +91,7 @@ void Storage::readFile (vector <Task> &temp, bool isUndoTrue) {
 	string fileName;
 	string line;
 	string taskName;
+	int recurringIndex;
 	string startDate;
 	string startTime;
 	string endDate;
@@ -117,22 +121,24 @@ void Storage::readFile (vector <Task> &temp, bool isUndoTrue) {
 			Task task;
 			int size = tempTask.size();
 			taskName = tempTask[0];
+			recurringIndex = atoi(tempTask[1].c_str());
 			task.setTaskName(taskName);
-	
-			if (size == 8) {
-				startDate = tempTask[1];
-				startTime = tempTask[2];
-				endDate = tempTask[3];
-				endTime = tempTask[4];
+			task.setRecurringIndex(recurringIndex);
+			
+			if (size == 9) {
+				startDate = tempTask[2];
+				startTime = tempTask[3];
+				endDate = tempTask[4];
+				endTime = tempTask[5];
 				task.setStartDate(startDate);
 				task.setStartTime(startTime);
 				task.setEndDate(endDate);
 				task.setEndTime(endTime);
 			}
 	
-			if (size == 6) {
-				endDate = tempTask[1];
-				endTime = tempTask[2];
+			if (size == 7) {
+				endDate = tempTask[2];
+				endTime = tempTask[3];
 				task.setEndDate(endDate);
 				task.setEndTime(endTime);
 			}

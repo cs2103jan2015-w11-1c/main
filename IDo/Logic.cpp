@@ -1,6 +1,5 @@
 #include "Logic.h"
 
-
 const string SUCCESSFULLY_MARKED = "[Marked Successfully]";
 const string SUCCESSFULLY_ADDED = "[Added Successfully]";
 const string SUCCESSFULLY_EDITED = "[Edited Successfully]";
@@ -44,9 +43,12 @@ void Logic::addTask() {
 		if(!add.isRecurring(_parsedInformation)){
 			_listOfTasks.push_back(add.getTask());
 		} else {
-			int size = add.getOccurrences().size();
+			vector <Task> temp = add.getOccurrences();
+			int size = temp.size();
+			int index = searchNextRecurringIndex();
 			for(int i = 0; i < size; i++) {
-				_listOfTasks.push_back(add.getOccurrences()[i]);
+				temp[i].setRecurringIndex(index);
+				_listOfTasks.push_back(temp[i]);
 			}
 		}
 		view.viewDefault(_listOfTasks);
@@ -56,6 +58,19 @@ void Logic::addTask() {
 	} else {
 		printMessage(ERROR_WRONG_INPUT);
 	}
+}
+
+int Logic::searchNextRecurringIndex() {
+	int index = 0; 
+	int temp;
+	int size = _listOfTasks.size();
+	for (int i = 0 ; i < size; i++) {
+		temp = _listOfTasks[i].getRecurringIndex();
+		if (temp > index) {
+			index = temp;
+		}
+	}
+	return index + 1;
 }
 
 void Logic::deleteTask() {

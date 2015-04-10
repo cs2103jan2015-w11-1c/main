@@ -17,7 +17,7 @@ void Logic::undo() {
 	View view;
 	_listOfTasks.clear();
 	_storage.readFile(_listOfTasks,1);
-	view.viewDefault(_listOfTasks);
+	view.viewDefault(_listOfTasks,_dates.getTodayDate());
 }
 
 void Logic::backup() {
@@ -51,7 +51,7 @@ void Logic::addTask() {
 				_listOfTasks.push_back(temp[i]);
 			}
 		}
-		view.viewDefault(_listOfTasks);
+		view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		view.viewSelectedOne(_listOfTasks, _listOfTasks.size());
 		printMessage(SUCCESSFULLY_ADDED);
 		updateStorage();	
@@ -62,10 +62,11 @@ void Logic::addTask() {
 
 int Logic::searchNextRecurringIndex() {
 	int index = 0; 
-	int temp;
+	int temp = 1;
 	int size = _listOfTasks.size();
 	for (int i = 0 ; i < size; i++) {
 		temp = _listOfTasks[i].getRecurringIndex();
+		temp = i;
 		if (temp > index) {
 			index = temp;
 		}
@@ -80,7 +81,7 @@ void Logic::deleteTask() {
 
 	if (remove.isValidInput(_parsedInformation, _listOfTasks.size())) {
 		remove.execute(_parsedInformation, _listOfTasks);
-		view.viewDefault(_listOfTasks);
+		view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		printMessage(SUCCESSFULLY_DELETED);
 		updateStorage();
 	}
@@ -98,7 +99,7 @@ void Logic::editTask() {
 	if (edit.execute(_parsedInformation, _listOfTasks)) {
 		_listOfTasks=edit.getList();
 		editedTaskNumber = atoi(_parsedInformation[1].c_str());
-		view.viewDefault(_listOfTasks);
+		view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		view.viewSelectedOne(_listOfTasks, editedTaskNumber);
 		printMessage(SUCCESSFULLY_EDITED);
 		updateStorage();
@@ -114,7 +115,7 @@ void Logic::markTask() {
 
 	if (mark.isValidInput(_parsedInformation, _listOfTasks.size())) {
 		mark.execute(_parsedInformation, _listOfTasks);
-		view.viewDefault(_listOfTasks);
+		view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		printMessage(SUCCESSFULLY_MARKED);
 		updateStorage();
 	}
@@ -150,6 +151,8 @@ void Logic::viewDecider() {
 		view.viewNotDoneTasks(_listOfTasks);
 	} else if (_parsedInformation[1] == "commands") {
 		viewCommands();
+	} else {
+		view.viewDefault(_listOfTasks,_parsedInformation[1]);
 	}
 }
 

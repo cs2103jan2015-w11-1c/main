@@ -8,9 +8,9 @@
 #include <sstream>
 #include <string>
 #include <Windows.h>
-#include "Logic.h"
 #include "Task.h"
 #include "Dates.h"
+#include "Sort.h"
 
 using namespace std;
 
@@ -21,10 +21,10 @@ private:
 	string _todayDate;
 
 	void printMessage(string);
-	void displayToday(vector <Task> &, int);
+	void displayToday(vector <Task> &, int, string);
 	void printTimedTaskHeader();
 	void displayTimedTask(Task task);
-	void displayDeadline(vector <Task> &, int);
+	void displayDeadline(vector <Task> &, int, string);
 	void printDeadlineTaskHeader();
 	void displayDeadlineTask(Task task);
 	void displayFloating (vector <Task> &, int);
@@ -39,7 +39,7 @@ public:
 	View();
 	void viewSelectedFew(vector<Task>, vector<int>);
 	void viewSelectedOne(vector<Task>, int);
-	void viewDefault(vector<Task> &list);
+	void viewDefault(vector<Task> &list, string);
 	
 	void viewAll(vector <Task> &list);
 	void viewDoneTasks(vector <Task> &list);

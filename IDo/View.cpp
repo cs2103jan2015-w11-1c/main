@@ -11,15 +11,15 @@ void View::printMessage(string message) {
 	cout << endl << message << endl << endl;
 }
 
-void View::displayToday(vector <Task> &list, int size) {
+void View::displayToday(vector <Task> &list, int size, string date) {
 	SetColor(15);
 	cout << "[" << _todayDate << "]" << endl;
 	SetColor(13);
-	cout << "** Today's Timed-Tasks **" << endl << endl;
+	cout << "** " << date << " Timed-Tasks **" << endl << endl;
 	SetColor(7);
 	printTimedTaskHeader();
 	for(int i = 0; i < size; i++) {
-		if(list[i].getStartDate() == _todayDate) {
+		if(list[i].getStartDate() == date) {
 			cout << setw(3) << i+1 << "." << setw(4) << " ";
 			displayTimedTask(list[i]);
 		}
@@ -81,9 +81,9 @@ void View::displayTimedTask(Task task) {
 	}
 }
 
-void View::displayDeadline(vector <Task> &list, int size) {
+void View::displayDeadline(vector <Task> &list, int size, string date) {
 	SetColor(13);
-	cout << "** Upcoming Deadline Tasks **" << endl << endl; 
+	cout << "** Upcoming Deadline Tasks from " << date << " onwards**" << endl << endl; 
 	SetColor(7);
 
 	printDeadlineTaskHeader();
@@ -111,8 +111,10 @@ void View::displayDeadline(vector <Task> &list, int size) {
 		displaySize = 5; 
 	}
 	for (int i = 0 ; i < displaySize ; i++) {
-		cout << setw(3) << indexList[i] << "." << setw(4) << " ";
-		displayDeadlineTask(deadlineList[i]);	
+		if (deadlineList[i].getEndDate() >= date) {
+			cout << setw(3) << indexList[i] << "." << setw(4) << " ";
+			displayDeadlineTask(deadlineList[i]);	
+		}
 	}
 	cout << endl;
 }
@@ -315,10 +317,10 @@ void View::viewSelectedOne(vector<Task> list, int taskNumber) {
 }
 
 // Default view after every command
-void View::viewDefault(vector<Task> &list) {
+void View::viewDefault(vector<Task> &list, string date) {
 	system("CLS");
-	displayToday(list,list.size());
-	displayDeadline(list,list.size());
+	displayToday(list,list.size(),date);
+	displayDeadline(list,list.size(),date);
 	displayFloating(list,list.size());
 }
 

@@ -18,13 +18,13 @@
 #include "Storage.h"
 #include "Sort.h"
 #include "Search.h"
-#include "RTask.h"
 
 using namespace std;
 
 class Logic {
 private:
 	Storage _storage;
+	Dates _dates;
 
 	string _commandChoice;
 	vector<string> _parsedInformation;

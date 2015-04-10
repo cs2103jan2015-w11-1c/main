@@ -3,7 +3,8 @@
 Task::Task(){
 	_status = notdone;
 	_priority = low;
-	_label = "misc";
+	_label = "none";
+	_recurringIndex = 0;
 }
 
 Task::~Task(){
@@ -45,8 +46,8 @@ string Task::getLabel() {
 	return _label;
 }
 
-string Task::getExtra() {
-	return _extra;
+int Task::getRecurringIndex() {
+	return _recurringIndex;
 }
 
 void Task::setTaskName(string name) {
@@ -85,6 +86,6 @@ void Task::setLabel(string label) {
 	_label = label;
 }
 
-void Task::setExtra(string extra) {
-	_extra = extra;
+void Task::setRecurringIndex(int index) {
+	_recurringIndex = index;
 }

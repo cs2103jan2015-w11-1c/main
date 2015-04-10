@@ -26,7 +26,7 @@ private:
 	Status _status;
 	Priority _priority;
 	string _label;
-	string _extra;
+	int _recurringIndex;
 
 public:
 	Task();
@@ -40,7 +40,7 @@ public:
 	Status getStatus();
 	Priority getPriority();
 	string getLabel();
-	string getExtra();
+	int getRecurringIndex();
 	void setTaskName(string name);
 	void setStartDate(string date);
 	void setStartTime(string time);
@@ -50,7 +50,7 @@ public:
 	void setStatus(Status state);
 	void setPriority(Priority priority);
 	void setLabel(string label);
-	void setExtra(string extra);
+	void setRecurringIndex(int index);
 };
 
 #endif

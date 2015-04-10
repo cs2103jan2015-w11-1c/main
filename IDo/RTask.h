@@ -19,7 +19,6 @@ private:
 	int _limit;
 	Period _period;
 	Period _secPeriod;
-
 	vector <Task> _listOfOccurrences;
 
 public:
@@ -28,17 +27,14 @@ public:
 	vector<Task> getListOfOccurrences();
 
 	void setAbstrInfo(vector <string>);
-	void setNoOfOccurrences(int);
-	void setPeriod(string);
-	void setPeriod2(string);
 	void setInterval(int);
-	void setLimit(string);
-
+	void setPeriod(string);
+	void setNoOfOccurrences(int);
 	void setFirstOccur(vector <string>);
-	void stringToIntDate(string, int *day, int *month, int *yr);
-	void generateOccurs();
+	void generateOccursForDeadlineTask();
 	void generateOccursForTimedTask();
-
+	void setPeriod2(string);
+	void setLimit(string);
 };
 
 #endif

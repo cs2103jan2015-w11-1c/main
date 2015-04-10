@@ -150,7 +150,8 @@ string Dates::datesGivenDays(string inputDate, string daysInName) {
 }
 
 string Dates::datesFromToday(int numberOfDays){
-	date d1(from_simple_string(todayDate));
+
+	date d1(from_simple_string(getTodayDate()));
 	date_duration dd(numberOfDays);
 	string newDate;
 	newDate = to_simple_string(d1 + dd);

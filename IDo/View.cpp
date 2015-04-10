@@ -107,13 +107,12 @@ void View::displayDeadline(vector <Task> &list, int size, string date) {
 	}
 
 	int displaySize = deadlineList.size();
-	if (displaySize > 5) {   // only the next 5 deadline tasks will be displayed
-		displaySize = 5; 
-	}
-	for (int i = 0 ; i < displaySize ; i++) {
+	int j = 0; 
+	for (int i = 0 ; i < displaySize && j < 5; i++) {
 		if (deadlineList[i].getEndDate() >= date) {
 			cout << setw(3) << indexList[i] << "." << setw(4) << " ";
 			displayDeadlineTask(deadlineList[i]);	
+			j++;
 		}
 	}
 	cout << endl;

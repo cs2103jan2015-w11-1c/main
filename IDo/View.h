@@ -44,6 +44,7 @@ public:
 	void viewAll(vector <Task> &list);
 	void viewDoneTasks(vector <Task> &list);
 	void viewNotDoneTasks(vector <Task> &list);
+	void viewPriority(vector <Task> &list, string priority);
 };
 
 #endif

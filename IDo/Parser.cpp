@@ -453,7 +453,6 @@ bool Parser::processAddContent(vector<string> inputs) {
 	int size = inputs.size();
 
 	if(checkTimedTask()){
-//		cout << "timetask" << endl;
 		storeTaskContent(0, fromPosition-1, inputs);
 		parsedInputs.push_back(_taskContent);
 		parsedInputs.push_back(_startDate);
@@ -466,20 +465,16 @@ bool Parser::processAddContent(vector<string> inputs) {
 		}
 
 	} else if (checkDeadlineTask()) {
-//		cout << "inputisdeadlinetask" << endl;
 		storeTaskContent(0, byPosition-1, inputs);
-//		cout << "taskcontent:" << _taskContent << endl;
 		parsedInputs.push_back(_taskContent);
 		parsedInputs.push_back(_endDate);
 		parsedInputs.push_back(_endTime);
 
 		if(checkRecurring()){
-//			cout << "checkRecurring is true" << endl;
 			checkRecurringLimit();
 		}
 
 	} else if(checkFloating()) {
-//		cout << "floatingtask" << endl;
 		storeTaskContent(0, size, inputs);
 		cout<<_taskContent << endl;
 		parsedInputs.push_back(_taskContent);
@@ -717,9 +712,6 @@ vector<string> Parser::completeParsing(string line){
 
 	//Process Parsing 
 	parseActions(splittedUserInputs);
-	for(int i = 0; i <parsedInputs.size();i++) {
-		cout<< parsedInputs[i]<<endl;
-	}
 
 	return parsedInputs;
 }

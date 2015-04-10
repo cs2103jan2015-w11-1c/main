@@ -61,17 +61,16 @@ void Logic::addTask() {
 }
 
 int Logic::searchNextRecurringIndex() {
-	int index = 0; 
-	int temp = 1;
 	int size = _listOfTasks.size();
+	int max = 0; 
+	int index; 
 	for (int i = 0 ; i < size; i++) {
-		temp = _listOfTasks[i].getRecurringIndex();
-		temp = i;
-		if (temp > index) {
-			index = temp;
+		index = _listOfTasks[i].getRecurringIndex();
+		if (index > max) {
+			max = index;
 		}
 	}
-	return index + 1;
+	return max + 1;
 }
 
 void Logic::deleteTask() {
@@ -140,19 +139,32 @@ void Logic::viewCommands() {
 	cout << "To change label: mark <task number> <friends/family/misc etc> " << endl;
 }
 
-void Logic::viewDecider() {
+bool Logic::viewDecider() {
 	View view;
+
+	
+	if (_parsedInformation.size() == 1) {
+		return false;
+	}
 	system("CLS");
 	if (_parsedInformation[1] == "all") {
 		view.viewAll(_listOfTasks);
+		return true;
 	} else if (_parsedInformation[1] == "done") {
 		view.viewDoneTasks(_listOfTasks);
+		return true;
 	} else if (_parsedInformation[1] == "notdone") {
 		view.viewNotDoneTasks(_listOfTasks);
+		return true;
 	} else if (_parsedInformation[1] == "commands") {
 		viewCommands();
+		return true;
+	} else if (_parsedInformation[1] == "high" || _parsedInformation[1] == "medium" || _parsedInformation[1] == "low") {
+		view.viewPriority(_listOfTasks,_parsedInformation[1]);
+		return true;
 	} else {
 		view.viewDefault(_listOfTasks,_parsedInformation[1]);
+		return true;
 	}
 }
 
@@ -217,7 +229,9 @@ bool Logic::process(string line) {
 	} else if (_commandChoice == "mark") {
 		markTask();
 	} else if (_commandChoice == "view") {
-		viewDecider();
+		if (!viewDecider()) {
+			cout << ERROR_WRONG_INPUT << endl;
+		}
 	} else if (_commandChoice == "store") {
 		storeChange();
 		updateStorage();

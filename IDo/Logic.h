@@ -42,7 +42,7 @@ private:
 	void editTask();
 	void markTask();
 	void viewCommands();
-	void viewDecider();
+	bool viewDecider();
 	void storeChange();
 	void sortTask();
 	void searchWord();

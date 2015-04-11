@@ -79,7 +79,7 @@ void Logic::deleteTask() {
 	backup();
 
 	if (remove.isValidInput(_parsedInformation, _listOfTasks.size())) {
-		remove.execute(_parsedInformation, _listOfTasks);
+		remove.execute(_listOfTasks);
 		view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		printMessage(SUCCESSFULLY_DELETED);
 		updateStorage();
@@ -252,6 +252,6 @@ bool Logic::process(string line) {
 	return true;
 }
 
-vector<Task> Logic::getListofTasks(){
+vector<Task> Logic::getListOfTasks(){
 	return _listOfTasks;
 }

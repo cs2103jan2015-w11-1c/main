@@ -98,8 +98,9 @@ void UserInterface::instructMessage() {
 	cout << setw(15) << "view" << endl << endl;
 
 	SetColor1(7);
-	cout << "Data will be stored by default in the file path specified in"
-		 << "filename.txt" << endl << endl << "Let's get started!" << endl;
+	cout << "Data will be stored by default in the file path specified in "
+		 << endl << "filename.txt" << endl << endl << "Let's get started!" 
+		 << endl;
 }
 
 void UserInterface::process() {

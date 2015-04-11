@@ -327,7 +327,7 @@ void View::viewSelectedOne(vector<Task> list, int taskNumber) {
 
 // Default view after every command
 void View::viewDefault(vector<Task> &list, string date) {
-	system("CLS");
+//	system("CLS");
 	displayToday(list,list.size(),date);
 	displayDeadline(list,list.size(),date);
 	displayFloating(list,list.size());

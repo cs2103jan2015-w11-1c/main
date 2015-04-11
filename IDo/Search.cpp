@@ -8,26 +8,20 @@ void Search::setSearchWord(string userInput) {
 
 bool Search::isSearchDate() {
 	Dates d;
-	//cout << "sakdlak" << endl;
-	//cout << d.checkDateFormat(_searchword) << endl;
+
 	if (d.checkDateFormat(_searchword)) {
-		_searchword = d.getFormattedDates();
-		//cout << "sakdlak" << d.getFormattedDates();
+		if(d.isDateValid(_searchword)) {
+			_searchword = d.getFormattedDates();
+		} else {
+			cout<<"searching task instead...."<<endl;
+			return false;
+		}
 	} else {
-		//cout << "wrong date" << endl;
 		return false;
 	}
+
 	return true;
-	/*
-	if (_searchWordSize >= 8 && _searchWordSize <= 10) {
-		if (_searchword[4] == '/') {
-			cout << "slash at 4" << endl;
-			if (_searchword[6] == '/' || _searchword[7] == '/') {
-				return true;
-			} 
-		}
-	} 
-	return false;*/
+
 }
 
 bool Search::foundDate(string date) {
@@ -160,7 +154,10 @@ bool Search::foundWord(string taskname) {
 				return false;
 			}
 		}
+	} else {
+		return false;
 	}
+
 }
 
 

@@ -171,8 +171,6 @@ bool Dates::checkDateFormat(string input){
 		return false;
 	} 
 
-		//dateCheckedFormat =  year1 + '/' + month1 + '/' + day1;
-
 	return true;
 }
 

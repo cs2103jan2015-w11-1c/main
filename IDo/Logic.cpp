@@ -40,6 +40,7 @@ void Logic::addTask() {
 	View view;
 	backup();
 	if (add.execute(_parsedInformation)) {
+
 		if(!add.isRecurring(_parsedInformation)){
 			_listOfTasks.push_back(add.getTask());
 		} else {
@@ -51,10 +52,12 @@ void Logic::addTask() {
 				_listOfTasks.push_back(temp[i]);
 			}
 		}
+
 		view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		view.viewSelectedOne(_listOfTasks, _listOfTasks.size());
 		printMessage(SUCCESSFULLY_ADDED);
 		updateStorage();
+
 	} else {
 		printMessage(ERROR_WRONG_INPUT);
 	}
@@ -144,7 +147,9 @@ bool Logic::viewDecider() {
 	if (_parsedInformation.size() == 1) {
 		return false;
 	}
+
 	system("CLS");
+
 	if (_parsedInformation[1] == "all") {
 		view.viewAll(_listOfTasks);
 		return true;
@@ -177,8 +182,7 @@ void Logic::sortTask() {
 	if (sort.execute(_parsedInformation, _listOfTasks)) {
 		_listOfTasks = sort.getSortedList();
 		cout << endl << SUCCESSFULLY_SORTED << endl;
-	}
-	else {
+	} else {
 		printMessage(ERROR_WRONG_INPUT);
 	}
 }

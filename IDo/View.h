@@ -8,10 +8,10 @@
 #include <sstream>
 #include <string>
 #include <Windows.h>
-#include "Task.h"
 #include "Dates.h"
 #include "Sort.h"
 #include "Parser.h"
+#include "Task.h"
 
 using namespace std;
 

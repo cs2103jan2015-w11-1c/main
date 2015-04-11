@@ -17,8 +17,8 @@ bool Add::isRecurring(vector <string> parsedInfo) {
 bool Add::execute(vector<string> parsedInformation){
 	int size = parsedInformation.size();
 
-	for (int i = 0; i < size; i++) {
-		cout << parsedInformation[i] << endl;
+	if(size == 1) {
+		return false;
 	}
 
 	if (isRecurring(parsedInformation)) {	//check if it's command for recurring

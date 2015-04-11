@@ -22,7 +22,7 @@ private:
 
 	vector<string> store;
 	bool checkDelimiters(string date);
-	bool checkYearMthDayFormat();
+	bool checkYearMthDayFormat();;
 	bool storeDates(string, string, string);
 
 public:

@@ -188,23 +188,23 @@ bool Parser::checkTimedTask(){
 		}
 
 		setMissingDateTime();
-	}
 
-	//Return false if start date is larger than end date
-	if(compareDates(_startDate,_endDate)) {
-		valid = false;
-	}
+			//Return false if start date is larger than end date
+		if(compareDates(_startDate,_endDate)) {
+			valid = false;
+		}
 	
-	//Return false if start time is larger than end time
-	if(_startDate == _endDate && compareTimes(_startTime,_endTime)) {
-		valid = false;
-	}
+		//Return false if start time is larger than end time
+		if(_startDate == _endDate && compareTimes(_startTime,_endTime)) {
+			valid = false;
+		}
 
-	if(!checkTimeIfDateIsToday(_startDate, _startTime)){
-		cout << "Error: You should start on your task NOW!" <<endl;
-		valid = false;
-	}
+		if(!checkTimeIfDateIsToday(_startDate, _startTime)){
+			cout << "Error: You should start on your task NOW!" <<endl;
+			valid = false;
+		}
 
+	}
 	return valid;
 }
 
@@ -257,9 +257,6 @@ bool Parser::checkDeadlineTask(){
 	} else if (byPosition == -1) {
 		return false;
 	}
-	else {
-		valid = true;
-	}
 
 	if(valid == true) {
 		for(int i = byPosition+1 ; i < size ; i++) {
@@ -279,13 +276,12 @@ bool Parser::checkDeadlineTask(){
 		if(_endTime.empty()) {
 			_endTime = "2359";
 		}
-	}
 
-	if(!checkTimeIfDateIsToday(_endDate, _endTime)){
-		cout << "You Missed Your DEADLINE!" <<endl;
-		valid = false;
+		if(!checkTimeIfDateIsToday(_endDate, _endTime)){
+			cout << "You Missed Your DEADLINE!" <<endl;
+			valid = false;
+		}
 	}
-
 	return valid;
 }
 
@@ -351,6 +347,8 @@ bool Parser::checkRecurring() {
 	return validRecurring;
 }
 
+//Post: Returns true if after the word "for", the second word is a digit and the 
+//		third word is a day/month/year	
 bool Parser::checkRecurringLimit() {
 
 	string keyWord = "for";
@@ -368,7 +366,7 @@ bool Parser::checkRecurringLimit() {
 			valid = true;
 		}
 	}
-
+                                                                                	      
 	if(valid == true) {
 		parsedInputs.push_back(keyWord);
 		parsedInputs.push_back(duration);

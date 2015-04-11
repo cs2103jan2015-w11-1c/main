@@ -361,3 +361,26 @@ void View::viewNotDoneTasks(vector <Task> &list) {
 	}
 	cout << endl;
 }
+
+void View::viewPriority(vector <Task> &list, string priority) {
+	printMessage(DISPLAYING);
+	printHeader();
+	int _size = list.size();
+	Priority enumPriority;
+
+	if (priority == "high") {
+		enumPriority = high;
+	} else if (priority == "medium") {
+		enumPriority = medium;
+	} else {
+		enumPriority = low;
+	}
+
+	for (int i = 0; i < _size; i++) {
+		if (list[i].getPriority() == enumPriority) {
+			cout << setw(3) << i + 1 << ".";
+			display(list[i]);
+		}
+	}
+	cout << endl;
+}

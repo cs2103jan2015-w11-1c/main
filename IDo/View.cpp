@@ -83,7 +83,7 @@ void View::displayTimedTask(Task task) {
 
 void View::displayDeadline(vector <Task> &list, int size, string date) {
 	SetColor(13);
-	cout << "** Upcoming Deadline Tasks from " << date << " onwards**" << endl << endl; 
+	cout << "** Upcoming Deadline Tasks from " << date << " onwards **" << endl << endl; 
 	SetColor(7);
 
 	printDeadlineTaskHeader();
@@ -133,10 +133,20 @@ void View::printDeadlineTaskHeader() {
 
 // Print out deadline tasks
 void View::displayDeadlineTask(Task task) {
+	Parser parser;
 	int spacing;
+	string _todayDate;
+	bool valid = false;
+	parser.compareDates(_todayDate, task.getDeadline());
 
 	if(task.getStartTime().empty() && !task.getEndTime().empty()){
+		if(valid) {
+		SetColor(12);
 		cout << task.getEndDate() << " " << task.getEndTime();
+		SetColor(7);
+		} else {
+			cout << task.getEndDate() << " " << task.getEndTime();
+		}
 	} 
 
 	if (task.getStatus() == notdone) {

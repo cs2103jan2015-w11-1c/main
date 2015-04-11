@@ -95,7 +95,6 @@ bool Dates::checkYearMthDayFormat(){
 	return true;
 }
 
-
 //Post: Returns true if there are 2/3 pieces of numbers stored.
 //		Stores year, month, day if store size is 3.
 //		Stores month, day if store size is 2.
@@ -166,16 +165,11 @@ bool Dates::checkDateFormat(string input){
 //		cout << "Error: Date format is wrong." <<endl;
 		return false;
 	} 
+
 	if(!checkYearMthDayFormat()){
 //		cout << "Error: Date format1 is wrong." <<endl;
 		return false;
-	} else {
-
-		date d(year, month, day);
-
-		dateCheckedFormat = to_simple_string(d);
-		//dateCheckedFormat =  year1 + '/' + month1 + '/' + day1;
-	}
+	} 
 
 	return true;
 }
@@ -186,7 +180,15 @@ bool Dates::isDateValid(string dateinput){
 
 	if(!checkDateFormat(dateinput)) {
 		return false;
-	} 
+	} else {
+		try{
+			date d(year, month, day);
+			dateCheckedFormat = to_simple_string(d);
+		} catch (exception& e) {
+			cout<< "[ERROR] " << e.what() << endl << endl;
+			return false;
+		}
+	}
 	
 	date today = day_clock::local_day();
 

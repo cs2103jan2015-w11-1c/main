@@ -73,7 +73,7 @@ private:
 	bool checkRecurringLimit();
 
 	//Functions to check for validity
-	bool compareDates(string date1, string date2);
+	//bool compareDates(string date1, string date2);
 	bool compareTimes(string time1, string time2); 
 	bool isPossibleTime(string time);
 	bool isTimeFormat(string time);
@@ -95,6 +95,7 @@ private:
 public:
 	//Stores information that has been parsed
 	vector<string> completeParsing(string);
+	bool compareDates(string date1, string date2);
 };
 
 #endif

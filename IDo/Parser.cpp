@@ -91,7 +91,7 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 		
 		case SEARCH:
 			parsedInputs.push_back("search");
-			parsedInputs.push_back(splittedUserInputs[0]);
+			processSearchContent(splittedUserInputs);
 			break;
 
 		case VIEW:
@@ -567,6 +567,27 @@ bool Parser::processSortContent(vector<string> inputs) {
 	} else {
 		return false;
 	}
+
+	return true;
+}
+
+bool Parser::processSearchContent(vector<string> inputs) {
+	int size = inputs.size();
+	string content;
+
+	if(size == 1) {
+		content = inputs[FIRST_WORD];
+		parsedInputs.push_back(content);
+	} else if(size > 1) {
+		for(int i = 0;  i < size; i++){
+			if(i != size -1) { 
+				content += inputs[i] + " ";
+			} else {
+				content += inputs[i];
+			}
+		}
+		parsedInputs.push_back(content);
+	} 
 
 	return true;
 }

@@ -77,7 +77,6 @@ void Logic::deleteTask() {
 	Delete remove;
 	View view;
 	backup();
-
 	if (remove.isValidInput(_parsedInformation, _listOfTasks.size())) {
 		remove.execute(_listOfTasks);
 		view.viewDefault(_listOfTasks,_dates.getTodayDate());
@@ -159,9 +158,9 @@ bool Logic::viewDecider() {
 	} else if (_parsedInformation[1] == "commands") {
 		viewCommands();
 		return true;
-	} else if (_parsedInformation[1] == "high" || _parsedInformation[1] == "medium" || _parsedInformation[1] == "low") {
-		view.viewPriority(_listOfTasks,_parsedInformation[1]);
-		return true;
+	//} else if (_parsedInformation[1] == "high" || _parsedInformation[1] == "medium" || _parsedInformation[1] == "low") {
+		//view.viewPriority(_listOfTasks,_parsedInformation[1]);
+		//return true;
 	} else {
 		view.viewDefault(_listOfTasks,_parsedInformation[1]);
 		return true;
@@ -187,7 +186,7 @@ void Logic::sortTask() {
 
 void Logic::searchWord() {
 	Search search;
-
+	
 	search.setSearchWord(_parsedInformation[1]);
 	search.execute(_listOfTasks);
 
@@ -196,6 +195,8 @@ void Logic::searchWord() {
 		vector <int> listOfFoundTaskNum;
 		listOfFoundTasks = search.getListOfFoundTasks();
 		listOfFoundTaskNum = search.getListOfFoundTaskNum();
+
+		system("CLS");
 
 		View printFoundTasks;
 		printFoundTasks.viewSelectedFew(listOfFoundTasks, listOfFoundTaskNum);

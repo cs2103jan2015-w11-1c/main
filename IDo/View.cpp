@@ -301,7 +301,7 @@ void View::viewSelectedFew(vector<Task> list, vector<int> taskNum) {
 	printHeader();
 	int size = list.size();
 	for (int i = 0; i < size; i++) {
-		cout << taskNum[i] << "." << setw(3) << "   ";
+		cout << setw(3) << taskNum[i] << ".";
 		display(list[i]);
 	}
 	cout << endl;

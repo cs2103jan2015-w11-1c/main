@@ -63,6 +63,7 @@ private:
 	bool processMarkContent(vector<string> inputs);
 	bool processView(vector<string> inputs);
 	bool processSortContent(vector<string> inputs);
+	bool processSearchContent(vector<string> inputs);
 	vector<string> getParsedInputs();
 
 	bool checkTimedTask();

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "Logic.h"
+#include <algorithm>
 #include "Task.h"
 
 using namespace std;

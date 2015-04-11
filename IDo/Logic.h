@@ -8,12 +8,12 @@
 #include <sstream>
 #include <assert.h>
 
-#include "Parser.h"
 #include "Add.h"
 #include "Delete.h"
 #include "Task.h"
 #include "Edit.h"
 #include "Mark.h"
+#include "Parser.h"
 #include "View.h"
 #include "Storage.h"
 #include "Sort.h"

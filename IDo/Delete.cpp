@@ -72,9 +72,7 @@ void Delete::execute(vector<Task> &taskList) {
 			taskIndexToDelete.push_back((atoi(parsedInfo[i].c_str()))-1);
 		}
 	} else {    //deleting recurring tasks
-		deleteRecurring(taskList);
-
-		
+		deleteRecurring(taskList);	
 	}
 	
 	size = taskIndexToDelete.size();

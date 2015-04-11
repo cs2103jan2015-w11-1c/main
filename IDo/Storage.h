@@ -2,6 +2,7 @@
 #define STORAGE_H
 
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <vector>
 #include <string>
@@ -15,6 +16,12 @@ class Storage {
 private:
 	string _storageFileName;
 	static const string BACKUP;
+
+	string dateAndTime (Task , bool);
+	string priorityDecider (Priority);
+	string statusDecider (Status);
+	void setTempStatus(Task &, string);
+	void setTempPriority(Task &, string);
 
 public:
 	Storage();

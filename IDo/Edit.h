@@ -11,17 +11,33 @@ using namespace std;
 
 class Edit {
 private:
+	//Declaration of Objects
+	Dates check;
+
+	//Declaration of Variables
 	vector<Task> _taskList;
 	vector<string> _parsedInformation;
-	int _editNumber;
+
 	string _editType;
 	string _editContent;
+	string _time;
+
+	int _editNumber;
 	int _numberOfTasks;
 	int _parsedInfoSize;
 
+	//Functions
+	bool checkAndProcess();
+	bool isPossibleTime(string time);
+	bool isPossibleTimeFormat(string time);
+	bool isTimeFormat(string time);
+	string getTodayTime();
+	bool compareDates(string date1, string date2);
+	bool compareSameDates(string date1, string date2);
+	void printMessage(string message);
+
 public:
 	bool execute(vector<string> parsedInformation, vector<Task> taskList);
-	bool checkAndProcess();
 	vector<Task> getList();
 };
 

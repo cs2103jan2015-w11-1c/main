@@ -189,7 +189,7 @@ bool Parser::checkTimedTask(){
 
 		setMissingDateTime();
 
-			//Return false if start date is larger than end date
+		//Return false if start date is larger than end date
 		if(compareDates(_startDate,_endDate)) {
 			valid = false;
 		}
@@ -433,7 +433,7 @@ bool Parser::checkThirdWord(int index) {
 
 bool Parser::storeTaskContent(int start, int end, vector<string> inputs) {
 	for(int i = start; i < end; i++) {
-		if(i == inputs.size()){
+		if(i == end-1){
 			_taskContent += inputs[i];
 		} else {
 			_taskContent += inputs[i] + " ";
@@ -602,7 +602,7 @@ bool Parser::compareDates(string date1, string date2) {
 	} 
 
 	date d1(from_simple_string(date1));
-	date d2(from_simple_string(date1));
+	date d2(from_simple_string(date2));
 
 	if(d1 > d2) {
 		cout << endl << "[Error] End Date is before Start Date??" << endl <<endl;

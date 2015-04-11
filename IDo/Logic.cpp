@@ -3,6 +3,7 @@
 const string SUCCESSFULLY_MARKED = "[Marked Successfully]";
 const string SUCCESSFULLY_ADDED = "[Added Successfully]";
 const string SUCCESSFULLY_EDITED = "[Edited Successfully]";
+const string NOT_EDITED = "[Editing NOT Successful]";
 const string SUCCESSFULLY_DELETED = "[Deleted Successfully]";
 const string SUCCESSFULLY_CLEARED = "[Cleared Successfully]";
 const string SUCCESSFULLY_SORTED = "[Sorted Successfully]";
@@ -93,16 +94,16 @@ void Logic::editTask() {
 	View view;
 	backup();
 
+	view.viewDefault(_listOfTasks,_dates.getTodayDate());
 	int editedTaskNumber;
 	if (edit.execute(_parsedInformation, _listOfTasks)) {
 		_listOfTasks=edit.getList();
 		editedTaskNumber = atoi(_parsedInformation[1].c_str());
-		view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		view.viewSelectedOne(_listOfTasks, editedTaskNumber);
 		printMessage(SUCCESSFULLY_EDITED);
 		updateStorage();
 	} else {
-		cout << "Task NOT edited" << endl;
+		printMessage(NOT_EDITED);
 	}
 }
 

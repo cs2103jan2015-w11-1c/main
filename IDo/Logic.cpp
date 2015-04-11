@@ -141,7 +141,6 @@ void Logic::viewCommands() {
 bool Logic::viewDecider() {
 	View view;
 
-	
 	if (_parsedInformation.size() == 1) {
 		return false;
 	}
@@ -186,21 +185,20 @@ void Logic::sortTask() {
 
 void Logic::searchWord() {
 	Search search;
-	
+	system("CLS");
 	search.setSearchWord(_parsedInformation[1]);
 	search.execute(_listOfTasks);
+	View printFoundTasks;
 
 	if (search.getNoOfFoundTasks() != 0) {
 		vector <Task> listOfFoundTasks;
 		vector <int> listOfFoundTaskNum;
 		listOfFoundTasks = search.getListOfFoundTasks();
 		listOfFoundTaskNum = search.getListOfFoundTaskNum();
-
-		system("CLS");
-
-		View printFoundTasks;
 		printFoundTasks.viewSelectedFew(listOfFoundTasks, listOfFoundTaskNum);
+
 	} else {
+		printFoundTasks.viewDefault(_listOfTasks, _dates.getTodayDate());
 		printMessage(TASK_NOT_FOUND);
 	}
 }

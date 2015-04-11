@@ -13,7 +13,6 @@ bool Search::isSearchDate() {
 		if(d.isDateValid(_searchword)) {
 			_searchword = d.getFormattedDates();
 		} else {
-			cout<<"searching task instead...."<<endl;
 			return false;
 		}
 	} else {

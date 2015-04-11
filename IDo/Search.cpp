@@ -3,21 +3,66 @@
 //takes in a single word to be search
 void Search::setSearchWord(string userInput) {
 	_searchword = userInput;
+	_searchWordSize = _searchword.size();
+}
+
+bool Search::isSearchDate() {
+	Dates d;
+	//cout << "sakdlak" << endl;
+	//cout << d.checkDateFormat(_searchword) << endl;
+	if (d.checkDateFormat(_searchword)) {
+		_searchword = d.getFormattedDates();
+		//cout << "sakdlak" << d.getFormattedDates();
+	} else {
+		//cout << "wrong date" << endl;
+		return false;
+	}
+	return true;
+	/*
+	if (_searchWordSize >= 8 && _searchWordSize <= 10) {
+		if (_searchword[4] == '/') {
+			cout << "slash at 4" << endl;
+			if (_searchword[6] == '/' || _searchword[7] == '/') {
+				return true;
+			} 
+		}
+	} 
+	return false;*/
+}
+
+bool Search::foundDate(string date) {
+	if (_searchword == date) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 //Pre-condition: takes in a vector of task objects from logic
 //looks through the tasks according to task name
 void Search::execute(vector <Task> taskListFromLogic) {
-	
+
 	int i;
-	for (i = 0; i < taskListFromLogic.size(); i++) {
-		//cout << "searching in " << taskListFromLogic[i].getTaskName() << endl;
-		if (foundWord(taskListFromLogic[i].getTaskName())) {
-			_listOfFoundTasks.push_back(taskListFromLogic[i]);
-			_listOfFoundTaskNum.push_back(i+1);
+	if (!isSearchDate()) {
+		for (i = 0; i < taskListFromLogic.size(); i++) {
+			//cout << "searching in " << taskListFromLogic[i].getTaskName() << endl;
+			if (foundWord(taskListFromLogic[i].getTaskName())) {
+				_listOfFoundTasks.push_back(taskListFromLogic[i]);
+				_listOfFoundTaskNum.push_back(i + 1);
+			}
 		}
+		_noOfFoundTasks = _listOfFoundTasks.size();
+	} else {
+		for (i = 0; i < taskListFromLogic.size(); i++) {
+			//cout << "searching date " << taskListFromLogic[i].getEndDate() << endl;
+			if (foundDate(taskListFromLogic[i].getEndDate()) || foundDate(taskListFromLogic[i].getStartDate())) {
+				_listOfFoundTasks.push_back(taskListFromLogic[i]);
+				_listOfFoundTaskNum.push_back(i + 1);
+			}
+		}
+		_noOfFoundTasks = _listOfFoundTasks.size();
 	}
-	_noOfFoundTasks = _listOfFoundTasks.size();
+	
 }
 
 vector <string> Search::stringToTokens(string taskname) {
@@ -68,8 +113,7 @@ bool Search::foundWord(string taskname) {
 		} else {
 			return false;
 		}
-	}
-	else if (_searchword.size() > 1) {
+	} else if (_searchword.size() > 1) {
 
 		vector <string> tokenisedTaskName;;
 		tokenisedTaskName = stringToTokens(taskname);
@@ -86,8 +130,7 @@ bool Search::foundWord(string taskname) {
 				return false;
 			}
 
-		}
-		else {	//search more than 1 word
+		} else {	//search more than 1 word
 			int i = 0;
 			vector<string> tokenisedSearchWord = stringToTokens(_searchword);
 			int size = tokenisedSearchWord.size();
@@ -98,8 +141,7 @@ bool Search::foundWord(string taskname) {
 			while (!foundfirst && i < size2) {
 				if (tokenisedSearchWord[0] == tokenisedTaskName[i]) {
 					foundfirst = true;
-				}
-				else {
+				} else {
 					i++;
 				}
 			}
@@ -109,8 +151,7 @@ bool Search::foundWord(string taskname) {
 				for (int j = 0; j < size && running && i < size2; j++) {
 					if (tokenisedSearchWord[j] == tokenisedTaskName[i]) {
 						i++;
-					}
-					else {
+					} else {
 						running = false;
 					}
 				}

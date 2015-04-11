@@ -12,6 +12,7 @@ using namespace std;
 class Search {
 private:
 	string _searchword;
+	int _searchWordSize;
 	vector <Task> _listOfFoundTasks;
 	vector <int> _listOfFoundTaskNum;
 	int _noOfFoundTasks;
@@ -19,6 +20,8 @@ private:
 
 public:
 	void setSearchWord(string);
+	bool isSearchDate();
+	bool foundDate(string);
 	void execute(vector<Task>);
 	vector<string> stringToTokens(string);
 	bool foundWord(string);

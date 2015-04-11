@@ -50,7 +50,7 @@ private:
 public:
 	void readFromFile();
 	bool process(string);
-	vector<Task> getListofTasks();
+	vector<Task> getListOfTasks();
 };
 
 #endif

@@ -571,6 +571,26 @@ bool Parser::processSortContent(vector<string> inputs) {
 	return true;
 }
 
+bool Parser::processSearchContent(vector<string> inputs) {
+	int size = inputs.size();
+	string content;
+
+	if(size == 1) {
+		content = inputs[FIRST_WORD];
+		parsedInputs.push_back(content);
+	} else if(size > 1) {
+		for(int i = 0; i++; i < size){
+			if(i != size -1) { 
+				content += inputs[i] + " ";
+			} else {
+				content += inputs[i];
+			}
+		}
+	} 
+
+	return true;
+}
+
 vector<string> Parser::getParsedInputs(){
 	return parsedInputs;
 }

@@ -54,7 +54,7 @@ void Logic::addTask() {
 		view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		view.viewSelectedOne(_listOfTasks, _listOfTasks.size());
 		printMessage(SUCCESSFULLY_ADDED);
-		updateStorage();	
+		updateStorage();
 	} else {
 		printMessage(ERROR_WRONG_INPUT);
 	}

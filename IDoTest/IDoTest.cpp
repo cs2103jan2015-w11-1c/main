@@ -18,6 +18,7 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
+//system testing
 namespace IDoTest {
 
 	TEST_CLASS(LogicTest) 
@@ -77,6 +78,7 @@ namespace IDoTest {
 	};
 }
 
+//unit tests
 namespace LogicTest
 {
 	
@@ -111,7 +113,9 @@ namespace LogicTest
 			Assert::AreEqual(expectedstatus, outputstatus);
 			
 			vector <string> parsedInfo;
-			parsedInfo = { "mark", "1", "done" };
+			parsedInfo.push_back("mark");
+			parsedInfo.push_back("1");
+			parsedInfo.push_back("done");
 			
 			Mark markStatus;
 			markStatus.execute(parsedInfo, taskListFromLogic);

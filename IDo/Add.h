@@ -6,18 +6,29 @@
 #include <iostream>
 #include "Task.h"
 #include "RTask.h"
+#include "Log.h"
 
 using namespace std;
 
 class Add {
 private:
+
+	//Declaration of objects
 	Task _task;
+	Log log;
+	RTask rtask;
+
+	//Declaration of variables
 	vector <Task> _listOfOccurrences;
 
 public:
-	Task getTask();
-	vector<Task> getOccurrences();
+
+	//Process Functions
 	bool isRecurring(vector <string>);
-	bool execute(vector<string> parsedInformation);	//for adding nrtask
+	bool execute(vector<string> parsedInformation);	
+
+	//Getter Functions
+	vector<Task> getOccurrences();
+	Task getTask();
 };
 #endif

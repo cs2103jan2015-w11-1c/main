@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Task.h"
 #include "Dates.h"
+#include "Log.h"
 
 enum Period {
 	day, month, year
@@ -12,29 +13,47 @@ enum Period {
 
 class RTask : public Task {
 private:
-	Task _abstract;	//task name, start time, end time
-	Task _occur;	//start date, end date, label, prio, status
+
+	Log log;
+	//Stores task name, start time, end time;
+	Task _abstract;	
+	//Stores start date, end date, label, priority, status
+	Task _occur;	
+
+	//Variables
 	double _noOfOccurrences;
 	int _intervalBtwPeriod;
 	int _limit;
+	int sizeType;
+
 	Period _period;
-	Period _secPeriod;
+	Period _limitingPeriod;
 	vector <Task> _listOfOccurrences;
+
+	date startDate;
+	date endDate;
+	date nextStartDate;
+	date nextEndDate;
 
 public:
 	RTask();
 	~RTask();
-	vector<Task> getListOfOccurrences();
 
-	void setAbstrInfo(vector <string>);
-	void setInterval(int);
-	void setPeriod(string);
-	void setNoOfOccurrences(int);
-	void setFirstOccur(vector <string>);
+	//Setter Function
+	bool setAbstrInfo(vector <string>);
+	bool setInterval(int);
+	bool setPeriod(string);
+	bool setFirstOccur(vector <string>);
+	bool setLimitingPeriod(string);
+	bool setLimit(string);
+	bool setNoOfOccurrences(int);
+
+	//Process Function
 	void generateOccursForDeadlineTask();
 	void generateOccursForTimedTask();
-	void setPeriod2(string);
-	void setLimit(string);
+
+	//Getter Functions
+	vector<Task> getListOfOccurrences();
 };
 
 #endif

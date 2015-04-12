@@ -39,9 +39,13 @@ private:
 	//Error Messages
 	static const string MESSAGE_INVALID_TIME;
 	static const string MESSAGE_INVALID_DATE;
+	static const char* ERROR_TIME_OUT_RANGE;
+	static const char* ERROR_END_TIME_B4_STARTTIME;
 
 	int fromPosition;
 	int byPosition;
+	int toPosition;
+	int everyPosition;
 
 	string _userInputs;	
 	string _userCommand;
@@ -75,17 +79,19 @@ private:
 	bool checkRecurring();
 	bool checkRecurringLimit();
 
+	//Functions for Recurring Feature
+	bool checkSecondWord(int);
+	bool checkNumberOfRepeats(int);
+	bool checkThirdWord(int);
+	
 	//Functions to check for validity
 	//bool compareDates(string date1, string date2);
 	bool compareTimes(string time1, string time2); 
 	bool isPossibleTime(string time);
 	bool isTimeFormat(string time);
 	bool checkTimeIfDateIsToday(string date, string time);
+	bool validDateTime(int index);
 
-	//Functions for Recurring Feature
-	bool checkSecondWord(int);
-	bool checkNumberOfRepeats(int);
-	bool checkThirdWord(int);
 
 	string getTodayTime();
 	int keywordPos(string keyword);

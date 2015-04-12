@@ -27,6 +27,7 @@ private:
 	Log _log;
 	Storage _storage;
 	Dates _dates;
+	View view;
 
 	string _commandChoice;
 	vector<string> _parsedInformation;
@@ -53,6 +54,7 @@ public:
 	void readFromFile();
 	bool process(string);
 	vector<Task> getListOfTasks();
+	void enterToGoDefaultView();
 };
 
 #endif

@@ -7,8 +7,10 @@ const string NOT_EDITED = "[Editing NOT Successful]";
 const string SUCCESSFULLY_DELETED = "[Deleted Successfully]";
 const string SUCCESSFULLY_CLEARED = "[Cleared Successfully]";
 const string SUCCESSFULLY_SORTED = "[Sorted Successfully]";
+const string SUCCESSFULLY_CHANGE_FILE= "[Successfully Changed File Location]";
 const string TASK_NOT_FOUND = "[Task Not Found]";
 const string ERROR_WRONG_INPUT = "Error: Wrong Input!";
+const string ENTER_TO_DEFAULT_VIEW = "Press the ENTER key to go back to default view";
 
 void Logic::updateStorage() {
 	_storage.updateFile(_listOfTasks,0);
@@ -16,7 +18,6 @@ void Logic::updateStorage() {
 
 void Logic::undo() {
 	_log.log("Undo done");
-	View view;
 	_listOfTasks.clear();
 	_storage.readFile(_listOfTasks,1);
 	view.viewDefault(_listOfTasks,_dates.getTodayDate());
@@ -41,7 +42,6 @@ void Logic::printMessage(string message) {
 
 void Logic::addTask() {
 	Add add;
-	View view;
 	backup();
 	if (add.execute(_parsedInformation)) {
 
@@ -65,6 +65,7 @@ void Logic::addTask() {
 		updateStorage();
 
 	} else {
+		view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		printMessage(ERROR_WRONG_INPUT);
 	}
 }
@@ -79,12 +80,12 @@ int Logic::searchNextRecurringIndex() {
 			max = index;
 		}
 	}
+
 	return max + 1;
 }
 
 void Logic::deleteTask() {
 	Delete remove;
-	View view;
 	backup();
 	if (remove.isValidInput(_parsedInformation, _listOfTasks.size())) {
 		_log.log("Logic pass to delete");
@@ -100,7 +101,6 @@ void Logic::deleteTask() {
 
 void Logic::editTask() {
 	Edit edit;
-	View view;
 	backup();
 
 	view.viewDefault(_listOfTasks,_dates.getTodayDate());
@@ -119,18 +119,20 @@ void Logic::editTask() {
 
 void Logic::markTask() {
 	Mark mark;
-	View view;
 	backup();
 
 	if (mark.isValidInput(_parsedInformation, _listOfTasks.size())) {
 		_log.log("Logic pass to mark");
 		mark.execute(_parsedInformation, _listOfTasks);
-		view.viewDefault(_listOfTasks,_dates.getTodayDate());
+		view.viewSelectedFew(mark.getMarkedTasks(), mark.getMarkedTaskIndex());
 		printMessage(SUCCESSFULLY_MARKED);
 		updateStorage();
+		enterToGoDefaultView();
 	}
 	else {
+		view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		printMessage(ERROR_WRONG_INPUT);
+		enterToGoDefaultView();
 	}
 	updateStorage();
 }
@@ -161,15 +163,19 @@ bool Logic::viewDecider() {
 
 	if (_parsedInformation[1] == "all") {
 		view.viewAll(_listOfTasks);
+		enterToGoDefaultView();
 		return true;
 	} else if (_parsedInformation[1] == "done") {
 		view.viewDoneTasks(_listOfTasks);
+		enterToGoDefaultView();
 		return true;
 	} else if (_parsedInformation[1] == "notdone") {
 		view.viewNotDoneTasks(_listOfTasks);
+		enterToGoDefaultView();
 		return true;
 	} else if (_parsedInformation[1] == "commands") {
 		viewCommands();
+		enterToGoDefaultView();
 		return true;
 	} else {
 		view.viewDefault(_listOfTasks,_parsedInformation[1]);
@@ -178,8 +184,13 @@ bool Logic::viewDecider() {
 }
 
 void Logic::storeChange() {
+	string filename;
 	_log.log("Logic call storage to change storage file name");
-	_storage.editStorageFileName(_parsedInformation[1]);
+	view.viewDefault(_listOfTasks,_dates.getTodayDate());
+	filename = _parsedInformation[1] + ".txt";
+	_storage.editStorageFileName(filename);
+	cout << "New File Storage: " << filename << endl; 
+	printMessage(SUCCESSFULLY_CHANGE_FILE);
 }
 
 void Logic::sortTask() {
@@ -189,15 +200,16 @@ void Logic::sortTask() {
 	if (sort.execute(_parsedInformation, _listOfTasks)) {
 		_log.log("Logic pass to sort");
 		_listOfTasks = sort.getSortedList();
-		cout << endl << SUCCESSFULLY_SORTED << endl;
+	//	view.viewDefault(_listOfTasks,_dates.getTodayDate());
+		printMessage(SUCCESSFULLY_SORTED);
 	} else {
+		view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		printMessage(ERROR_WRONG_INPUT);
 	}
 }
 
 void Logic::searchWord() {
 	Search search;
-	system("CLS");
 	search.setSearchWord(_parsedInformation[1]);
 	search.execute(_listOfTasks);
 	View printFoundTasks;
@@ -209,10 +221,25 @@ void Logic::searchWord() {
 		listOfFoundTasks = search.getListOfFoundTasks();
 		listOfFoundTaskNum = search.getListOfFoundTaskNum();
 		printFoundTasks.viewSelectedFew(listOfFoundTasks, listOfFoundTaskNum);
-
+		enterToGoDefaultView();
 	} else {
 		printFoundTasks.viewDefault(_listOfTasks, _dates.getTodayDate());
 		printMessage(TASK_NOT_FOUND);
+	 }
+}
+
+void Logic::enterToGoDefaultView() {
+	string userInput;
+	printMessage(ENTER_TO_DEFAULT_VIEW);
+
+	char one;
+	cin.get(one);
+	if (one == '\n') {
+		view.viewDefault(_listOfTasks,_dates.getTodayDate());
+	} else {
+		getline(cin, userInput);
+		userInput = one + userInput;
+		process(userInput);
 	}
 }
 
@@ -224,6 +251,12 @@ void Logic::readFromFile() {
 // Processes the command and inputs passed from UI
 bool Logic::process(string line) {
 
+	if(line.empty()){
+		cout << "[ERROR] No Input" << endl;
+		enterToGoDefaultView();
+		return true;
+	}
+	
 	getParsedInformation(line);
 	_commandChoice = _parsedInformation[0];
 
@@ -237,13 +270,14 @@ bool Logic::process(string line) {
 		editTask();
 	} else if (_commandChoice == "clear") {
 		_listOfTasks.clear();
+		view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		printMessage(SUCCESSFULLY_CLEARED);
 		updateStorage();
 	} else if (_commandChoice == "mark") {
 		markTask();
 	} else if (_commandChoice == "view") {
 		if (!viewDecider()) {
-			cout << ERROR_WRONG_INPUT << endl;
+			printMessage(ERROR_WRONG_INPUT);
 		}
 	} else if (_commandChoice == "store") {
 		storeChange();
@@ -257,9 +291,9 @@ bool Logic::process(string line) {
 		updateStorage();
 		return false;
 	} else if (_commandChoice == "invalid") {
-		cout << ERROR_WRONG_INPUT << endl;
+		printMessage(ERROR_WRONG_INPUT);
 	} else {
-		cout << ERROR_WRONG_INPUT << endl;
+		printMessage(ERROR_WRONG_INPUT);
 	}
 
 	return true;

@@ -6,8 +6,8 @@ const static string PERIOD_DAY = "day";
 const static string PERIOD_MONTH = "month";
 const static string PERIOD_YEAR = "year";
 static const int RECURRING_DEADLINE_NO_LIMIT = 7;
-static const int RECURRING_DEADLINE_WITH_LIMIT = 9;
-static const int RECURRING_TIMED_NO_LIMIT = 10;
+static const int RECURRING_DEADLINE_WITH_LIMIT = 10;
+static const int RECURRING_TIMED_NO_LIMIT = 9;
 static const int RECURRING_TIMED_WITH_LIMIT = 12;
 static const string RTASK_TO_TASK = "RTASK to Task";
 
@@ -74,12 +74,13 @@ bool RTask::setFirstOccur(vector<string> parsedInfo){
 	_log.log(RTASK_TO_TASK);
 
 	sizeType = parsedInfo.size();
+	cout<< "hihihi: "<< sizeType <<endl;
 	_occur.setTaskName(_abstract.getTaskName());
 
-	if (sizeType == RECURRING_DEADLINE_NO_LIMIT || sizeType ==RECURRING_TIMED_NO_LIMIT) {	
+	if (sizeType == RECURRING_DEADLINE_NO_LIMIT || sizeType == RECURRING_DEADLINE_WITH_LIMIT) {	
 		_occur.setEndTime(_abstract.getEndTime());
 		_occur.setEndDate(parsedInfo[2]);
-	} else if(sizeType == RECURRING_DEADLINE_WITH_LIMIT || sizeType == RECURRING_TIMED_WITH_LIMIT ) {
+	} else if(sizeType == RECURRING_TIMED_NO_LIMIT || sizeType == RECURRING_TIMED_WITH_LIMIT ) {
 		_occur.setStartTime(_abstract.getStartTime());
 		_occur.setEndTime(_abstract.getEndTime());
 		_occur.setStartDate(parsedInfo[2]);

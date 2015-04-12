@@ -79,7 +79,8 @@ bool Sort::sortStartTime() {
 	//Ascending Sort
 	for (int i = 0; i < listSize - 1; i++) {
 		for (int j = 0; j < listSize - i - 1; j++) {
-			if (_sortList[j].getStartDate() == _sortList[j + 1].getStartDate() && _sortList[j].getStartTime() > _sortList[j + 1].getStartTime()) {
+			if (_sortList[j].getStartDate() == _sortList[j + 1].getStartDate() 
+				&& _sortList[j].getStartTime() > _sortList[j + 1].getStartTime()) {
 				swap.push_back(_sortList[j]);
 				_sortList[j] = _sortList[j + 1];
 				_sortList[j + 1] = swap[0];
@@ -98,19 +99,21 @@ bool Sort::sortToBy() {
 	//Ascending Sort
 	for (int i = 0; i < listSize - 1; i++) {
 		for (int j = 0; j < listSize - i - 1; j++) {
+			if (!_sortList[j].getEndDate().empty() && !_sortList[j + 1].getEndDate().empty()) {
+			
+				date endDate(from_simple_string(_sortList[j].getEndDate()));
+				date endDate2(from_simple_string(_sortList[j + 1].getEndDate()));
 
-			date endDate(from_simple_string(_sortList[j].getEndDate()));
-			date endDate2(from_simple_string(_sortList[j + 1].getEndDate()));
-
-			if (endDate > endDate2) {
-				swap(j, j + 1);
-			}
-			else if (endDate == endDate2) {
-				if (_sortList[j].getEndTime() > _sortList[j + 1].getEndTime()) {
+				if (endDate > endDate2) {
+					swap(j, j + 1);
+				} else if (endDate == endDate2) {
+					if (_sortList[j].getEndTime() > _sortList[j + 1].getEndTime()) {
+						swap(j, j + 1);
+					}
+				} else if (_sortList[j].getEndDate().empty()) {
 					swap(j, j + 1);
 				}
-			}
-			else if (_sortList[j].getEndDate().empty()) {
+			} else if (_sortList[j].getEndDate().empty()) {
 				swap(j, j + 1);
 			}
 		}
@@ -126,7 +129,8 @@ bool Sort::sortEndTime() {
 	//Ascending Sort
 	for (int i = 0; i < listSize - 1; i++) {
 		for (int j = 0; j < listSize - i - 1; j++) {
-			if (_sortList[j].getEndDate() == _sortList[j + 1].getEndDate() && _sortList[j].getEndTime() > _sortList[j + 1].getEndTime()) {
+			if (_sortList[j].getEndDate() == _sortList[j + 1].getEndDate() 
+				&& _sortList[j].getEndTime() > _sortList[j + 1].getEndTime()) {
 				swap.push_back(_sortList[j]);
 				_sortList[j] = _sortList[j + 1];
 				_sortList[j + 1] = swap[0];
@@ -231,23 +235,23 @@ bool Sort::execute(vector <string> parsedInformation, vector <Task> list) {
 	SortChoice sortType = sortWhat();
 
 	switch (sortType) {
-	case TASKNAME:
-		sortTaskName();
-		break;
-	case FROM:
-		sortFrom();
-		break;
-	case TO:
-		sortToBy();
-		break;
-	case BY:
-		sortToBy();
-		break;
-	case DEADLINE:
-		sortDeadLine();
-		break;
-	case INVALID:
-		return false;
+		case TASKNAME:
+			sortTaskName();
+			break;
+		case FROM:
+			sortFrom();
+			break;
+		case TO:
+			sortToBy();
+			break;
+		case BY:
+			sortToBy();
+			break;
+		case DEADLINE:
+			sortDeadLine();
+			break;
+		case INVALID:
+			return false;
 	}
 
 	return true;

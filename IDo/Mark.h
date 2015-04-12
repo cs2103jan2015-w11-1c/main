@@ -12,9 +12,14 @@ using namespace std;
 
 class Mark {
 private:
-	string _contentToMark;
+
 	Log _log;
-	
+	vector<Task> _markedTask;
+	vector<int> _markedTaskIndex;
+	int _indexToMark;
+	string _contentToMark;
+
+
 	void markStatus (Task &taskToMark);
 	void markPriority (Task &taskToMark);
 	void markLabel (Task &taskToMark);
@@ -22,6 +27,9 @@ private:
 public:
 	bool isValidInput(vector <string>, int);
 	void execute (vector<string> parsedInformation, vector<Task> &taskListFromLogic);
+	vector<Task> getMarkedTasks();
+	vector<int> getMarkedTaskIndex();
+
 };
 
 #endif

@@ -1,6 +1,7 @@
 //@author A0111624W
 #include "Parser.h"
 
+const int NOT_VALID = -1;
 const int FIRST_WORD = 0;
 const int SECOND_WORD = 1;
 const int THIRD_WORD = 2;
@@ -19,6 +20,8 @@ const string Parser::CHOICE_STORE = "store";
 const string Parser::CHOICE_EXIT = "exit";
 const string Parser::MESSAGE_INVALID_TIME = "Invalid Time Input";
 const string Parser::MESSAGE_INVALID_DATE = "Invalid Date Input";
+const char* Parser::ERROR_TIME_OUT_RANGE = "[ERROR] Outside time range 0000 to 2359";
+const char* Parser:: ERROR_END_TIME_B4_STARTTIME = "[ERROR] End Time before Start Time";
 
 //This checks the choice of command 
 Parser::CommandType Parser::userCommand(){
@@ -72,59 +75,55 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 	
 	switch (commandChoice){
 		case ADD:
-			parsedInputs.push_back("add");
+			parsedInputs.push_back(CHOICE_ADD);
 			processAddContent(splittedUserInputs);
 			break;
 
 		case DEL:
-			parsedInputs.push_back("delete");
+			parsedInputs.push_back(CHOICE_DELETE);
 			processDeleteContent(splittedUserInputs);
 			break;
 
 		case EDIT:
-			parsedInputs.push_back("edit");
+			parsedInputs.push_back(CHOICE_EDIT);
 			processEditContent(splittedUserInputs);
 			break;
 
 		case CLEAR:
-			parsedInputs.push_back("clear");
+			parsedInputs.push_back(CHOICE_CLEAR);
 			break;
 		
 		case SEARCH:
-			parsedInputs.push_back("search");
+			parsedInputs.push_back(CHOICE_SEARCH);
 			processSearchContent(splittedUserInputs);
 			break;
 
 		case VIEW:
-			parsedInputs.push_back("view");
+			parsedInputs.push_back(CHOICE_VIEW);
 			processView(splittedUserInputs);
 			break;
 
 		case MARK:
-			parsedInputs.push_back("mark");
+			parsedInputs.push_back(CHOICE_MARK);
 			processMarkContent(splittedUserInputs);
 			break;	
 	
 		case SORT:
-			parsedInputs.push_back("sort");
+			parsedInputs.push_back(CHOICE_SORT);
 			processSortContent(splittedUserInputs);
 			break;	
 
 		case STORE:
-			parsedInputs.push_back("store");
-			parsedInputs.push_back(splittedUserInputs[0]);
+			parsedInputs.push_back(CHOICE_STORE);
+			parsedInputs.push_back(splittedUserInputs[FIRST_WORD]);
 			break;
 
 		case UNDO:
-			parsedInputs.push_back("undo");
+			parsedInputs.push_back(CHOICE_UNDO);
 			break;
 
 		case EXIT:
-			parsedInputs.push_back("exit");
-
-		case INVALID:
-			parsedInputs.push_back("invalid");
-			break;
+			parsedInputs.push_back(CHOICE_EXIT);
 	}
 
 	return 1;
@@ -135,33 +134,31 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 bool Parser::checkTimedTask(){
 
 	int size = splittedUserInputs.size();
-	int toPosition = -1;
-	int everyPosition = -1;
 	bool valid = true;
 
 	fromPosition = keywordPos("from");
 	toPosition = keywordPos("to");
 	everyPosition = keywordPos("every");
 
-	if(fromPosition !=-1 && toPosition != -1 && everyPosition != -1) {
-		for(int i = fromPosition+1; i < toPosition; i ++ ) {
-			if(!check.isDateValid(splittedUserInputs[i]) && !isPossibleTime(splittedUserInputs[i])) {
+	if(fromPosition != NOT_VALID && toPosition != NOT_VALID && everyPosition != NOT_VALID) {
+		for(int i = fromPosition+1; i < toPosition; i++ ) {
+			if(!validDateTime(i)) {
 				valid = false;
 			}
 		}
 		for(int i = toPosition+1 ; i < everyPosition ; i++) {
-			if(!check.isDateValid(splittedUserInputs[i]) && !isPossibleTime(splittedUserInputs[i])) {
+			if(!validDateTime(i)) {
 				valid = false;
 			}
 		}
-	} else if ( fromPosition !=-1 && toPosition != -1 && everyPosition == -1) {
-		for(int i = fromPosition+1; i < toPosition; i ++ ) {
-			if(!check.isDateValid(splittedUserInputs[i]) && !isPossibleTime(splittedUserInputs[i])) {
+	} else if ( fromPosition != NOT_VALID && toPosition != NOT_VALID && everyPosition == NOT_VALID) {
+		for(int i = fromPosition+1; i < toPosition; i++ ) {
+			if(!validDateTime(i)) {
 				valid = false;
 			}
 		}
 		for(int i = toPosition+1 ; i < size ; i++) {
-			if(!check.isDateValid(splittedUserInputs[i]) && !isPossibleTime(splittedUserInputs[i])) {
+			if(!validDateTime(i)) {
 				valid = false;
 			}
 		}
@@ -615,7 +612,7 @@ bool Parser::compareTimes(string time1, string time2) {
 	}
 
 	if(time1 > time2) {
-		cout << endl << "[Error] End Time is before Start Time??" << endl;
+//		throw ERROR_END_TIME_B4_STARTTIME;
 		return true;
 	} else {
 		return false;
@@ -639,7 +636,7 @@ bool Parser::isPossibleTime(string time){
 	int minute = atoi(time.c_str());
 	
 	if(minute > 2359) {
-		cout << "[Error] Outside time range 0000 to 2359" << endl;
+//		throw ERROR_TIME_OUT_RANGE;
 		return false;
 	}
 
@@ -674,12 +671,23 @@ bool Parser::checkTimeIfDateIsToday(string date, string time) {
 
 	if(date == check.getTodayDate()) {
 		if(time < getTodayTime()) {
-			return false;
+			throw "[ERROR] Time is OVER!!!";
 		}
 	}
 	return true;
 }
 
+bool Parser::validDateTime(int index) {
+	
+	if(!check.isDateValid(splittedUserInputs[index])) {
+		if(!isPossibleTime(splittedUserInputs[index])) {
+			return false;
+		}
+	} 
+
+	return true;
+}
+//Return today'sTime as a string
 string Parser::getTodayTime() {
 
 	string todayTime;
@@ -703,7 +711,7 @@ string Parser::getTodayTime() {
 
 //Return the position of keyword in splittedUserInputs
 int Parser::keywordPos(string keyword) {
-	int position = -1;
+	int position = NOT_VALID;
 
 	int size = splittedUserInputs.size();
 

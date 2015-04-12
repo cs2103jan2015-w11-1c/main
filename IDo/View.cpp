@@ -14,7 +14,7 @@ void View::printMessage(string message) {
 
 void View::displayToday(vector <Task> &list, int size, string date) {
 	SetColor(brightWhite);
-	cout << "[" << _todayDate << "]" << endl;
+	cout << "Today's Date [" << _todayDate << "]" << endl << endl;
 	SetColor(pink);
 	cout << "** " << date << " Timed-Tasks **" << endl << endl;
 	SetColor(defaultWhite);
@@ -260,6 +260,7 @@ void View::display(Task task) {
 }
 
 void View::viewSelectedFew(vector<Task> list, vector<int> taskNum) {
+	system("CLS");
 	printMessage(DISPLAYING);
 	printHeader();
 	int size = list.size();

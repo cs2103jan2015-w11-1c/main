@@ -106,7 +106,9 @@ bool Edit::setStartDate(string startDate, int index) {
 		startDate = check.getFormattedDates();
 		try {
 			compareDates(startDate, _endDate);
+			cout<<"hihihi"<<endl;
 			compareTime(startDate, _endDate, _startTime, _endTime);
+			cout<<"asdasd"<<endl;
 			_taskList[index].setStartDate(startDate);
 		} catch (const char* msg) {
 			cerr << msg << endl;
@@ -258,16 +260,8 @@ bool Edit::compareDates(string date1, string date2) {
 //		Return false if otherwise;
 bool Edit::compareTime(string date1, string date2, string startTime, string endTime) {
 
-	if(date1.empty()) {
-		_startDate = check.getTodayDate();
-	} else {
-		_startDate = date1;
-	}
-
-	if(date2.empty()) {
-		_endDate = check.getTodayDate();
-	} else {
-		_endDate = date2;
+	if(date1.empty() || date2.empty() || startTime.empty() || endTime.empty()) {
+		return false;
 	}
 
 	date startDate(from_simple_string(_startDate));

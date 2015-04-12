@@ -446,11 +446,11 @@ bool Parser::storeTaskContent(int start, int end, vector<string> inputs) {
 //Pre: Takes in the content of userinputs less the command
 //Post: Returns false if userinput is invalid
 bool Parser::processAddContent(vector<string> inputs) {
-
 	bool addResultValid = true;
 	int size = inputs.size();
 
-	if(checkTimedTask()){
+	_log.log("Parser processing input for adding");
+	if(checkTimedTask()) {
 		storeTaskContent(0, fromPosition-1, inputs);
 		parsedInputs.push_back(_taskContent);
 		parsedInputs.push_back(_startDate);
@@ -458,7 +458,7 @@ bool Parser::processAddContent(vector<string> inputs) {
 		parsedInputs.push_back(_endDate);
 		parsedInputs.push_back(_endTime);
 
-		if(checkRecurring()){
+		if(checkRecurring()) {
 			checkRecurringLimit();
 		}
 
@@ -468,13 +468,12 @@ bool Parser::processAddContent(vector<string> inputs) {
 		parsedInputs.push_back(_endDate);
 		parsedInputs.push_back(_endTime);
 
-		if(checkRecurring()){
+		if(checkRecurring()) {
 			checkRecurringLimit();
 		}
 
 	} else if(checkFloating()) {
 		storeTaskContent(0, size, inputs);
-		cout<<_taskContent << endl;
 		parsedInputs.push_back(_taskContent);
 
 	} else {
@@ -486,9 +485,9 @@ bool Parser::processAddContent(vector<string> inputs) {
 
 //This sorts out the information that an edit function requires i.e. task index, type and details
 bool Parser::processEditContent(vector<string> inputs) {
-	
 	int inputSize = inputs.size();
 
+	_log.log("Parser processing input for edit");
 	if(inputSize >= 3){
 		parsedInputs.push_back(inputs[FIRST_WORD]); //task index to be edited
 		parsedInputs.push_back(inputs[SECOND_WORD]); //task type to be edited
@@ -505,36 +504,33 @@ bool Parser::processEditContent(vector<string> inputs) {
 
 //This processes all words if delete function is called
 bool Parser::processDeleteContent(vector<string> inputs){
-
 	int size = inputs.size();
 
+	_log.log("Parser processing input for delete");
 	for(int i = 0; i < size ; i++) {
 		parsedInputs.push_back(inputs[i]);
 	}
-
 	return true;
 }
 
 //This processes all words if mark function is called
 bool Parser::processMarkContent(vector<string> inputs){
-
 	int size = inputs.size();
 
+	_log.log("Parser processing input for mark");
 	for(int i = 0; i < size ; i++) {
 		parsedInputs.push_back(inputs[i]);
 	}
-
 	return true;
 }
 
 //This parses the information that a view function requires i.e. undone, done, commands
 bool Parser::processView(vector<string> inputs) {
-
 	int size = inputs.size();
 
+	_log.log("Parser processing input for viewing");
 	if(size == 1 && inputs[FIRST_WORD] == "tmr") {
 		parsedInputs.push_back(check.datesFromToday(1));
-		cout << check.datesFromToday(1) << endl;
 	} else if (size == 1 && check.checkDay(inputs[FIRST_WORD]) == 8) {
 		parsedInputs.push_back(inputs[FIRST_WORD]); //notdone, done, commands 
 	} else if(size == 1 && check.checkDay(inputs[FIRST_WORD]) < 8) {
@@ -551,13 +547,11 @@ bool Parser::processView(vector<string> inputs) {
 	} else {
 		return false;
 	}
-
 	return true;
 }
 
 //This parses the information that a sort function requires i.e. sort date/time/undone/priority
 bool Parser::processSortContent(vector<string> inputs) {
-
 	int size = inputs.size();
 
 	if(size == 1) {
@@ -565,7 +559,6 @@ bool Parser::processSortContent(vector<string> inputs) {
 	} else {
 		return false;
 	}
-
 	return true;
 }
 
@@ -573,6 +566,7 @@ bool Parser::processSearchContent(vector<string> inputs) {
 	int size = inputs.size();
 	string content;
 
+	_log.log("Parser processing input for search");
 	if(size == 1) {
 		content = inputs[FIRST_WORD];
 		parsedInputs.push_back(content);
@@ -728,9 +722,10 @@ vector<string> Parser::completeParsing(string line){
 
 	//removes spacing between words
 	split(line);
-
+	_log.log("Parser removes spacing between words");
 	//Process Parsing 
 	parseActions(splittedUserInputs);
+	_log.log("Parser parses the user input and stores in vector");
 
 	return parsedInputs;
 }

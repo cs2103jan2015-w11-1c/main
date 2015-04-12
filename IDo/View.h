@@ -12,6 +12,7 @@
 #include "Sort.h"
 #include "Parser.h"
 #include "Task.h"
+#include "Log.h"
 
 using namespace std;
 
@@ -20,6 +21,7 @@ private:
 	Task _task;
 	Dates _date;
 	string _todayDate;
+	Log _log;
 
 	void printMessage(string);
 	void displayToday(vector <Task> &, int, string);

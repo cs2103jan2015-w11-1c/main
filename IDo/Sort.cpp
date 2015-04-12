@@ -47,7 +47,7 @@ bool Sort::sortFrom() {
 			}
 		}
 	}
-
+	_log.log("Sorting by start date and time");
 	return true;
 }
 
@@ -67,7 +67,7 @@ bool Sort::sortTaskName(){
 			}
 		}
 	}
-
+	_log.log("Sorting taskname alphabetically");
 	return true;
 }
 
@@ -86,7 +86,7 @@ bool Sort::sortStartTime() {
 			}
 		}
 	}
-
+	_log.log("sorted by start time");
 	return true;
 }
 
@@ -114,7 +114,7 @@ bool Sort::sortToBy() {
 			}
 		}
 	}
-
+	_log.log("sorted by end date and time");
 	return true;
 }
 
@@ -133,7 +133,7 @@ bool Sort::sortEndTime() {
 			}
 		}
 	}
-
+	_log.log("sorted by end time");
 	return true;
 }
 
@@ -199,7 +199,7 @@ bool Sort::sortDeadLine() {
 			}
 		}
 	}
-
+	_log.log("sorted by deadline");
 	return true;
 }
 

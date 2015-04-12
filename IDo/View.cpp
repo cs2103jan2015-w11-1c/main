@@ -328,8 +328,11 @@ void View::viewSelectedOne(vector<Task> list, int taskNumber) {
 // Default view after every command
 void View::viewDefault(vector<Task> &list, string date) {
 //	system("CLS");
+	_log.log("Called display to view timed tasks");
 	displayToday(list,list.size(),date);
+	_log.log("Called display to view deadline tasks");
 	displayDeadline(list,list.size(),date);
+	_log.log("Called display to view floating tasks");
 	displayFloating(list,list.size());
 }
 

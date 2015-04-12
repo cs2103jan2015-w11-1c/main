@@ -108,6 +108,7 @@ void UserInterface::process() {
 
 	readFile();
 	while(carryOn){
+		_log.log("Command is not exit. Passing user input to logic");
 		carryOn = _logic.process(receiveInput());
 	}
 }

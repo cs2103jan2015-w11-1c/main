@@ -67,11 +67,13 @@ bool Delete::isValidInput(vector <string> parsedInformation, int taskListSize) {
 void Delete::execute(vector<Task> &taskList) {
 	int size = parsedInfo.size();
 	
-	if (parsedInfo[1] != "all") {   // deleting non-recurring atsk
+	if (parsedInfo[1] != "all") {   // deleting non-recurring task
+		_log.log("Deleting non-recurring tasks");
 		for (int i = 1 ; i < size ; i++) {
 			taskIndexToDelete.push_back((atoi(parsedInfo[i].c_str()))-1);
 		}
 	} else {    //deleting recurring tasks
+		_log.log("Batch deleting recurring tasks");
 		deleteRecurring(taskList);	
 	}
 	

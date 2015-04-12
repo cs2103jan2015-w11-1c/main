@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include "Log.h"
 #include "Task.h"
 #include "boost/date_time/gregorian/gregorian.hpp" 
 
@@ -12,6 +13,7 @@ using namespace boost::gregorian;
 
 class Sort {
 private:
+	Log _log;
 	Task _task;
 	string _sortChoice;
 	vector<Task> _sortList;

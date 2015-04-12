@@ -11,6 +11,7 @@
 #include <time.h>
 #include <Windows.h>
 #include "Logic.h"
+#include "Log.h"
 
 
 using namespace std;
@@ -20,6 +21,7 @@ class UserInterface {
 private:
 	string _userInput;
 	Logic _logic;
+	Log _log;
 
 	void SetColor1(int value);
 	void readFile();

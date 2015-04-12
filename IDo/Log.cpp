@@ -1,13 +1,6 @@
 #include "Log.h"
 using namespace std;
 
-Log::Log(void) {
-}
-
-
-Log::~Log(void) {
-}
-
 void Log::clear() {
 	ofstream file;
 	file.open("log.txt", ios::trunc);

@@ -46,7 +46,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>\\vmware-host\Shared Folders\Desktop\boost_1_57_0;C:\Users\User\Desktop\boost_1_57_0;C:\Users\QunYou\Desktop\boost_1_57_0;C:\Users\Shen Yee\Desktop\boost_1_57_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo;\\vmware-host\Shared Folders\Desktop\boost_1_57_0;C:\Users\User\Desktop\boost_1_57_0;C:\Users\QunYou\Desktop\boost_1_57_0;C:\Users\Shen Yee\Desktop\boost_1_57_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

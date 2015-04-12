@@ -9,8 +9,6 @@ private:
 	ofstream file;
 
 public:
-	Log(void);
-	~Log(void);
 
 	void clear();
 	void log(string);

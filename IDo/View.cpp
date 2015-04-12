@@ -12,11 +12,11 @@ void View::printMessage(string message) {
 }
 
 void View::displayToday(vector <Task> &list, int size, string date) {
-	SetColor(15);
+	SetColor(brightWhite);
 	cout << "[" << _todayDate << "]" << endl;
-	SetColor(13);
+	SetColor(pink);
 	cout << "** " << date << " Timed-Tasks **" << endl << endl;
-	SetColor(7);
+	SetColor(defaultWhite);
 	printTimedTaskHeader();
 	for(int i = 0; i < size; i++) {
 		if(list[i].getStartDate() == date) {
@@ -35,9 +35,9 @@ void View::printTimedTaskHeader() {
 		<< "Label" << setw(12) << " "
 		<< "Task" << endl;
 
-	SetColor(3);
+	SetColor(cyan);
 	cout << string(80, '-') << endl;
-	SetColor(7);
+	SetColor(defaultWhite);
 }
 
 // Print out timed tasks 
@@ -61,30 +61,30 @@ void View::displayTimedTask(Task task) {
 	cout << setw(spacing) << " ";
 
 	if (task.getPriority() == high) {
-		SetColor(12); // red
+		SetColor(brightRed); // red
 		cout << task.getTaskName() << endl;
-		SetColor(7); // default white
+		SetColor(defaultWhite); // default white
 	}
 	else if (task.getPriority() == medium) {
-		SetColor(14); // bright yellow
+		SetColor(yellow); // bright yellow
 		cout << task.getTaskName() << endl;
-		SetColor(7); // default white
+		SetColor(defaultWhite); // default white
 	}
 	else if (task.getPriority() == low) {
-		SetColor(10); // bright green
+		SetColor(brightGreen); // bright green
 		cout << task.getTaskName() << endl;
-		SetColor(7); // default white
+		SetColor(defaultWhite); // default white
 	}
 	else {
-		SetColor(7); // default white
+		SetColor(defaultWhite); // default white
 		cout << task.getTaskName() << endl;
 	}
 }
 
 void View::displayDeadline(vector <Task> &list, int size, string date) {
-	SetColor(13);
+	SetColor(pink);
 	cout << "** Upcoming Deadline Tasks from " << date << " onwards **" << endl << endl; 
-	SetColor(7);
+	SetColor(defaultWhite);
 
 	printDeadlineTaskHeader();
 
@@ -126,9 +126,9 @@ void View::printDeadlineTaskHeader() {
 		 << "Label" << setw(12) << " "
 		 << "Task" << endl;
 
-	SetColor(3);
+	SetColor(cyan);
 	cout << string(80, '-') << endl;
-	SetColor(7);
+	SetColor(defaultWhite);
 }
 
 // Print out deadline tasks
@@ -141,9 +141,9 @@ void View::displayDeadlineTask(Task task) {
 
 	if(task.getStartTime().empty() && !task.getEndTime().empty()){
 		if(valid) {
-		SetColor(12);
+		SetColor(brightRed);
 		cout << task.getEndDate() << " " << task.getEndTime();
-		SetColor(7);
+		SetColor(defaultWhite);
 		} else {
 			cout << task.getEndDate() << " " << task.getEndTime();
 		}
@@ -160,27 +160,27 @@ void View::displayDeadlineTask(Task task) {
 	cout << setw(spacing) << " ";
 
 	if (task.getPriority() == high) {
-		SetColor(12); // red
+		SetColor(brightRed); // red
 		cout << task.getTaskName() << endl;
-		SetColor(7); // default white
+		SetColor(defaultWhite); // default white
 	} else if (task.getPriority() == medium) {
-		SetColor(14); // bright yellow
+		SetColor(yellow); // bright yellow
 		cout << task.getTaskName() << endl;
-		SetColor(7); // default white
+		SetColor(defaultWhite); // default white
 	} else if (task.getPriority() == low) {
-		SetColor(10); // bright green
+		SetColor(brightGreen); // bright green
 		cout << task.getTaskName() << endl;
-		SetColor(7); // default white
+		SetColor(defaultWhite); // default white
 	} else {
-		SetColor(7); // default white
+		SetColor(defaultWhite); // default white
 		cout << task.getTaskName() << endl;
 	}
 }
 
 void View::displayFloating(vector <Task> &list, int size) {
-	SetColor(13);
+	SetColor(pink);
 	cout << "** Floating Tasks **" << endl << endl;
-	SetColor(7);
+	SetColor(defaultWhite);
 
 	printFloatingTaskHeader();
 	for (int i = 0; i < size; i++) {
@@ -199,9 +199,9 @@ void View::printFloatingTaskHeader() {
 		 << "Label" << setw(12) << " "
 		 << "Task" << endl;
 
-	SetColor(3);
+	SetColor(cyan);
 	cout << string(80, '-') << endl;
-	SetColor(7);
+	SetColor(defaultWhite);
 }
 
 // Print out floating tasks
@@ -219,19 +219,19 @@ void View::displayFloatingTask(Task task) {
 	cout << setw(spacing) << " ";
 
 	if (task.getPriority() == high) {
-		SetColor(12); // red
+		SetColor(brightRed); // red
 		cout << task.getTaskName() << endl;
-		SetColor(7); // default white
+		SetColor(defaultWhite); // default white
 	} else if (task.getPriority() == medium) {
-		SetColor(14); // bright yellow
+		SetColor(yellow); // bright yellow
 		cout << task.getTaskName() << endl;
-		SetColor(7); // default white
+		SetColor(defaultWhite); // default white
 	} else if (task.getPriority() == low) {
-		SetColor(10); // bright green
+		SetColor(brightGreen); // bright green
 		cout << task.getTaskName() << endl;
-		SetColor(7); // default white
+		SetColor(defaultWhite); // default white
 	} else {
-		SetColor(7); // default white
+		SetColor(defaultWhite); // default white
 		cout << task.getTaskName() << endl;
 	}
 }
@@ -250,9 +250,9 @@ void View::printHeader() {
 		 << "Label" << setw(12) << " "
 		 << "Task" << endl;
 
-	SetColor(3);
+	SetColor(cyan);
 	cout << string(80, '-') << endl;
-	SetColor(7);
+	SetColor(defaultWhite);
 }
 
 // Print out one event
@@ -286,22 +286,22 @@ void View::display(Task task) {
 	cout << setw(spacing) << " ";
 
 	if (task.getPriority() == high) {
-		SetColor(12); // red
+		SetColor(brightRed); // red
 		cout << task.getTaskName() << endl;
-		SetColor(7); // default white
+		SetColor(defaultWhite); // default white
 	}
 	else if (task.getPriority() == medium) {
-		SetColor(14); // bright yellow
+		SetColor(yellow); // bright yellow
 		cout << task.getTaskName() << endl;
-		SetColor(7); // default white
+		SetColor(defaultWhite); // default white
 	}
 	else if (task.getPriority() == low) {
-		SetColor(10); // bright green
+		SetColor(brightGreen); // bright green
 		cout << task.getTaskName() << endl;
-		SetColor(7); // default white
+		SetColor(defaultWhite); // default white
 	}
 	else {
-		SetColor(7); // default white
+		SetColor(defaultWhite); // default white
 		cout << task.getTaskName() << endl;
 	}
 }
@@ -328,8 +328,11 @@ void View::viewSelectedOne(vector<Task> list, int taskNumber) {
 // Default view after every command
 void View::viewDefault(vector<Task> &list, string date) {
 //	system("CLS");
+	_log.log("Called display to view timed tasks");
 	displayToday(list,list.size(),date);
+	_log.log("Called display to view deadline tasks");
 	displayDeadline(list,list.size(),date);
+	_log.log("Called display to view floating tasks");
 	displayFloating(list,list.size());
 }
 

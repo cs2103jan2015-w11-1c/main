@@ -10,6 +10,7 @@
 
 #include "Add.h"
 #include "Delete.h"
+#include "Log.h"
 #include "Task.h"
 #include "Edit.h"
 #include "Mark.h"
@@ -23,6 +24,7 @@ using namespace std;
 
 class Logic {
 private:
+	Log _log;
 	Storage _storage;
 	Dates _dates;
 

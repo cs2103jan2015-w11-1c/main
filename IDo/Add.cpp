@@ -1,11 +1,26 @@
 #include "Add.h"
 
+static const int INVALID = 1;
+static const int DEADLINE_TASK = 4;
+static const int TIMED_TASK = 6;
+static const int RECURRING_DEADLINE_NO_LIMIT = 7;
+static const int RECURRING_DEADLINE_WITH_LIMIT = 9;
+static const int RECURRING_TIMED_NO_LIMIT = 10;
+static const int RECURRING_TIMED_WITH_LIMIT = 12;
+static const int DEFAULT_OCCURRENCE = 5;
+static const string KEYWORD_EVERY = "every";
+static const string ADD_TO_RTASK = "Add to Rtask";
+static const string ADD_TO_TASK = "Add to Task";
+
+//Pre: Takes in parsed information from the parser
+//Post: Return true if it contains keyword "every"
+//		Return false if it does not contain keyword "every"
 bool Add::isRecurring(vector <string> parsedInfo) {
 	int size = parsedInfo.size();
 
-	if (size > 4 && parsedInfo[4] == "every") {
+	if (size > 4 && parsedInfo[4] == KEYWORD_EVERY) {
 		return true;
-	} else if (size > 6 &&  parsedInfo[6] == "every") {
+	} else if (size > 6 &&  parsedInfo[6] == KEYWORD_EVERY) {
 		return true;
 	} else {
 		return false;
@@ -15,85 +30,89 @@ bool Add::isRecurring(vector <string> parsedInfo) {
 }
 
 bool Add::execute(vector<string> parsedInformation){
-	int size = parsedInformation.size();
+	int sizeType = parsedInformation.size();
 
-	if(size == 1) {
+	if(sizeType == INVALID) {
 		return false;
 	}
 
-	if (isRecurring(parsedInformation)) {	//check if it's command for recurring
-		if (size == 7) {	//recurring deadline without "for"
-			RTask rtask;
+	if (isRecurring(parsedInformation)) {
+
+		log.log(ADD_TO_RTASK);
+
+		rtask.setAbstrInfo(parsedInformation);
+		rtask.setFirstOccur(parsedInformation);
+	
+		if (sizeType == RECURRING_DEADLINE_NO_LIMIT) {	
 			
-			int interval = stoi(parsedInformation[5]);
-			rtask.setAbstrInfo(parsedInformation);
-			rtask.setInterval(interval);
-			rtask.setPeriod(parsedInformation[6]);
-			rtask.setNoOfOccurrences(5);
-			rtask.setFirstOccur(parsedInformation);
-			rtask.generateOccursForDeadlineTask();
-
-			_listOfOccurrences = rtask.getListOfOccurrences();
-
-		} else if(size == 9) { //recurring timed task without "for"
-			RTask rtask;
-
-			rtask.setAbstrInfo(parsedInformation);
-			rtask.setInterval(stoi(parsedInformation[7]));
-			rtask.setPeriod(parsedInformation[8]);
-			rtask.setNoOfOccurrences(5);
-			rtask.setFirstOccur(parsedInformation);
-			rtask.generateOccursForTimedTask();
-
-			_listOfOccurrences = rtask.getListOfOccurrences();
-
-		} else if(size == 10) { //recurring deadline with number of times
-			RTask rtask;
-
-			rtask.setAbstrInfo(parsedInformation);
+			rtask.setNoOfOccurrences(DEFAULT_OCCURRENCE);
 			rtask.setInterval(stoi(parsedInformation[5]));
 			rtask.setPeriod(parsedInformation[6]);
-			rtask.setPeriod2(parsedInformation[9]);
-			rtask.setLimit(parsedInformation[8]);
-			rtask.setFirstOccur(parsedInformation);
-			rtask.generateOccursForDeadlineTask();
 
+			rtask.generateOccursForDeadlineTask();
 			_listOfOccurrences = rtask.getListOfOccurrences();
 
-		} else if(size == 12) { //recurring timed task with number of times
-			RTask rtask;
+		} else if(sizeType == RECURRING_TIMED_NO_LIMIT) { 
 
-			rtask.setAbstrInfo(parsedInformation);
+			rtask.setNoOfOccurrences(DEFAULT_OCCURRENCE);
 			rtask.setInterval(stoi(parsedInformation[7]));
 			rtask.setPeriod(parsedInformation[8]);
-			rtask.setPeriod2(parsedInformation[11]);
-			rtask.setLimit(parsedInformation[10]);
-			rtask.setFirstOccur(parsedInformation);
+
 			rtask.generateOccursForTimedTask();
-
 			_listOfOccurrences = rtask.getListOfOccurrences();
-		} 
 
-	} else { // check if it's a valid command
+		} else if(sizeType == RECURRING_DEADLINE_WITH_LIMIT) {
+
+			rtask.setInterval(stoi(parsedInformation[5])); 
+			rtask.setPeriod(parsedInformation[6]); 
+			rtask.setLimit(parsedInformation[8]);
+			rtask.setLimitingPeriod(parsedInformation[9]); 
+
+			rtask.generateOccursForDeadlineTask();
+			_listOfOccurrences = rtask.getListOfOccurrences();
+
+		} else if(sizeType == RECURRING_TIMED_WITH_LIMIT) { 
+
+			rtask.setInterval(stoi(parsedInformation[7]));
+			rtask.setPeriod(parsedInformation[8]);
+			rtask.setLimit(parsedInformation[10]);
+			rtask.setLimitingPeriod(parsedInformation[11]);
+
+			rtask.generateOccursForTimedTask();
+			_listOfOccurrences = rtask.getListOfOccurrences();
+
+		} else {
+			return false;
+		}
+
+	} else { 
+		log.log(ADD_TO_TASK);
+
 		_task.setTaskName(parsedInformation[1]);
-		if (size == 4) { //deadline tasks
+
+		if (sizeType == DEADLINE_TASK) { 
 			_task.setEndDate(parsedInformation[2]);
 			_task.setEndTime(parsedInformation[3]);
 
-		} else if (size == 6) { //timed-tasks
+		} else if (sizeType == TIMED_TASK) { 
 			_task.setStartDate(parsedInformation[2]);
 			_task.setStartTime(parsedInformation[3]);
 			_task.setEndDate(parsedInformation[4]);
 			_task.setEndTime(parsedInformation[5]);
+
 		} 
 	} 
 	return true;
 }
 
+//This function is for storing recurring tasks
+//Post: Return a list of recurring tasks in vector
 vector <Task> Add::getOccurrences () {
 	return _listOfOccurrences;
 }
 
+
+//Post: Return information of the task stored
 Task Add::getTask(){
 	return _task;
 }

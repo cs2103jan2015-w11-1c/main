@@ -6,6 +6,7 @@
 #include <iostream>
 #include "Logic.h"
 #include "Task.h"
+#include "Log.h"
 
 using namespace std;
 
@@ -13,6 +14,7 @@ class Edit {
 private:
 	//Declaration of Objects
 	Dates check;
+	Log log;
 
 	//Declaration of Variables
 	vector<Task> _taskList;
@@ -26,15 +28,26 @@ private:
 	int _numberOfTasks;
 	int _parsedInfoSize;
 
-	//Functions
+	string _startDate;
+	string _endDate;
+	string _startTime;
+	string _endTime;
+
+	//Functions to set the change
 	bool checkAndProcess();
-	bool isPossibleTime(string time);
-	bool isPossibleTimeFormat(string time);
-	bool isTimeFormat(string time);
+	bool setStartDate(string, int);
+	bool setEndDate(string, int);
+	bool setStartTime(string, int);
+	bool setEndTime(string, int);
+
+	//Functions to check time and dates
+	bool isPossibleTimeFormat(string);
 	string getTodayTime();
-	bool compareDates(string date1, string date2);
-	bool compareSameDates(string date1, string date2);
-	void printMessage(string message);
+	bool compareDates(string, string);
+	bool compareTime(string, string, string, string);
+
+	void getSelectedTaskInfo(int index);
+	void printMessage(string);
 
 public:
 	bool execute(vector<string> parsedInformation, vector<Task> taskList);

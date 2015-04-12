@@ -5,12 +5,14 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include "Log.h"
 #include "Task.h"
 
 using namespace std;
 
 class Delete{
 private:
+	Log _log;
 	vector <string> parsedInfo;
 	vector <int> taskIndexToDelete;
 	vector <int> recurringToDelete;

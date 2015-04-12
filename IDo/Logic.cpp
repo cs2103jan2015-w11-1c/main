@@ -15,6 +15,7 @@ void Logic::updateStorage() {
 }
 
 void Logic::undo() {
+	_log.log("Undo done");
 	View view;
 	_listOfTasks.clear();
 	_storage.readFile(_listOfTasks,1);
@@ -22,10 +23,12 @@ void Logic::undo() {
 }
 
 void Logic::backup() {
+	_log.log("Back up files");
 	_storage.updateFile(_listOfTasks,1);
 }
 
 void Logic::getParsedInformation(string line) {
+	_log.log("Logic passes input to parser");
 	Parser parser;
 	_userInput = line;
 	//pass to parser and process
@@ -43,8 +46,10 @@ void Logic::addTask() {
 	if (add.execute(_parsedInformation)) {
 
 		if(!add.isRecurring(_parsedInformation)){
+			_log.log("Logic pass to add to add recurring tasks");
 			_listOfTasks.push_back(add.getTask());
 		} else {
+			_log.log("Logic pass to add to add tasks");
 			vector <Task> temp = add.getOccurrences();
 			int size = temp.size();
 			int index = searchNextRecurringIndex();
@@ -82,6 +87,7 @@ void Logic::deleteTask() {
 	View view;
 	backup();
 	if (remove.isValidInput(_parsedInformation, _listOfTasks.size())) {
+		_log.log("Logic pass to delete");
 		remove.execute(_listOfTasks);
 		view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		printMessage(SUCCESSFULLY_DELETED);
@@ -100,6 +106,7 @@ void Logic::editTask() {
 	view.viewDefault(_listOfTasks,_dates.getTodayDate());
 	int editedTaskNumber;
 	if (edit.execute(_parsedInformation, _listOfTasks)) {
+		_log.log("Logic pass to edit");
 		_listOfTasks=edit.getList();
 		editedTaskNumber = atoi(_parsedInformation[1].c_str());
 		view.viewSelectedOne(_listOfTasks, editedTaskNumber);
@@ -116,6 +123,7 @@ void Logic::markTask() {
 	backup();
 
 	if (mark.isValidInput(_parsedInformation, _listOfTasks.size())) {
+		_log.log("Logic pass to mark");
 		mark.execute(_parsedInformation, _listOfTasks);
 		view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		printMessage(SUCCESSFULLY_MARKED);
@@ -163,9 +171,6 @@ bool Logic::viewDecider() {
 	} else if (_parsedInformation[1] == "commands") {
 		viewCommands();
 		return true;
-	//} else if (_parsedInformation[1] == "high" || _parsedInformation[1] == "medium" || _parsedInformation[1] == "low") {
-		//view.viewPriority(_listOfTasks,_parsedInformation[1]);
-		//return true;
 	} else {
 		view.viewDefault(_listOfTasks,_parsedInformation[1]);
 		return true;
@@ -173,6 +178,7 @@ bool Logic::viewDecider() {
 }
 
 void Logic::storeChange() {
+	_log.log("Logic call storage to change storage file name");
 	_storage.editStorageFileName(_parsedInformation[1]);
 }
 
@@ -181,6 +187,7 @@ void Logic::sortTask() {
 	backup();
 
 	if (sort.execute(_parsedInformation, _listOfTasks)) {
+		_log.log("Logic pass to sort");
 		_listOfTasks = sort.getSortedList();
 		cout << endl << SUCCESSFULLY_SORTED << endl;
 	} else {
@@ -196,6 +203,7 @@ void Logic::searchWord() {
 	View printFoundTasks;
 
 	if (search.getNoOfFoundTasks() != 0) {
+		_log.log("Logic pass to search");
 		vector <Task> listOfFoundTasks;
 		vector <int> listOfFoundTaskNum;
 		listOfFoundTasks = search.getListOfFoundTasks();
@@ -209,6 +217,7 @@ void Logic::searchWord() {
 }
 
 void Logic::readFromFile() {
+	_log.log("Read data from storage file");
 	_storage.readFile(_listOfTasks,0);
 }
 

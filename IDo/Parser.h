@@ -9,12 +9,14 @@
 #include <sstream>
 #include <iterator>
 #include "Dates.h"
+#include "Log.h"
 
 using namespace std;
 
 class Parser {
 private:
 	Dates check;
+	Log _log;
 
 	vector<string> splittedUserInputs;
 	vector<string> parsedInputs;
@@ -90,8 +92,6 @@ private:
 	bool setMissingDateTime();
 	bool storeTaskContent(int, int, vector<string>);
 
-
-	
 public:
 	//Stores information that has been parsed
 	vector<string> completeParsing(string);

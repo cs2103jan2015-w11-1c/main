@@ -113,6 +113,12 @@ void Storage::updateFile (vector <Task> &taskList, bool isUndoTrue) {
 		writeFile << "_____" << endl;
 	}
 	writeFile.close();
+
+	if (!isUndoTrue) {
+		_log.log("Updated storage file");
+	} else {
+		_log.log("Backed up file");
+	}
 }
 
 void Storage::readFile (vector <Task> &taskList, bool isUndoTrue) {
@@ -173,5 +179,10 @@ void Storage::readFile (vector <Task> &taskList, bool isUndoTrue) {
 			infoFromFile.clear();
 			getline(readFile,line);
 		}
+	}
+	if (!isUndoTrue) {
+		_log.log("Updated data from storage file");
+	} else {
+		_log.log("Restored data from back up file");
 	}
 }

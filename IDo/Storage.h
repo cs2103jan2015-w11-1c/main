@@ -6,6 +6,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include "Log.h"
 #include "Task.h"
 
 using namespace std;
@@ -14,6 +15,7 @@ class Task;
 
 class Storage {
 private:
+	Log _log;
 	string _storageFileName;
 	static const string BACKUP;
 

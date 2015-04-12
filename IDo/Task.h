@@ -13,7 +13,7 @@ enum Status {
 };
 
 enum Priority {
-	high, medium, low, none
+	high, medium, low
 };
 
 class Task {

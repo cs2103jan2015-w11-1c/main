@@ -1,3 +1,4 @@
+//@author A0111624W
 #ifndef EDIT_H
 #define EDIT_H
 
@@ -14,7 +15,7 @@ class Edit {
 private:
 	//Declaration of Objects
 	Dates check;
-	Log log;
+	Log _log;
 
 	//Declaration of Variables
 	vector<Task> _taskList;

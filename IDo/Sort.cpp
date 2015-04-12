@@ -1,3 +1,4 @@
+//@author A0114010L
 #include "Sort.h"
 
 Sort::SortChoice Sort::sortWhat(){

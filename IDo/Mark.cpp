@@ -1,6 +1,8 @@
+//@author A0115465H
 #include "Mark.h"
 
 void Mark::markStatus (Task &taskToMark){
+	_log.log("Marking status");
 	if (_contentToMark == "done") {
 		taskToMark.setStatus(done);
 	} else if (_contentToMark == "notdone") {
@@ -9,6 +11,7 @@ void Mark::markStatus (Task &taskToMark){
 }
 
 void Mark::markPriority(Task &taskToMark) {
+	_log.log("Marking priority");
 	if (_contentToMark == "high") {
 		taskToMark.setPriority(high);
 	} else if (_contentToMark == "medium") {
@@ -19,6 +22,7 @@ void Mark::markPriority(Task &taskToMark) {
 }
 
 void Mark::markLabel (Task &taskToMark) {
+	_log.log("Marking label");
 	taskToMark.setLabel(_contentToMark);
 }
 

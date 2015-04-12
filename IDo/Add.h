@@ -1,3 +1,4 @@
+//@author A0115545J
 #ifndef ADD_H
 #define ADD_H
 
@@ -15,7 +16,7 @@ private:
 
 	//Declaration of objects
 	Task _task;
-	Log log;
+	Log _log;
 	RTask rtask;
 
 	//Declaration of variables

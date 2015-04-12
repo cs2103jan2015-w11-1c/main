@@ -1,3 +1,4 @@
+//@author A0111624W
 #include "Parser.h"
 
 const int FIRST_WORD = 0;

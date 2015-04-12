@@ -1,3 +1,4 @@
+//@author A0115545J
 #ifndef RTASK_H
 #define RTASK_H
 
@@ -14,7 +15,7 @@ enum Period {
 class RTask : public Task {
 private:
 
-	Log log;
+	Log _log;
 	//Stores task name, start time, end time;
 	Task _abstract;	
 	//Stores start date, end date, label, priority, status

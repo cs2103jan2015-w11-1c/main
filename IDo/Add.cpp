@@ -1,14 +1,15 @@
+//@author A0115545J
 #include "Add.h"
 
 static const int INVALID = 1;
 static const int DEADLINE_TASK = 4;
 static const int TIMED_TASK = 6;
-static const int RECURRING_DEADLINE_NO_LIMIT = 7;
-static const int RECURRING_DEADLINE_WITH_LIMIT = 9;
-static const int RECURRING_TIMED_NO_LIMIT = 10;
-static const int RECURRING_TIMED_WITH_LIMIT = 12;
+static const int RECURRING_DEADLINE_WITHOUT_LIMIT = 7;
+static const int RECURRING_DEADLINE_GOT_LIMIT = 9;
+static const int RECURRING_TIMED_WITHOUT_LIMIT = 10;
+static const int RECURRING_TIMED_GOT_LIMIT = 12;
 static const int DEFAULT_OCCURRENCE = 5;
-static const string KEYWORD_EVERY = "every";
+static const string WORD_EVERY = "every";
 static const string ADD_TO_RTASK = "Add to Rtask";
 static const string ADD_TO_TASK = "Add to Task";
 
@@ -18,9 +19,9 @@ static const string ADD_TO_TASK = "Add to Task";
 bool Add::isRecurring(vector <string> parsedInfo) {
 	int size = parsedInfo.size();
 
-	if (size > 4 && parsedInfo[4] == KEYWORD_EVERY) {
+	if (size > 4 && parsedInfo[4] == WORD_EVERY) {
 		return true;
-	} else if (size > 6 &&  parsedInfo[6] == KEYWORD_EVERY) {
+	} else if (size > 6 &&  parsedInfo[6] == WORD_EVERY) {
 		return true;
 	} else {
 		return false;
@@ -38,12 +39,12 @@ bool Add::execute(vector<string> parsedInformation){
 
 	if (isRecurring(parsedInformation)) {
 
-		log.log(ADD_TO_RTASK);
+		_log.log(ADD_TO_RTASK);
 
 		rtask.setAbstrInfo(parsedInformation);
 		rtask.setFirstOccur(parsedInformation);
 	
-		if (sizeType == RECURRING_DEADLINE_NO_LIMIT) {	
+		if (sizeType == RECURRING_DEADLINE_WITHOUT_LIMIT) {	
 			
 			rtask.setNoOfOccurrences(DEFAULT_OCCURRENCE);
 			rtask.setInterval(stoi(parsedInformation[5]));
@@ -52,7 +53,7 @@ bool Add::execute(vector<string> parsedInformation){
 			rtask.generateOccursForDeadlineTask();
 			_listOfOccurrences = rtask.getListOfOccurrences();
 
-		} else if(sizeType == RECURRING_TIMED_NO_LIMIT) { 
+		} else if(sizeType == RECURRING_TIMED_WITHOUT_LIMIT) { 
 
 			rtask.setNoOfOccurrences(DEFAULT_OCCURRENCE);
 			rtask.setInterval(stoi(parsedInformation[7]));
@@ -61,7 +62,7 @@ bool Add::execute(vector<string> parsedInformation){
 			rtask.generateOccursForTimedTask();
 			_listOfOccurrences = rtask.getListOfOccurrences();
 
-		} else if(sizeType == RECURRING_DEADLINE_WITH_LIMIT) {
+		} else if(sizeType == RECURRING_DEADLINE_GOT_LIMIT) {
 
 			rtask.setInterval(stoi(parsedInformation[5])); 
 			rtask.setPeriod(parsedInformation[6]); 
@@ -71,7 +72,7 @@ bool Add::execute(vector<string> parsedInformation){
 			rtask.generateOccursForDeadlineTask();
 			_listOfOccurrences = rtask.getListOfOccurrences();
 
-		} else if(sizeType == RECURRING_TIMED_WITH_LIMIT) { 
+		} else if(sizeType == RECURRING_TIMED_GOT_LIMIT) { 
 
 			rtask.setInterval(stoi(parsedInformation[7]));
 			rtask.setPeriod(parsedInformation[8]);
@@ -86,7 +87,7 @@ bool Add::execute(vector<string> parsedInformation){
 		}
 
 	} else { 
-		log.log(ADD_TO_TASK);
+		_log.log(ADD_TO_TASK);
 
 		_task.setTaskName(parsedInformation[1]);
 

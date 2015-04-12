@@ -1,3 +1,4 @@
+//@author A0115545J
 #include "RTask.h"
 
 const static string KEYWORD_EVERY = "every";
@@ -21,7 +22,7 @@ RTask::~RTask(){
 //		Return false if the attributes are not set
 bool RTask::setAbstrInfo(vector <string> parsedInfo) {
 
-	log.log(RTASK_TO_TASK);
+	_log.log(RTASK_TO_TASK);
 	//initialise abstract task attributes
 	_abstract.setTaskName(parsedInfo[1]);
 	
@@ -70,7 +71,7 @@ bool RTask::setPeriod(string period) {
 //		Reuturn false if it is not
 bool RTask::setFirstOccur(vector<string> parsedInfo){
 
-	log.log(RTASK_TO_TASK);
+	_log.log(RTASK_TO_TASK);
 
 	sizeType = parsedInfo.size();
 	_occur.setTaskName(_abstract.getTaskName());
@@ -157,7 +158,7 @@ void RTask::generateOccursForDeadlineTask() {
 			date nextEndDate = endDate + interval;			
 		}
 
-		log.log(RTASK_TO_TASK);
+		_log.log(RTASK_TO_TASK);
 
 		next.setEndDate(to_simple_string(nextEndDate));
 		_listOfOccurrences.push_back(next);
@@ -197,7 +198,7 @@ void RTask::generateOccursForTimedTask() {
 			nextEndDate = endDate + interval;
 		}
 
-		log.log(RTASK_TO_TASK);
+		_log.log(RTASK_TO_TASK);
 		next.setStartDate(to_simple_string(nextStartDate));
 		next.setEndDate(to_simple_string(nextEndDate));
 		_listOfOccurrences.push_back(next);

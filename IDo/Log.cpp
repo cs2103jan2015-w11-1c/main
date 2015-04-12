@@ -1,3 +1,4 @@
+//@author A0111624W-reused
 #include "Log.h"
 using namespace std;
 

@@ -1,9 +1,11 @@
+//@author A0115465H
 #ifndef MARK_H
 #define MARK_H
 
 #include <string>
 #include <vector>
 #include <iostream>
+#include "Log.h"
 #include "Task.h"
 
 using namespace std;
@@ -11,6 +13,7 @@ using namespace std;
 class Mark {
 private:
 	string _contentToMark;
+	Log _log;
 	
 	void markStatus (Task &taskToMark);
 	void markPriority (Task &taskToMark);

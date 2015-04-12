@@ -1,3 +1,4 @@
+//@author A0111624W
 #include "Edit.h"
 
 const char* ERROR_STARTTIME = "[ERROR] Start Time is Over";
@@ -64,26 +65,26 @@ bool Edit::checkAndProcess(){
 
 	//Match the type of task to be edited
 	if(_editType == TASK_NAME){
-		log.log("Editing Taskname");
+		_log.log("Editing Taskname");
 		_taskList[_editNumber].setTaskName(_editContent);
 
 	} else if(_editType == START_DATE){
-		log.log("Editing Startdate");
+		_log.log("Editing Startdate");
 		if(!setStartDate(_editContent, _editNumber)){
 			return false;
 		}
 	} else if(_editType == START_TIME){
-		log.log("Editing Starttime");
+		_log.log("Editing Starttime");
 		if(!setStartTime(_editContent, _editNumber)) {
 			return false;
 		} 
 	} else if(_editType == END_DATE){
-		log.log("Editing Enddates");
+		_log.log("Editing Enddates");
 		if(!setEndDate(_editContent, _editNumber)){
 			return false;
 		}
 	} else if(_editType == END_TIME){
-		log.log("Editing Endtime");
+		_log.log("Editing Endtime");
 		if(!setEndTime(_editContent, _editNumber)) {
 			return false;
 		} 

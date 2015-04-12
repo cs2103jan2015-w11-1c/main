@@ -1,17 +1,25 @@
 #include "Search.h"
 
+Search::Search(){
+	_noOfFoundTasks = 0;
+}
+
+Search::~Search(){
+}
+
 //takes in a single word to be search
 void Search::setSearchWord(string userInput) {
-	_searchword = userInput;
-	_searchWordSize = _searchword.size();
+	_searchWord = userInput;
+	_searchWordSize = _searchWord.size();
+	
 }
 
 bool Search::isSearchDate() {
 	Dates d;
 
-	if (d.checkDateFormat(_searchword)) {
-		if(d.isDateValid(_searchword)) {
-			_searchword = d.getFormattedDates();
+	if (d.checkDateFormat(_searchWord)) {
+		if(d.isDateValid(_searchWord)) {
+			_searchWord = d.getFormattedDates();
 		} else {
 			return false;
 		}
@@ -24,7 +32,9 @@ bool Search::isSearchDate() {
 }
 
 bool Search::foundDate(string date) {
-	if (_searchword == date) {
+	assert(date.size() > 0);
+
+	if (_searchWord == date) {
 		return true;
 	} else {
 		return false;
@@ -38,24 +48,26 @@ void Search::execute(vector <Task> taskListFromLogic) {
 	int i;
 	if (!isSearchDate()) {
 		for (i = 0; i < taskListFromLogic.size(); i++) {
+			_taskName = taskListFromLogic[i].getTaskName();
 			//cout << "searching in " << taskListFromLogic[i].getTaskName() << endl;
-			if (foundWord(taskListFromLogic[i].getTaskName())) {
+			if (foundWord(_taskName)) {
 				_listOfFoundTasks.push_back(taskListFromLogic[i]);
 				_listOfFoundTaskNum.push_back(i + 1);
 			}
 		}
-		_noOfFoundTasks = _listOfFoundTasks.size();
 	} else {
 		for (i = 0; i < taskListFromLogic.size(); i++) {
+			_endDate = taskListFromLogic[i].getEndDate();
+			_startDate = taskListFromLogic[i].getStartDate();
 			//cout << "searching date " << taskListFromLogic[i].getEndDate() << endl;
-			if (foundDate(taskListFromLogic[i].getEndDate()) || foundDate(taskListFromLogic[i].getStartDate())) {
+			if (foundDate(_endDate) || foundDate(_startDate)) {
 				_listOfFoundTasks.push_back(taskListFromLogic[i]);
 				_listOfFoundTaskNum.push_back(i + 1);
 			}
 		}
-		_noOfFoundTasks = _listOfFoundTasks.size();
+		
 	}
-	
+	_noOfFoundTasks = _listOfFoundTasks.size();
 }
 
 vector <string> Search::stringToTokens(string taskname) {
@@ -72,14 +84,19 @@ vector <string> Search::stringToTokens(string taskname) {
 }
 
 int Search::searchForWord(vector<string> tokenisedTaskName) {
+	assert(tokenisedTaskName.size() > 0);
+
+	_log.log("searching for 1 word\n");
+
 	vector <string>::iterator iter = tokenisedTaskName.begin();
 	int foundIndex = 0;
 	while (iter != tokenisedTaskName.end()) {
 		int size = (*iter).size();	//length of 1 word
 		int i = 0;
 		
+
 		while (i < size) {
-			foundIndex = ((*iter).substr(i)).find(_searchword);
+			foundIndex = ((*iter).substr(i)).find(_searchWord);
 			//cout << "foundIndex : " << foundIndex << endl;
 			if (foundIndex != -1) {
 				 return foundIndex;
@@ -93,6 +110,41 @@ int Search::searchForWord(vector<string> tokenisedTaskName) {
 	return foundIndex;
 }
 
+bool Search::canFindFirst(int &i, vector<string> tokenisedSearchWord, vector<string> tokenisedTaskName) {
+	_log.log("searching for more than 1 word, finding first word\n");
+
+	bool foundfirst = false;
+	
+	int size = tokenisedTaskName.size();
+
+	while (!foundfirst && i < size) {
+		if (tokenisedSearchWord[0] == tokenisedTaskName[i]) {
+			foundfirst = true;
+		}
+		else {
+			i++;
+		}
+	}
+	return foundfirst;
+}
+
+bool Search::findSec(int &i, vector<string> tokenisedSearchWord, vector<string> tokenisedTaskName) {
+	_log.log("searching for remaining words\n");
+
+	bool running = true;
+	int size = tokenisedSearchWord.size();
+	int size2 = tokenisedTaskName.size();
+
+	for (int j = 0; j < size && running && i < size2; j++) {
+		if (tokenisedSearchWord[j] == tokenisedTaskName[i]) {
+			i++;
+		} else {
+			running = false;
+		}
+	}
+	return running;
+}
+
 //Pre condition: takes in the task name of task in list
 //conducts the matching of task name with the word to be searched
 //returns true if word is found, false otherwise
@@ -100,63 +152,64 @@ bool Search::foundWord(string taskname) {
 
 	int whiteSpaceIndex;
 	//cout << _searchword << "search word size: " << _searchword.size() << endl;
-	if (_searchword.size() == 1) {	//single first character search
-		if (taskname[0] == _searchword[0]) {
+	if (_searchWord.size() == 1) {	//single first character search
+		if (taskname[0] == _searchWord[0]) {
 			return true;
 		} else {
 			return false;
 		}
-	} else if (_searchword.size() > 1) {
+	}
+	else if (_searchWord.size() > 1) {
 
 		vector <string> tokenisedTaskName;;
 		tokenisedTaskName = stringToTokens(taskname);
 
-		whiteSpaceIndex = _searchword.find_first_of(" ");
+		whiteSpaceIndex = _searchWord.find_first_of(" ");
 
 		//cout << "whitespace index" << whiteSpaceIndex << endl;
-
-		if (whiteSpaceIndex == -1) {	//search word is 1 word
-			int i = searchForWord(tokenisedTaskName);
-			if (i != -1) {
-				return true;
-			} else {
-				return false;
-			}
-
-		} else {	//search more than 1 word
-			int i = 0;
-			vector<string> tokenisedSearchWord = stringToTokens(_searchword);
-			int size = tokenisedSearchWord.size();
-			int size2 = tokenisedTaskName.size();
-
-			//cout << "i " << i << endl;
-			bool foundfirst = false;
-			while (!foundfirst && i < size2) {
-				if (tokenisedSearchWord[0] == tokenisedTaskName[i]) {
-					foundfirst = true;
-				} else {
-					i++;
+		try {
+			if (whiteSpaceIndex == -1) {	//search word is 1 word
+				int i = searchForWord(tokenisedTaskName);
+				if (i != -1) {
+					return true;
 				}
-			}
-			//cout << "i " << i << endl;
-			if (foundfirst && i < size2 - 1) {
-				bool running = true;
-				for (int j = 0; j < size && running && i < size2; j++) {
-					if (tokenisedSearchWord[j] == tokenisedTaskName[i]) {
-						i++;
-					} else {
-						running = false;
+				else {
+					return false;
+				}
+
+			} else {	//search more than 1 word
+
+				int i = 0;
+				vector<string> tokenisedSearchWord = stringToTokens(_searchWord);
+				int size2 = tokenisedTaskName.size();
+
+				//cout << "i " << i << endl;
+				bool foundfirst = false;
+				foundfirst = canFindFirst(i, tokenisedSearchWord, tokenisedTaskName);
+
+				if (foundfirst && i < size2 - 1) {
+					if (findSec(i, tokenisedSearchWord, tokenisedTaskName)) {
+						_log.log("found second word\n");
+						return true;
 					}
+					else {
+						if (i == size2 - 1) {
+							throw ("exceed possible range");
+						}
+						return false;
+					}
+				} else {
+					return false;
 				}
-				return running;
-			} else {
-				return false;
-			}
+			} 
+
+		} 
+		catch (char* strg){
+			cout << "Exception raised: " << strg << endl;
 		}
 	} else {
 		return false;
 	}
-
 }
 
 
@@ -170,4 +223,8 @@ vector <int> Search::getListOfFoundTaskNum() {
 
 int Search::getNoOfFoundTasks() {
 	return _noOfFoundTasks;
+}
+
+string Search::getSearchWord(){
+	return _searchWord;
 }

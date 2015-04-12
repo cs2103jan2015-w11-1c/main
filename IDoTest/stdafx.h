@@ -22,3 +22,7 @@
 #include "UserInterface.h"
 #include "Dates.h"
 #include "View.h"
+#include "RTask.h"
+#include "Search.h"
+#include "Sort.h"
+#include "Log.h"

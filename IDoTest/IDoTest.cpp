@@ -11,204 +11,75 @@
 #include "UserInterface.cpp"
 #include "View.cpp"
 #include "Dates.cpp"
+#include "RTask.cpp"
+#include "Search.cpp"
+#include "Sort.cpp"
+#include "Log.cpp"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-namespace StorageTest
-{		
-	TEST_CLASS(StorageTest)
+namespace IDoTest {
+
+	TEST_CLASS(LogicTest) 
 	{
-	public:
-		
-		TEST_METHOD(updateStorage)
-		{
-			Task task;
-			vector <Task> testVector;
-			Storage storage;
-			string temp;
-			task.setTaskName("do tutorial");
-			task.setStartDate("2015/01/01");
-			task.setStartTime("1300");
-			task.setEndDate("2015/01/02");
-			task.setEndTime("1300");
-			testVector.push_back(task);
-			storage.updateFile (testVector);
-			ifstream readFile ("output.txt");
-			getline(readFile,temp);
-			Assert::AreEqual (temp, task.getTaskName());
-			getline(readFile,temp);
-			Assert::AreEqual (temp, task.getStartDate());
-			getline(readFile,temp);
-			Assert::AreEqual (temp, task.getStartTime());
-			getline(readFile,temp);
-			Assert::AreEqual (temp, task.getEndDate());
-			getline(readFile,temp);
-			Assert::AreEqual (temp, task.getEndTime());
-		}
-	};
-}
+		public:
+			TEST_METHOD(AddNRTest)
+			{
+				Logic logicAddTest;
+				int numOfTask = (logicAddTest.getListOfTasks()).size();
 
-namespace UITest
-{
-	TEST_CLASS(UITest)
-	{
-	public:
-		
-		TEST_METHOD(testWelcomeMessage)
-		{
-			UserInterface UI;
-			string expected = "Good day, Jimmy. How productive would you like to be today? :)";
+				Assert::AreEqual(0, numOfTask);
+				
+				logicAddTest.process("add submit CS by 4/13");
+				logicAddTest.process("add inform instructor abt venue change");
 
-			Assert::AreEqual(expected, UI.welcomeMessage());
-		}
-	};
-}
+				numOfTask = (logicAddTest.getListOfTasks()).size();
 
-namespace ParserTest
-{		
-	TEST_CLASS(ParserTest)
-	{
-	public:
+				Assert::AreEqual(2, numOfTask);
 
-		//Test if parsed inputs are correct for mark function
-		//This is a test for equivalence partition [commandchoice][number][content]
-		TEST_METHOD(markInformation){
-			vector<string> parsedInputs;
+			};
 
-			string input = "mark 1 done";
+			TEST_METHOD(AddRTest)
+			{
+				Logic logicAddTest;
+				int numOfTask = (logicAddTest.getListOfTasks()).size();
 
-			Parser parser;
-			parsedInputs = parser.completeParsing(input);
-			int size = parsedInputs.size();
+				Assert::AreEqual(0, numOfTask);
+				logicAddTest.process("add submit CS by 4/13 every 3 day");
 
-			string expectedResults[]  = {"mark" ,"1", "done"};
-			int expectedSize = 3;
+				numOfTask = (logicAddTest.getListOfTasks()).size();
 
-			//check if the correct number of items are in the vector
-			Assert::AreEqual(expectedSize, (int)parsedInputs.size());
-
-			//check if the correct strings are in the vector
-			for(int i=0; i<size; i++){
-				Assert::AreEqual (expectedResults[i].c_str(), parsedInputs[i].c_str());
+				Assert::AreEqual(5, numOfTask);
 			}
 
-		};
+			TEST_METHOD(EditTest)
+			{
+				Logic logicEditTest;
+				vector<Task> listOfTasks;
+				
+				logicEditTest.process("add CS presentation prep");
+				listOfTasks = logicEditTest.getListOfTasks();
+				
+				string taskname;
+				taskname = listOfTasks[0].getTaskName();
+				string expected = "CS presentation prep";
+				Assert::AreEqual(expected, taskname);
+				
+				logicEditTest.process("edit 1 taskname CS presentation final");
 
-		//Test if parsed inputs are correct if a deadline task is added
-		//This is a test for equivalence partition [commandchoice][content][date][time]
-		TEST_METHOD(deadLineTaskInformation){
-			vector<string> parsedInputs;
+				listOfTasks = logicEditTest.getListOfTasks();
 
-			string input = "add task by 9999/9/9,2323";
-
-			Parser parser;
-			parsedInputs = parser.completeParsing(input);
-			int size = parsedInputs.size();
-
-			string expectedResults[]  = {"add" ,"task ", "9999/9/9" , "2323"};
-			int expectedSize = 4;
-
-			//check if the correct number of items are in the vector
-			Assert::AreEqual(expectedSize, (int)parsedInputs.size());
-
-			//check if the correct strings are in the vector
-			for(int i=0; i<size; i++){
-				Assert::AreEqual (expectedResults[i].c_str(), parsedInputs[i].c_str());
+				taskname = listOfTasks[0].getTaskName();
+				expected = "CS presentation final";
+				Assert::AreEqual(expected, taskname);
+				
 			}
-		};
-
-		//Test if parsed inputs are correct if a timed-task is added
-		TEST_METHOD(timedTaskInformation){
-			vector<string> parsedInputs;
-
-			string input = "add task from 5555/9/9,2323 to 9999/9/9,2346";
-
-			Parser parser;
-			parsedInputs = parser.completeParsing(input);
-			int size = parsedInputs.size();
-
-			string expectedResults[]  = {"add" ,"task ", "5555/9/9" , "2323", "9999/9/9" , "2346"};
-			int expectedSize = 6;
-
-			//check if the correct number of items are in the vector
-			Assert::AreEqual(expectedSize, (int)parsedInputs.size());
-
-			//check if the correct strings are in the vector
-			for(int i=0; i<size; i++){
-				Assert::AreEqual (expectedResults[i].c_str(), parsedInputs[i].c_str());
-			}
-		};
-
-		//Test if parsed inputs are correct if a floating task is added
-		TEST_METHOD(floatingTaskInformation){
-			vector<string> parsedInputs;
-
-			string input = "add how are you";
-
-			Parser parser;
-			parsedInputs = parser.completeParsing(input);
-			int size = parsedInputs.size();
-
-			string expectedResults[]  = {"add" ,"how are you"};
-			int expectedSize = 1;
-
-			//check if the correct number of items are in the vector
-			Assert::AreEqual(expectedSize, (int)parsedInputs.size());
-
-			//check if the correct strings are in the vector
-			for(int i=0; i<size; i++){
-				Assert::AreEqual (expectedResults[i].c_str(), parsedInputs[i].c_str());
-			}
-		};
-
-		//Test if parsed inputs are correct for edit function
-		TEST_METHOD(editInformation){
-			vector<string> parsedInputs;
-
-			string input = "edit 1 taskname testing";
-
-			Parser parser;
-			parsedInputs = parser.completeParsing(input);
-			int size = parsedInputs.size();
-
-			string expectedResults[]  = {"edit" ,"1", "taskname" , "testing"};
-			int expectedSize = 4;
-
-			//check if the correct number of items are in the vector
-			Assert::AreEqual(expectedSize, (int)parsedInputs.size());
-
-			//check if the correct strings are in the vector
-			for(int i=0; i<size; i++){
-				Assert::AreEqual (expectedResults[i].c_str(), parsedInputs[i].c_str());
-			}
-		};
-
-		//Test if parsed inputs are correct if a timed-task is added
-		TEST_METHOD(wrongStartDateInformation){
-			vector<string> parsedInputs;
-
-			string input = "add task from 2099/2/30,2323 to 9999/9/9,2346";
-
-			Parser parser;
-			parsedInputs = parser.completeParsing(input);
-			int size = parsedInputs.size();
-
-			string expectedResults[]  = {"add"};
-			int expectedSize = 1;
-
-			//check if the correct number of items are in the vector
-			Assert::AreEqual(expectedSize, (int)parsedInputs.size());
-
-			//check if the correct strings are in the vector
-			for(int i=0; i<size; i++){
-				Assert::AreEqual (expectedResults[i].c_str(), parsedInputs[i].c_str());
-			}
-		};
 	};
 }
 
 namespace LogicTest
 {
+	
 	TEST_CLASS (MarkTest)
 	{
 	public:
@@ -251,6 +122,51 @@ namespace LogicTest
 
 		};
 	};
+	
+	TEST_CLASS(SearchTest)
+	{
+	public:
+		
+		TEST_METHOD(setSearchWord)
+		{
+			Search search;
+			search.setSearchWord("CS presentation");
+			
+			string storedSearchWord;
+			storedSearchWord = search.getSearchWord();
+
+			string expected = "CS presentation";
+
+			Assert::AreEqual(expected, storedSearchWord);
+		}
+		
+
+		TEST_METHOD(execute)
+		{
+			Task taskInLogic;
+			taskInLogic.setTaskName("CS presentation");
+			taskInLogic.setEndDate("4/17");
+
+			vector <Task> taskList;
+			taskList.push_back(taskInLogic);
+
+			taskInLogic.setTaskName("2150 presentation");
+			taskInLogic.setEndDate("4/14");
+
+			taskList.push_back(taskInLogic);
+
+			Search search;
+			search.setSearchWord("CS presentation");
+			
+			int num = search.getNoOfFoundTasks();
+			Assert::AreEqual(0, num);
+
+			search.execute(taskList);
+
+			num = search.getNoOfFoundTasks();
+			Assert::AreEqual(1, num);
+		};
+	};
 }
 
 //creating a template specialization of the ToString function
@@ -266,26 +182,4 @@ namespace Microsoft{
 
 		}
 	}
-}
-
-namespace LogicTest
-{
-	TEST_CLASS(Add)
-	{
-	public:
-		TEST_METHOD(execute)
-		{
-			vector <string> parsedInfo;
-			parsedInfo.push_back("add");
-			parsedInfo.push_back("cut nails");
-
-			vector <Task> listOfTasks;
-			Logic add;
-			add.setListOfTasks(listOfTasks);
-			Add adding;
-			adding.execute();
-
-			}
-		};
-	};
 }

@@ -211,6 +211,8 @@ bool Search::foundWord(string taskname) {
 	} else {
 		return false;
 	}
+
+	return true;
 }
 
 

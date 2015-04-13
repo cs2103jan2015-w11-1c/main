@@ -27,7 +27,7 @@ private:
 	Log _log;
 	Storage _storage;
 	Dates _dates;
-	View view;
+	View _view;
 
 	string _commandChoice;
 	vector<string> _parsedInformation;
@@ -39,6 +39,7 @@ private:
 	void backup();
 	void getParsedInformation(string);
 	void printMessage(string message);
+	void printHeader(string message);
 	void addTask();
 	int searchNextRecurringIndex();
 	void deleteTask();

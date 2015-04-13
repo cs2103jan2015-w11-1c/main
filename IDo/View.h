@@ -36,7 +36,6 @@ using namespace std;
 
 class View {
 private:
-	Task _task;
 	Dates _date;
 	string _todayDate;
 	Log _log;

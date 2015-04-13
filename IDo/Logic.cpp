@@ -1,5 +1,6 @@
 #include "Logic.h"
 
+const string LAST_CHANGE = "** Last Change Made **";
 const string SUCCESSFULLY_MARKED = "[Marked Successfully]";
 const string SUCCESSFULLY_ADDED = "[Added Successfully]";
 const string SUCCESSFULLY_EDITED = "[Edited Successfully]";
@@ -9,7 +10,8 @@ const string SUCCESSFULLY_CLEARED = "[Cleared Successfully]";
 const string SUCCESSFULLY_SORTED = "[Sorted Successfully]";
 const string SUCCESSFULLY_CHANGE_FILE= "[Successfully Changed File Location]";
 const string TASK_NOT_FOUND = "[Task Not Found]";
-const string ERROR_WRONG_INPUT = "Error: Wrong Input!";
+const string ERROR_WRONG_INPUT = "[Error] Wrong Input!";
+const string ERROR_COMMAND_INPUT = "[Error] Wrong Command Input!";
 const string ENTER_TO_DEFAULT_VIEW = "Press the ENTER key to go back to default view";
 
 void Logic::updateStorage() {
@@ -20,7 +22,7 @@ void Logic::undo() {
 	_log.log("Undo done");
 	_listOfTasks.clear();
 	_storage.readFile(_listOfTasks,1);
-	view.viewDefault(_listOfTasks,_dates.getTodayDate());
+	_view.viewDefault(_listOfTasks,_dates.getTodayDate());
 }
 
 void Logic::backup() {
@@ -38,6 +40,10 @@ void Logic::getParsedInformation(string line) {
 
 void Logic::printMessage(string message) {
 	cout << endl << message << endl << endl;
+}
+
+void Logic::printHeader(string message) {
+	cout << endl << message << endl;
 }
 
 void Logic::addTask() {
@@ -59,13 +65,13 @@ void Logic::addTask() {
 			}
 		}
 
-		view.viewDefault(_listOfTasks,_dates.getTodayDate());
-		view.viewSelectedOne(_listOfTasks, _listOfTasks.size());
+		_view.viewDefault(_listOfTasks,_dates.getTodayDate());
+		_view.viewSelectedOne(_listOfTasks, _listOfTasks.size());
 		printMessage(SUCCESSFULLY_ADDED);
 		updateStorage();
 
 	} else {
-		view.viewDefault(_listOfTasks,_dates.getTodayDate());
+		_view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		printMessage(ERROR_WRONG_INPUT);
 	}
 }
@@ -87,10 +93,11 @@ int Logic::searchNextRecurringIndex() {
 void Logic::deleteTask() {
 	Delete remove;
 	backup();
+
+	_view.viewDefault(_listOfTasks, _dates.getTodayDate());
 	if (remove.isValidInput(_parsedInformation, _listOfTasks.size())) {
 		_log.log("Logic pass to delete");
 		remove.execute(_listOfTasks);
-		view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		printMessage(SUCCESSFULLY_DELETED);
 		updateStorage();
 	}
@@ -103,13 +110,13 @@ void Logic::editTask() {
 	Edit edit;
 	backup();
 
-	view.viewDefault(_listOfTasks,_dates.getTodayDate());
+	_view.viewDefault(_listOfTasks,_dates.getTodayDate());
 	int editedTaskNumber;
 	if (edit.execute(_parsedInformation, _listOfTasks)) {
 		_log.log("Logic pass to edit");
 		_listOfTasks=edit.getList();
 		editedTaskNumber = atoi(_parsedInformation[1].c_str());
-		view.viewSelectedOne(_listOfTasks, editedTaskNumber);
+		_view.viewSelectedOne(_listOfTasks, editedTaskNumber);
 		printMessage(SUCCESSFULLY_EDITED);
 		updateStorage();
 	} else {
@@ -121,18 +128,17 @@ void Logic::markTask() {
 	Mark mark;
 	backup();
 
+	_view.viewDefault(_listOfTasks, _dates.getTodayDate());
 	if (mark.isValidInput(_parsedInformation, _listOfTasks.size())) {
 		_log.log("Logic pass to mark");
 		mark.execute(_parsedInformation, _listOfTasks);
-		view.viewSelectedFew(mark.getMarkedTasks(), mark.getMarkedTaskIndex());
+		printHeader(LAST_CHANGE);
+		_view.viewSelectedFew(mark.getMarkedTasks(), mark.getMarkedTaskIndex());
 		printMessage(SUCCESSFULLY_MARKED);
 		updateStorage();
-		enterToGoDefaultView();
 	}
 	else {
-		view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		printMessage(ERROR_WRONG_INPUT);
-		enterToGoDefaultView();
 	}
 	updateStorage();
 }
@@ -153,7 +159,6 @@ void Logic::viewCommands() {
 }
 
 bool Logic::viewDecider() {
-	View view;
 
 	if (_parsedInformation.size() == 1) {
 		return false;
@@ -162,15 +167,15 @@ bool Logic::viewDecider() {
 	system("CLS");
 
 	if (_parsedInformation[1] == "all") {
-		view.viewAll(_listOfTasks);
+		_view.viewAll(_listOfTasks);
 		enterToGoDefaultView();
 		return true;
 	} else if (_parsedInformation[1] == "done") {
-		view.viewDoneTasks(_listOfTasks);
+		_view.viewDoneTasks(_listOfTasks);
 		enterToGoDefaultView();
 		return true;
 	} else if (_parsedInformation[1] == "notdone") {
-		view.viewNotDoneTasks(_listOfTasks);
+		_view.viewNotDoneTasks(_listOfTasks);
 		enterToGoDefaultView();
 		return true;
 	} else if (_parsedInformation[1] == "commands") {
@@ -178,7 +183,7 @@ bool Logic::viewDecider() {
 		enterToGoDefaultView();
 		return true;
 	} else {
-		view.viewDefault(_listOfTasks,_parsedInformation[1]);
+		_view.viewDefault(_listOfTasks,_parsedInformation[1]);
 		return true;
 	}
 }
@@ -186,7 +191,7 @@ bool Logic::viewDecider() {
 void Logic::storeChange() {
 	string filename;
 	_log.log("Logic call storage to change storage file name");
-	view.viewDefault(_listOfTasks,_dates.getTodayDate());
+	_view.viewDefault(_listOfTasks,_dates.getTodayDate());
 	filename = _parsedInformation[1] + ".txt";
 	_storage.editStorageFileName(filename);
 	cout << "New File Storage: " << filename << endl; 
@@ -200,10 +205,10 @@ void Logic::sortTask() {
 	if (sort.execute(_parsedInformation, _listOfTasks)) {
 		_log.log("Logic pass to sort");
 		_listOfTasks = sort.getSortedList();
-	//	view.viewDefault(_listOfTasks,_dates.getTodayDate());
+		_view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		printMessage(SUCCESSFULLY_SORTED);
 	} else {
-		view.viewDefault(_listOfTasks,_dates.getTodayDate());
+		_view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		printMessage(ERROR_WRONG_INPUT);
 	}
 }
@@ -214,6 +219,7 @@ void Logic::searchWord() {
 	search.execute(_listOfTasks);
 	View printFoundTasks;
 
+	system("CLS");
 	if (search.getNoOfFoundTasks() != 0) {
 		_log.log("Logic pass to search");
 		vector <Task> listOfFoundTasks;
@@ -235,7 +241,7 @@ void Logic::enterToGoDefaultView() {
 	char one;
 	cin.get(one);
 	if (one == '\n') {
-		view.viewDefault(_listOfTasks,_dates.getTodayDate());
+		_view.viewDefault(_listOfTasks,_dates.getTodayDate());
 	} else {
 		getline(cin, userInput);
 		userInput = one + userInput;
@@ -270,7 +276,7 @@ bool Logic::process(string line) {
 		editTask();
 	} else if (_commandChoice == "clear") {
 		_listOfTasks.clear();
-		view.viewDefault(_listOfTasks,_dates.getTodayDate());
+		_view.viewDefault(_listOfTasks,_dates.getTodayDate());
 		printMessage(SUCCESSFULLY_CLEARED);
 		updateStorage();
 	} else if (_commandChoice == "mark") {
@@ -290,9 +296,11 @@ bool Logic::process(string line) {
 	} else if (_commandChoice == "exit") {
 		updateStorage();
 		return false;
-	} else if (_commandChoice == "invalid") {
-		printMessage(ERROR_WRONG_INPUT);
+	} else if (_commandChoice == "error") {
+		_view.viewDefault(_listOfTasks, _dates.getTodayDate());	
+		printMessage(ERROR_COMMAND_INPUT);
 	} else {
+		_view.viewDefault(_listOfTasks, _dates.getTodayDate());
 		printMessage(ERROR_WRONG_INPUT);
 	}
 

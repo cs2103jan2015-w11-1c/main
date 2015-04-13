@@ -106,9 +106,7 @@ bool Edit::setStartDate(string startDate, int index) {
 		startDate = check.getFormattedDates();
 		try {
 			compareDates(startDate, _endDate);
-			cout<<"hihihi"<<endl;
 			compareTime(startDate, _endDate, _startTime, _endTime);
-			cout<<"asdasd"<<endl;
 			_taskList[index].setStartDate(startDate);
 		} catch (const char* msg) {
 			cerr << msg << endl;

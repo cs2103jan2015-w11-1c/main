@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <sstream>
 #include <iterator>
+#include <assert.h>
 #include "Dates.h"
 #include "Log.h"
 
@@ -20,6 +21,7 @@ private:
 	Log _log;
 
 	vector<string> splittedUserInputs;
+	int splittedSize;
 	vector<string> parsedInputs;
 
 	//Command Choices
@@ -33,8 +35,8 @@ private:
 	static const string CHOICE_SORT;
 	static const string CHOICE_STORE;
 	static const string CHOICE_UNDO;
-	static const string CHOICE_ERROR;
 	static const string CHOICE_EXIT;
+	static const string CHOICE_ERROR;
 
 	//Error Messages
 	static const string MESSAGE_INVALID_TIME;
@@ -85,7 +87,6 @@ private:
 	bool checkThirdWord(int);
 	
 	//Functions to check for validity
-	//bool compareDates(string date1, string date2);
 	bool compareTimes(string time1, string time2); 
 	bool isPossibleTime(string time);
 	bool isTimeFormat(string time);
@@ -96,6 +97,7 @@ private:
 	string getTodayTime();
 	int keywordPos(string keyword);
 
+	bool storeTimedTaskInfo();
 	bool setMissingDateTime();
 	bool storeTaskContent(int, int, vector<string>);
 

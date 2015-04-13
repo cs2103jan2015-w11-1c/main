@@ -14,10 +14,10 @@ const string Parser::CHOICE_SEARCH = "search";
 const string Parser::CHOICE_VIEW = "view";
 const string Parser::CHOICE_MARK = "mark";
 const string Parser::CHOICE_SORT = "sort";
-const string Parser::CHOICE_ERROR = "details not parsed";
 const string Parser::CHOICE_UNDO = "undo";
 const string Parser::CHOICE_STORE = "store";
 const string Parser::CHOICE_EXIT = "exit";
+const string Parser::CHOICE_ERROR = "error";
 const string Parser::MESSAGE_INVALID_TIME = "Invalid Time Input";
 const string Parser::MESSAGE_INVALID_DATE = "Invalid Date Input";
 const char* Parser::ERROR_TIME_OUT_RANGE = "[ERROR] Outside time range 0000 to 2359";
@@ -124,6 +124,9 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 
 		case EXIT:
 			parsedInputs.push_back(CHOICE_EXIT);
+
+		case INVALID:
+			parsedInputs.push_back(CHOICE_ERROR);
 	}
 
 	return 1;
@@ -133,7 +136,7 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 //		Returns false if it's not a timed-task
 bool Parser::checkTimedTask(){
 
-	int size = splittedUserInputs.size();
+    splittedSize = splittedUserInputs.size();
 	bool valid = true;
 
 	fromPosition = keywordPos("from");
@@ -151,13 +154,13 @@ bool Parser::checkTimedTask(){
 				valid = false;
 			}
 		}
-	} else if ( fromPosition != NOT_VALID && toPosition != NOT_VALID && everyPosition == NOT_VALID) {
+	} else if (fromPosition != NOT_VALID && toPosition != NOT_VALID && everyPosition == NOT_VALID) {
 		for(int i = fromPosition+1; i < toPosition; i++ ) {
 			if(!validDateTime(i)) {
 				valid = false;
 			}
 		}
-		for(int i = toPosition+1 ; i < size ; i++) {
+		for(int i = toPosition+1 ; i < splittedSize ; i++) {
 			if(!validDateTime(i)) {
 				valid = false;
 			}
@@ -167,25 +170,9 @@ bool Parser::checkTimedTask(){
 	}
 	
 	if(valid == true) {
-		for(int i = fromPosition+1; i < toPosition; i ++ ) {
-			if(check.isDateValid(splittedUserInputs[i])) {
-				_startDate = check.getFormattedDates();
-			}
-			if(isPossibleTime(splittedUserInputs[i])) {
-				_startTime = splittedUserInputs[i];
-			}
-		}
 
-		for(int i = toPosition+1 ; i < size ; i++) {
-			if(check.isDateValid(splittedUserInputs[i])) {
-				_endDate = check.getFormattedDates();
-			}
-			if(isPossibleTime(splittedUserInputs[i])) {
-				_endTime = splittedUserInputs[i];
-			}
-		}
-
-		setMissingDateTime();
+		//Stores startdate, starttime, enddate, endtime
+		storeTimedTaskInfo();
 
 		//Return false if start date is larger than end date
 		if(compareDates(_startDate,_endDate)) {
@@ -196,14 +183,40 @@ bool Parser::checkTimedTask(){
 		if(_startDate == _endDate && compareTimes(_startTime,_endTime)) {
 			valid = false;
 		}
-
+		//Return false if time is less than today's time
 		if(!checkTimeIfDateIsToday(_startDate, _startTime)){
-			cout << "Error: You should start on your task NOW!" <<endl;
+			cout << "[Error] You should start on your task NOW!" <<endl;
 			valid = false;
 		}
-
 	}
 	return valid;
+}
+
+bool Parser::storeTimedTaskInfo() {
+
+		assert (fromPosition != NOT_VALID || byPosition != NOT_VALID);
+
+		for (int i = fromPosition+1; i < toPosition; i++ ) {
+			if (check.isDateValid(splittedUserInputs[i])) {
+				_startDate = check.getFormattedDates();
+			}
+			if (isPossibleTime(splittedUserInputs[i])) {
+				_startTime = splittedUserInputs[i];
+			}
+		}
+
+		for (int i = toPosition + 1; i < splittedSize; i++) {
+			if(check.isDateValid(splittedUserInputs[i])) {
+				_endDate = check.getFormattedDates();
+			}
+			if(isPossibleTime(splittedUserInputs[i])) {
+				_endTime = splittedUserInputs[i];
+			}
+		}
+
+		setMissingDateTime();
+
+		return true;
 }
 
 bool Parser::setMissingDateTime() {
@@ -227,6 +240,8 @@ bool Parser::setMissingDateTime() {
 	}
 	return true;
 }
+
+
 
 //Post: Returns true if it's a deadline task i.e. add...by <date/time>
 //		Returns false if it's not a deadline task
@@ -289,7 +304,7 @@ bool Parser::checkFloating(){
 	int size = splittedUserInputs.size();
 	bool valid = true;
 
-	if(fromPosition!=size-1 && fromPosition!=-1) {
+	if(fromPosition != size-1 && fromPosition != -1) {
 		if(check.checkDateFormat(splittedUserInputs[fromPosition+1])){
 			valid = false;
 		}
@@ -298,7 +313,7 @@ bool Parser::checkFloating(){
 		}
 	}
 
-	if(byPosition!=size-1 && byPosition!=-1) {
+	if(byPosition != size-1 && byPosition != -1) {
 		if(check.checkDateFormat(splittedUserInputs[byPosition+1])){
 			valid = false;
 		}

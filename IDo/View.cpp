@@ -2,7 +2,7 @@
 #include "View.h"
 
 const string DISPLAYING = "[List of Tasks]";
-const string CHANGES = "[Last Change Made]";
+const string CHANGES = "**Last Change Made**";
 
 View::View() {
 	_todayDate = _date.getTodayDate();
@@ -260,7 +260,6 @@ void View::display(Task task) {
 }
 
 void View::viewSelectedFew(vector<Task> list, vector<int> taskNum) {
-	system("CLS");
 	printMessage(DISPLAYING);
 	printHeader();
 	int size = list.size();

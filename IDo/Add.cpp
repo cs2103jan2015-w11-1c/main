@@ -5,8 +5,8 @@ static const int INVALID = 1;
 static const int DEADLINE_TASK = 4;
 static const int TIMED_TASK = 6;
 static const int RECURRING_DEADLINE_WITHOUT_LIMIT = 7;
-static const int RECURRING_DEADLINE_GOT_LIMIT = 9;
-static const int RECURRING_TIMED_WITHOUT_LIMIT = 10;
+static const int RECURRING_DEADLINE_GOT_LIMIT = 10;
+static const int RECURRING_TIMED_WITHOUT_LIMIT = 9;
 static const int RECURRING_TIMED_GOT_LIMIT = 12;
 static const int DEFAULT_OCCURRENCE = 5;
 static const string WORD_EVERY = "every";
@@ -65,9 +65,9 @@ bool Add::execute(vector<string> parsedInformation){
 		} else if(sizeType == RECURRING_DEADLINE_GOT_LIMIT) {
 
 			rtask.setInterval(stoi(parsedInformation[5])); 
-			rtask.setPeriod(parsedInformation[6]); 
-			rtask.setLimit(parsedInformation[8]);
+			rtask.setPeriod(parsedInformation[6]); 			
 			rtask.setLimitingPeriod(parsedInformation[9]); 
+			rtask.setLimit(parsedInformation[8]);
 
 			rtask.generateOccursForDeadlineTask();
 			_listOfOccurrences = rtask.getListOfOccurrences();
@@ -76,8 +76,8 @@ bool Add::execute(vector<string> parsedInformation){
 
 			rtask.setInterval(stoi(parsedInformation[7]));
 			rtask.setPeriod(parsedInformation[8]);
-			rtask.setLimit(parsedInformation[10]);
 			rtask.setLimitingPeriod(parsedInformation[11]);
+			rtask.setLimit(parsedInformation[10]);
 
 			rtask.generateOccursForTimedTask();
 			_listOfOccurrences = rtask.getListOfOccurrences();

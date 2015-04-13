@@ -30,14 +30,15 @@ public:
 	
 	Dates();
 	~Dates();
-	bool checkDateFormat(string date);
-	bool isDateValid(string input);
-	bool checkDateWithToday();
-	string getFormattedDates();
-	string getTodayDate();
+
 	int checkDay(string);
 	string datesGivenDays(string, string);
 	string datesFromToday(int);
+	bool checkDateFormat(string date);
+	bool isDateValid(string input);
+	string getTodayDate();
+	bool validDateFromString(string date);
+	string getFormattedDates();
 };
 
 #endif

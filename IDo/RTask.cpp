@@ -23,6 +23,8 @@ RTask::~RTask(){
 bool RTask::setAbstrInfo(vector <string> parsedInfo) {
 
 	_log.log(RTASK_TO_TASK);
+	assert (!parsedInfo.empty());
+
 	//initialise abstract task attributes
 	_abstract.setTaskName(parsedInfo[1]);
 	
@@ -50,6 +52,8 @@ bool RTask::setInterval(int interval) {
 //		Return false if the string does not
 bool RTask::setPeriod(string period) {
 
+	assert (!period.empty());
+
 	if (period == PERIOD_DAY) {
 		_period = day;
 	}
@@ -72,19 +76,23 @@ bool RTask::setPeriod(string period) {
 bool RTask::setFirstOccur(vector<string> parsedInfo){
 
 	_log.log(RTASK_TO_TASK);
+	assert (!parsedInfo.empty());
 
-	sizeType = parsedInfo.size();
-	cout<< "hihihi: "<< sizeType <<endl;
+    int type = parsedInfo.size();
 	_occur.setTaskName(_abstract.getTaskName());
 
-	if (sizeType == RECURRING_DEADLINE_NO_LIMIT || sizeType == RECURRING_DEADLINE_WITH_LIMIT) {	
+	if (type == RECURRING_DEADLINE_NO_LIMIT || type == RECURRING_DEADLINE_WITH_LIMIT) {	
+
 		_occur.setEndTime(_abstract.getEndTime());
 		_occur.setEndDate(parsedInfo[2]);
-	} else if(sizeType == RECURRING_TIMED_NO_LIMIT || sizeType == RECURRING_TIMED_WITH_LIMIT ) {
+
+	} else if (type == RECURRING_TIMED_NO_LIMIT || type == RECURRING_TIMED_WITH_LIMIT ) {
+
 		_occur.setStartTime(_abstract.getStartTime());
 		_occur.setEndTime(_abstract.getEndTime());
 		_occur.setStartDate(parsedInfo[2]);
 		_occur.setEndDate(parsedInfo[4]);
+
 	} else {
 		return false;
 	}
@@ -95,6 +103,9 @@ bool RTask::setFirstOccur(vector<string> parsedInfo){
 //Post: Returns true if it is a day, month, year
 //		Returns false if it is not
 bool RTask::setLimitingPeriod(string period) {
+
+	assert (!period.empty());
+
 	if (period == PERIOD_DAY) {
 		_limitingPeriod = day;
 	}
@@ -109,27 +120,63 @@ bool RTask::setLimitingPeriod(string period) {
 	return true;
 }
 
+//This function sets the last date limit given by the user
+//Pre: Takes in userinput as a string
+//Post: Returns true if the recurring lastDateLimit is set
 bool RTask::setLimit(string limit) {
+
+	assert (!limit.empty());
 
 	_limit = atoi(limit.c_str());
 
-	if (_period == day && _limitingPeriod == month) {
-		_noOfOccurrences = _limit*30/_intervalBtwPeriod;
-	} else if (_period == day && _limitingPeriod == year) {
-		_noOfOccurrences = _limit*365/_intervalBtwPeriod;
-	} else if (_period == month && _limitingPeriod == year) {
-		_noOfOccurrences = _limit*12/_intervalBtwPeriod;
-	} else if (_period == _limitingPeriod) {
-		_noOfOccurrences = _limit/_intervalBtwPeriod;
+	days difference;
+	date now;
+	if (!_occur.getStartDate().empty()){
+		now = from_simple_string(_occur.getStartDate());
+	} else {
+		now = from_simple_string(_occur.getEndDate());
+	}
+
+	if (_limitingPeriod == month) {
+		months interval(_limit);
+		_lastDateLimit = now + interval;
+	} else if (_limitingPeriod == year) {
+		years interval(_limit);
+		_lastDateLimit = now + interval;
+	} else if (_limitingPeriod == day) {
+		days interval(_limit);
+		_lastDateLimit = now + interval;
 	} else {
 		return false;
 	}
+
 	return true;
 }
 
-//Pre: Takes in an integer
-//Post: Return true if number of occurrences is set
+//This function stores the datelimit for a recurring function
+//Pre: Takes in a default limit 
+//Post: Return true if date limit and number of occurrences is set
 bool RTask::setNoOfOccurrences(int noOfOccurrences) {
+
+	date now;
+
+	if(!_occur.getStartDate().empty()){
+		now = from_simple_string(_occur.getStartDate());
+	} else {
+		now = from_simple_string(_occur.getEndDate());
+	}
+
+	if(_period == day) {
+		days interval(noOfOccurrences);
+		_lastDateLimit = now + interval;
+	} else if(_period == month) {
+		months interval(noOfOccurrences);
+		_lastDateLimit = now + interval;
+	} else if(_period == year) {
+		years interval(noOfOccurrences);
+		_lastDateLimit = now + interval;
+	}
+
 	_noOfOccurrences = noOfOccurrences;
 
 	return true;
@@ -141,31 +188,31 @@ void RTask::generateOccursForDeadlineTask() {
 
 	//Push in the first occurence
 	_listOfOccurrences.push_back(_occur);
-	int count = 1;
 	Task next = _occur;
 
-	while (count < _noOfOccurrences) {
-		endDate = from_simple_string(_occur.getEndDate());
+	_nextEndDate = from_simple_string(next.getEndDate());
+
+	while (_nextEndDate <= _lastDateLimit) {
+		_endDate = from_simple_string(_occur.getEndDate());
 		if (_period == day) {	
 			date_duration interval(_intervalBtwPeriod);
-			nextEndDate = endDate + interval;	
-		}
-		else if (_period == month) {	
+			_nextEndDate = _endDate + interval;	
+		} else if (_period == month) {	
 			months interval(_intervalBtwPeriod);
-			date nextEndDate = endDate + interval;
-		}
-		else if (_period == year) {		
+			date nextEndDate = _endDate + interval;
+		} else if (_period == year) {		
 			years interval(_intervalBtwPeriod);
-			date nextEndDate = endDate + interval;			
+			date nextEndDate = _endDate + interval;			
 		}
 
 		_log.log(RTASK_TO_TASK);
 
-		next.setEndDate(to_simple_string(nextEndDate));
-		_listOfOccurrences.push_back(next);
-		_occur = next;
-		count++;
-	}
+		if(_nextEndDate <= _lastDateLimit) {
+			next.setEndDate(to_simple_string(_nextEndDate));
+			_listOfOccurrences.push_back(next);
+			_occur = next;
+		}
+	} 
 }
 
 //This functions calculates the number of occurences for tiemd tasks. 
@@ -174,37 +221,39 @@ void RTask::generateOccursForTimedTask() {
 
 	//Push in the first occurrence
 	_listOfOccurrences.push_back(_occur);
-	int count = 1;
-
+	days diff;
 	Task next = _occur;
+	_nextEndDate = from_simple_string(next.getEndDate());
 
-	while (count < _noOfOccurrences) {
-		startDate = from_simple_string(_occur.getStartDate());
-		endDate = from_simple_string(_occur.getEndDate());
+	while (_nextEndDate <= _lastDateLimit) {
+		_startDate = from_simple_string(_occur.getStartDate());
+		_endDate = from_simple_string(_occur.getEndDate());
+		diff = _endDate - _startDate;
 
 		if (_period == day) {		
 			date_duration interval(_intervalBtwPeriod);
-			nextStartDate = startDate + interval;
-			nextEndDate = endDate + interval;
+			_nextStartDate = _endDate + interval;
+			_nextEndDate = _nextStartDate + diff;
 
-		}
-		else if (_period == month) {
+		} else if (_period == month) {
 			months interval(_intervalBtwPeriod);
-			nextStartDate = startDate + interval;
-			nextEndDate = endDate + interval;
-		}
-		else if (_period == year) {
+			_nextStartDate = _endDate + interval;
+			_nextEndDate = _nextStartDate + diff;
+
+		} else if (_period == year) {
 			years interval(_intervalBtwPeriod);
-			nextStartDate = startDate + interval;
-			nextEndDate = endDate + interval;
+			_nextStartDate = _endDate + interval;
+			_nextEndDate = _nextStartDate + diff;
 		}
 
 		_log.log(RTASK_TO_TASK);
-		next.setStartDate(to_simple_string(nextStartDate));
-		next.setEndDate(to_simple_string(nextEndDate));
-		_listOfOccurrences.push_back(next);
-		_occur = next;
-		count++;
+
+		if (_nextEndDate <= _lastDateLimit) {
+			next.setStartDate(to_simple_string(_nextStartDate));
+			next.setEndDate(to_simple_string(_nextEndDate));
+			_listOfOccurrences.push_back(next);
+			_occur = next;
+		}
 	}
 }
 

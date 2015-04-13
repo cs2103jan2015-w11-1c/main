@@ -11,26 +11,30 @@ const string SUCCESSFULLY_CLEARED = "[Cleared Successfully]";
 const string SUCCESSFULLY_SORTED = "[Sorted Successfully]";
 const string SUCCESSFULLY_CHANGE_FILE= "[Successfully Changed File Location]";
 const string TASK_NOT_FOUND = "[Task Not Found]";
-const string ERROR_WRONG_INPUT = "[Error] Wrong Input!";
-const string ERROR_COMMAND_INPUT = "[Error] Wrong Command Input!";
+const string ERROR_WRONG_INPUT = "[ERROR] Wrong Input!";
+const string ERROR_COMMAND_INPUT = "[ERROR] Wrong Command Input!";
+const string ERROR_EMPTY_TASKLIST = "Task List is empty/Wrong task input!";
 const string ENTER_TO_DEFAULT_VIEW = "Press the ENTER key to go back to default view";
 
 void Logic::updateStorage() {
-	_storage.updateFile(_listOfTasks,0);
+	_storage.updateFile(_listOfTasks, 0);
 }
 
 void Logic::undo() {
 	_log.log("Undo done");
 	_listOfTasks.clear();
-	_storage.readFile(_listOfTasks,1);
-	_view.viewDefault(_listOfTasks,_dates.getTodayDate());
+	_storage.readFile(_listOfTasks, 1);
+	_view.viewDefault(_listOfTasks, _dates.getTodayDate());
 }
 
 void Logic::backup() {
 	_log.log("Back up files");
-	_storage.updateFile(_listOfTasks,1);
+	_storage.updateFile(_listOfTasks, 1);
 }
 
+//This function calls upon Parser to process userInput
+//Pre: userInput stored as line
+//Post: stores parsed information in a vector
 void Logic::getParsedInformation(string line) {
 	_log.log("Logic passes input to parser");
 	Parser parser;
@@ -39,11 +43,15 @@ void Logic::getParsedInformation(string line) {
 	_parsedInformation = parser.completeParsing(_userInput);
 }
 
+//This function prints out the intended message for the user
 void Logic::printMessage(string message) {
+	assert (!message.empty());
 	cout << endl << message << endl << endl;
 }
 
+//This function prints out the head for styling purpose
 void Logic::printHeader(string message) {
+	assert (!message.empty());
 	cout << endl << message << endl;
 }
 
@@ -52,6 +60,7 @@ void Logic::addTask() {
 	backup();
 	if (add.execute(_parsedInformation)) {
 
+		assert (!_parsedInformation.empty());
 		if(!add.isRecurring(_parsedInformation)){
 			_log.log("Logic pass to add to add recurring tasks");
 			_listOfTasks.push_back(add.getTask());
@@ -97,13 +106,14 @@ void Logic::deleteTask() {
 
 	_view.viewDefault(_listOfTasks, _dates.getTodayDate());
 	if (remove.isValidInput(_parsedInformation, _listOfTasks.size())) {
+		assert (!_parsedInformation.empty());
 		_log.log("Logic pass to delete");
 		remove.execute(_listOfTasks);
 		printMessage(SUCCESSFULLY_DELETED);
 		updateStorage();
 	}
 	else {
-		cout << "Task List is empty/Wrong task input!" << endl;
+		printMessage(ERROR_EMPTY_TASKLIST);
 	}
 }
 
@@ -114,8 +124,9 @@ void Logic::editTask() {
 	_view.viewDefault(_listOfTasks,_dates.getTodayDate());
 	int editedTaskNumber;
 	if (edit.execute(_parsedInformation, _listOfTasks)) {
+		assert (!_parsedInformation.empty());
 		_log.log("Logic pass to edit");
-		_listOfTasks=edit.getList();
+		_listOfTasks = edit.getList();
 		editedTaskNumber = atoi(_parsedInformation[1].c_str());
 		_view.viewSelectedOne(_listOfTasks, editedTaskNumber);
 		printMessage(SUCCESSFULLY_EDITED);
@@ -131,6 +142,8 @@ void Logic::markTask() {
 
 	_view.viewDefault(_listOfTasks, _dates.getTodayDate());
 	if (mark.isValidInput(_parsedInformation, _listOfTasks.size())) {
+		
+		assert (!_parsedInformation.empty());
 		_log.log("Logic pass to mark");
 		mark.execute(_parsedInformation, _listOfTasks);
 		printHeader(LAST_CHANGE);
@@ -164,7 +177,7 @@ bool Logic::viewDecider() {
 	if (_parsedInformation.size() == 1) {
 		return false;
 	}
-
+	assert (!_parsedInformation.empty());
 	system("CLS");
 
 	if (_parsedInformation[1] == "all") {
@@ -185,7 +198,7 @@ bool Logic::viewDecider() {
 		return true;
 	} else {
 		_view.viewDefault(_listOfTasks,_parsedInformation[1]);
-		return true;
+		return false;
 	}
 }
 
@@ -204,6 +217,7 @@ void Logic::sortTask() {
 	backup();
 
 	if (sort.execute(_parsedInformation, _listOfTasks)) {
+		assert (!_parsedInformation.empty());
 		_log.log("Logic pass to sort");
 		_listOfTasks = sort.getSortedList();
 		_view.viewDefault(_listOfTasks,_dates.getTodayDate());
@@ -239,14 +253,18 @@ void Logic::enterToGoDefaultView() {
 	string userInput;
 	printMessage(ENTER_TO_DEFAULT_VIEW);
 
-	char one;
-	cin.get(one);
-	if (one == '\n') {
+	char check;
+	cin.get(check);
+
+	//Press Enter to go back to default view
+	if (check == '\n') {
 		_view.viewDefault(_listOfTasks,_dates.getTodayDate());
 	} else {
 		getline(cin, userInput);
-		userInput = one + userInput;
-		process(userInput);
+		userInput = check + userInput;
+		if(!process(userInput)) {
+
+		}
 	}
 }
 
@@ -263,7 +281,8 @@ bool Logic::process(string line) {
 		enterToGoDefaultView();
 		return true;
 	}
-	
+
+	assert (!line.empty());
 	getParsedInformation(line);
 	_commandChoice = _parsedInformation[0];
 

@@ -7,6 +7,7 @@
 #include "Task.h"
 #include "Dates.h"
 #include "Log.h"
+#include "assert.h"
 
 enum Period {
 	day, month, year
@@ -31,10 +32,11 @@ private:
 	Period _limitingPeriod;
 	vector <Task> _listOfOccurrences;
 
-	date startDate;
-	date endDate;
-	date nextStartDate;
-	date nextEndDate;
+	date _startDate;
+	date _endDate;
+	date _nextStartDate;
+	date _nextEndDate;
+	date _lastDateLimit;
 
 public:
 	RTask();

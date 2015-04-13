@@ -30,10 +30,13 @@ bool Add::isRecurring(vector <string> parsedInfo) {
 	return true;
 }
 
+//This processses add function if user wants to add tasks
+//Pre: Takes in parsed information done by parser in vector
+//Post: Returns true if adding is successful
 bool Add::execute(vector<string> parsedInformation){
 	int sizeType = parsedInformation.size();
 
-	if(sizeType == INVALID) {
+	if (sizeType == INVALID) {
 		return false;
 	}
 
@@ -65,7 +68,7 @@ bool Add::execute(vector<string> parsedInformation){
 		} else if(sizeType == RECURRING_DEADLINE_GOT_LIMIT) {
 
 			rtask.setInterval(stoi(parsedInformation[5])); 
-			rtask.setPeriod(parsedInformation[6]); 			
+			rtask.setPeriod(parsedInformation[6]); 		
 			rtask.setLimitingPeriod(parsedInformation[9]); 
 			rtask.setLimit(parsedInformation[8]);
 
@@ -78,7 +81,6 @@ bool Add::execute(vector<string> parsedInformation){
 			rtask.setPeriod(parsedInformation[8]);
 			rtask.setLimitingPeriod(parsedInformation[11]);
 			rtask.setLimit(parsedInformation[10]);
-
 			rtask.generateOccursForTimedTask();
 			_listOfOccurrences = rtask.getListOfOccurrences();
 

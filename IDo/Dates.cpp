@@ -28,7 +28,6 @@ string Dates::getTodayDate(){
 
 //Post: Returns true if string contains the required delimiters for dates i.e. 10/10, 2009/10/10
 bool Dates::checkDelimiters(string date){
-	
 	store.clear();
 	string input = date;
 	string temp;
@@ -101,7 +100,6 @@ bool Dates::checkYearMthDayFormat(){
 //		Stores month, day if store size is 2.
 //		Returns false if others.
 bool Dates::storeDates(string tempYear, string tempMth, string tempDay){
-
 	if(store.size() == 3) {
 		year = atoi(tempYear.c_str());
 		month = atoi(tempMth.c_str());
@@ -139,7 +137,6 @@ int Dates::checkDay(string daysInName) {
 }
 
 string Dates::datesGivenDays(string inputDate, string daysInName) {
-
 	date d(from_string(inputDate));
 
 	greg_weekday day(checkDay(daysInName));
@@ -150,7 +147,6 @@ string Dates::datesGivenDays(string inputDate, string daysInName) {
 }
 
 string Dates::datesFromToday(int numberOfDays){
-
 	date d1(from_simple_string(getTodayDate()));
 	date_duration dd(numberOfDays);
 	string newDate;
@@ -161,7 +157,6 @@ string Dates::datesFromToday(int numberOfDays){
 
 //Post: Returns a string of date in the format of year/month/day
 bool Dates::checkDateFormat(string input){
-	
 	if(!checkDelimiters(input)) {
 		return false;
 	} 

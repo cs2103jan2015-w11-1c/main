@@ -26,6 +26,7 @@ const int brightWhite = 15;
 #include <sstream>
 #include <string>
 #include <Windows.h>
+#include <assert.h>
 #include "Dates.h"
 #include "Sort.h"
 #include "Parser.h"

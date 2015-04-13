@@ -204,6 +204,7 @@ void View::printStatus (Task task, bool isFloatingTask) {
 // print out label of the given task
 void View::printLabel (Task task) {
 	int spacing;
+	assert (task.getLabel().size() <= 15);
 	cout << "[" << task.getLabel() << "]";
 	spacing = 15 - task.getLabel().size();
 	cout << setw(spacing) << " ";

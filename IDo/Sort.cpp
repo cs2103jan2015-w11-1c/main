@@ -50,7 +50,7 @@ bool Sort::sortFrom() {
 			}
 		}
 	}
-	_log.log("Sorting by start date and time");
+	_log.log("Sort by start date and time");
 	return true;
 }
 
@@ -71,7 +71,7 @@ bool Sort::sortTaskName(){
 			}
 		}
 	}
-	_log.log("Sorting taskname alphabetically");
+	_log.log("Sort taskname alphabetically");
 	return true;
 }
 
@@ -92,7 +92,7 @@ bool Sort::sortStartTime() {
 			}
 		}
 	}
-	_log.log("sorted by start time");
+	_log.log("Sort by start time");
 	return true;
 }
 
@@ -123,7 +123,7 @@ bool Sort::sortToBy() {
 			}
 		}
 	}
-	_log.log("sorted by end date and time");
+	_log.log("Sort by end date and time");
 	return true;
 }
 
@@ -144,7 +144,7 @@ bool Sort::sortEndTime() {
 			}
 		}
 	}
-	_log.log("sorted by end time");
+	_log.log("Sort by end time");
 	return true;
 }
 
@@ -212,7 +212,7 @@ bool Sort::sortDeadLine() {
 			}
 		}
 	}
-	_log.log("sorted by deadline");
+	_log.log("Sort by deadline");
 	return true;
 }
 
@@ -236,7 +236,7 @@ bool Sort::execute(vector <string> parsedInformation, vector <Task> list) {
 		_sortList = list;
 	}
 	else {
-		cout << "[Error] No such Sorting!" << endl;
+		cout << "[Error] No such sorting!" << endl;
 		return false;
 	}
 

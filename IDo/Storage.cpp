@@ -168,6 +168,10 @@ void Storage::readFile (vector <Task> &taskList, bool isUndoTrue) {
 			string label = infoFromFile[size-1];
 			
 			if (size == 9) {
+				assert (!infoFromFile[2].empty());
+				assert (!infoFromFile[3].empty());
+				assert (!infoFromFile[4].empty());
+				assert (!infoFromFile[5].empty());
 				startDate = infoFromFile[2];
 				startTime = infoFromFile[3];
 				endDate = infoFromFile[4];
@@ -175,6 +179,8 @@ void Storage::readFile (vector <Task> &taskList, bool isUndoTrue) {
 			}
 	
 			if (size == 7) {
+				assert (!infoFromFile[2].empty());
+				assert (!infoFromFile[3].empty());
 				endDate = infoFromFile[2];
 				endTime = infoFromFile[3];
 			}

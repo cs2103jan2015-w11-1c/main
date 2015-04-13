@@ -15,7 +15,6 @@ using namespace std;
 
 class Task;
 
-// This class
 class Storage {
 private:
 	Log _log;

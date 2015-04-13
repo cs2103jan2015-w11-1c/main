@@ -43,14 +43,20 @@ private:
 	void printMessage(string);
 	void displayToday(vector <Task> &, int, string);
 	void printTimedTaskHeader();
-	void displayTimedTask(Task task);
+	void displayTimedTask(int, Task);
 	void displayDeadline(vector <Task> &, int, string);
 	void printDeadlineTaskHeader();
-	void displayDeadlineTask(Task task);
-	void displayFloating (vector <Task> &, int);
+	void displayDeadlineTask(int, Task);
+	void displayFloating(vector <Task> &, int);
 	void printFloatingTaskHeader();
-	void displayFloatingTask(Task task);
+	void displayFloatingTask(int, Task);
 	void SetColor(int value);
+	void printIndex(int);
+	void printStart(Task);
+	void printDeadline(Task);
+	void printStatus(Task, bool);
+	void printLabel(Task);
+	void printPriority(Task);
 
 	void printHeader();
 	void display(Task task);

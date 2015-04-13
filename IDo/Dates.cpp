@@ -120,19 +120,19 @@ bool Dates::storeDates(string tempYear, string tempMth, string tempDay){
 
 int Dates::checkDay(string daysInName) {
 	if(daysInName == "mon" || daysInName == "monday") {
-		return 0;
-	} else if (daysInName == "tues" || daysInName == "tuesday") {
 		return 1;
-	} else if (daysInName == "wed" || daysInName == "wednesday") {
+	} else if (daysInName == "tues" || daysInName == "tuesday") {
 		return 2;
-	} else if (daysInName == "thurs" || daysInName == "thursday") {
+	} else if (daysInName == "wed" || daysInName == "wednesday") {
 		return 3;
-	} else if (daysInName == "fri" || daysInName == "friday") {
+	} else if (daysInName == "thurs" || daysInName == "thursday") {
 		return 4;
-	} else if (daysInName == "sat" || daysInName == "saturday") {
+	} else if (daysInName == "fri" || daysInName == "friday") {
 		return 5;
-	} else if (daysInName == "sun" || daysInName == "sunday") {
+	} else if (daysInName == "sat" || daysInName == "saturday") {
 		return 6;
+	} else if (daysInName == "sun" || daysInName == "sunday") {
+		return 0;
 	} else {
 		return 8;
 	}

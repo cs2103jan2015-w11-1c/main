@@ -84,10 +84,10 @@ namespace StorageTest
 		TEST_METHOD(EditStorageFile)
 		{
 			Storage storage;
-			string newFile = "newfile!.txt";
-			string expected = "newfile!.txt";
+			string newFile = "new";
+			string expected = "new.txt";
 			string read;
-			storage.editStorageFileName("newfile!.txt");
+			storage.editStorageFileName("new.txt");
 			ifstream readFile ("filename.txt");
 			getline(readFile,read);
 			Assert::AreEqual(expected,read);
@@ -276,7 +276,7 @@ namespace IntegrationTest
 			int expected = 3;
 			string expected2 = "submit v0.5";
 			string expected3 = dates.getTodayDate();
-			string expected4 = "2300";
+			string expected4 = "2350";
 			string expected5 = dates.getTodayDate();
 			string expected6 = "2359";
 			string expected7 = "holiday";
@@ -289,7 +289,7 @@ namespace IntegrationTest
 			string expected14 = "1000";
 			string expected15 = "2015-Jun-05";
 			string expected16 = "1200";
-			logicAddTest.process("add submit v0.5 from 2300 to 2359");
+			logicAddTest.process("add submit v0.5 from 2350 to 2359");
 			logicAddTest.process("add holiday from 6/3 0300 to 6/7 0800");
 			logicAddTest.process("add dental appointment from 6/5 1000 to 1200");
 			results = logicAddTest.getListOfTasks();
@@ -391,7 +391,7 @@ namespace IntegrationTest
 			int expected = 2;
 			string expected2 = "holiday";
 			string expected3 = "dental appointment";
-			logicAddTest.process("add submit v0.5 from 2300 to 2359");
+			logicAddTest.process("add submit v0.5 from 2350 to 2359");
 			logicAddTest.process("add holiday from 6/3 0300 to 6/7 0800");
 			logicAddTest.process("add dental appointment from 6/5 1000 to 1200");
 			logicAddTest.process("delete 1");
@@ -411,7 +411,7 @@ namespace IntegrationTest
 			int expected = 1;
 			string expected2 = "holiday";
 			string expected3 = "dental appointment";
-			logicAddTest.process("add submit v0.5 from 2300 to 2359");
+			logicAddTest.process("add submit v0.5 from 2350 to 2359");
 			logicAddTest.process("add holiday from 6/3 0300 to 6/7 0800");
 			logicAddTest.process("add dental appointment from 6/5 1000 to 1200");
 			logicAddTest.process("delete 1 3");
@@ -430,7 +430,7 @@ namespace IntegrationTest
 			int expected = 2;
 			string expected2 = "submit v0.5";
 			string expected3 = "holiday";
-			logicAddTest.process("add submit v0.5 from 2300 to 2359");
+			logicAddTest.process("add submit v0.5 from 2350 to 2359");
 			logicAddTest.process("add holiday from 6/3 0300 to 6/7 0800");
 			logicAddTest.process("add dental appointment from 6/5 1000 to 1200 every 7 day for 2 month");
 			logicAddTest.process("delete all 3");
@@ -450,7 +450,7 @@ namespace IntegrationTest
 			int expected = 10;
 			string expected2 = "holiday";
 			string expected3 = "dental appointment";
-			logicAddTest.process("add submit v0.5 from 2300 to 2359");
+			logicAddTest.process("add submit v0.5 from 2350 to 2359");
 			logicAddTest.process("add holiday from 6/3 0300 to 6/7 0800");
 			logicAddTest.process("add dental appointment from 6/5 1000 to 1200 every 7 day for 2 month");
 			logicAddTest.process("delete all 1");
@@ -625,7 +625,7 @@ namespace IntegrationTest
 			string expected = "submit v0.5";
 			string expected2 = "dental appointment";
 			string expected3 = "holiday";
-			logicSortTest.process("add submit v0.5 from 2300 to 2359");
+			logicSortTest.process("add submit v0.5 from 2350 to 2359");
 			logicSortTest.process("add dental appointment from 6/5 1000 to 1200");
 			logicSortTest.process("add holiday from 6/3 0300 to 6/7 0800");
 			logicSortTest.process("sort priority");

@@ -159,7 +159,7 @@ void Logic::markTask() {
 
 // List the commands available
 void Logic::viewCommands() {
-	cout << "Add a floating task: " << "add <task>" << endl;
+	cout << "Add a floating task: add <task>" << endl;
 	cout << "Add a timed task: add <task> from yyyy/mm/dd hhmm to yyyy/mm/dd hhmm" << endl;
 	cout << "Add a deadline: add <task> by yyyy/mm/dd hhmm" << endl;
 	cout << "Add a recurring task: add <task> by yyyy/mm/dd hhmm every x <unit of time> for x <unit of time>" << endl;

@@ -9,6 +9,8 @@ UserInterface::UserInterface() {
 UserInterface::~UserInterface() {
 } 
 
+//This function helps to set the intended volor
+//Pre: Takes in a value that represents a color
 void UserInterface::SetColor1(int value){
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),  value);
 }
@@ -26,7 +28,7 @@ string UserInterface::receiveInput() {
 	return _userInput;
 }
 
-// displays today's date at the launch of the program
+// This function displays today's date at the launch of the program
 void UserInterface::displayDate() {
     char date[9];
 	_strdate_s(date);
@@ -37,7 +39,7 @@ void UserInterface::displayDate() {
 	cout << " -------------------------" << endl;
 }
 
-// displays quote of the day at the launch of the program
+// This function displays quote of the day at the launch of the program
 void UserInterface::qotd() {
     int lineCount = 0;
     int randomQuote_int = 0;
@@ -49,12 +51,13 @@ void UserInterface::qotd() {
     srand(time_t(0));
     if (quoteFile.is_open()) {
 		while (!quoteFile.eof()) {
-                getline(quoteFile, line);
-                if (line != " ") {
-                    randomQuote_vect.push_back(line);
-                    lineCount++;
-				}
-            }
+			getline(quoteFile, line);
+            if (line != " ") {
+				randomQuote_vect.push_back(line);
+                lineCount++;
+			}
+        }
+
 		randomQuote_int = rand() % lineCount;
 		SetColor1(6); // yellow
         cout << "Quote of the day: " << endl;
@@ -73,6 +76,7 @@ void UserInterface::displayDivider() {
 
 string UserInterface::welcomeMessage() {
     string welcome =  "Good day, Jim. How productive would you like to be today? :)";
+	assert (!welcome.empty());
 	SetColor1(15); // bright white
 	cout << welcome;
 	return welcome;
@@ -107,6 +111,9 @@ void UserInterface::process() {
 	bool carryOn = true;
 
 	readFile();
+
+	assert (carryOn);
+
 	while(carryOn){
 		_log.log("Command is not exit. Passing user input to logic");
 		carryOn = _logic.process(receiveInput());

@@ -8,13 +8,15 @@ Search::Search(){
 Search::~Search(){
 }
 
-//takes in a single word to be search
+//Pre: Takes in a single word to be search
 void Search::setSearchWord(string userInput) {
 	_searchWord = userInput;
 	_searchWordSize = _searchWord.size();
 	
 }
 
+//Post: Return true if search word is a date
+//		Return false if otherwise
 bool Search::isSearchDate() {
 	Dates d;
 
@@ -32,10 +34,13 @@ bool Search::isSearchDate() {
 
 }
 
+//Pre: Takes in a date as a string
+//Post: Return true if search word is the same as date
 bool Search::foundDate(string date) {
 	assert(date.size() > 0);
 
 	if (_searchWord == date) {
+		_log.log("Search word matches a date");
 		return true;
 	} else {
 		return false;
@@ -46,21 +51,23 @@ bool Search::foundDate(string date) {
 //looks through the tasks according to task name
 void Search::execute(vector <Task> taskListFromLogic) {
 
+	_log.log("Executing Search");
+
 	int i;
 	if (!isSearchDate()) {
+		_log.log("Searching not a date");
 		for (i = 0; i < taskListFromLogic.size(); i++) {
 			_taskName = taskListFromLogic[i].getTaskName();
-			//cout << "searching in " << taskListFromLogic[i].getTaskName() << endl;
 			if (foundWord(_taskName)) {
 				_listOfFoundTasks.push_back(taskListFromLogic[i]);
 				_listOfFoundTaskNum.push_back(i + 1);
 			}
 		}
 	} else {
+		_log.log("Searching for a date");
 		for (i = 0; i < taskListFromLogic.size(); i++) {
 			_endDate = taskListFromLogic[i].getEndDate();
 			_startDate = taskListFromLogic[i].getStartDate();
-			//cout << "searching date " << taskListFromLogic[i].getEndDate() << endl;
 			if (foundDate(_endDate) || foundDate(_startDate)) {
 				_listOfFoundTasks.push_back(taskListFromLogic[i]);
 				_listOfFoundTaskNum.push_back(i + 1);
@@ -69,6 +76,7 @@ void Search::execute(vector <Task> taskListFromLogic) {
 		
 	}
 	_noOfFoundTasks = _listOfFoundTasks.size();
+	_log.log("End of Search");
 }
 
 vector <string> Search::stringToTokens(string taskname) {
@@ -77,7 +85,6 @@ vector <string> Search::stringToTokens(string taskname) {
 	char *tokens;
 	tokens = strtok(ptr, " ,-");
 	while (tokens != NULL) {
-		//cout << "tokens: " << tokens << endl;
 		tokenisedTaskName.push_back(tokens);
 		tokens = strtok(NULL, " ,-");
 	}
@@ -98,7 +105,6 @@ int Search::searchForWord(vector<string> tokenisedTaskName) {
 
 		while (i < size) {
 			foundIndex = ((*iter).substr(i)).find(_searchWord);
-			//cout << "foundIndex : " << foundIndex << endl;
 			if (foundIndex != -1) {
 				 return foundIndex;
 			} else {
@@ -155,6 +161,7 @@ bool Search::foundWord(string taskname) {
 	//cout << _searchword << "search word size: " << _searchword.size() << endl;
 	if (_searchWord.size() == 1) {	//single first character search
 		if (taskname[0] == _searchWord[0]) {
+			_log.log("Search matches a word");
 			return true;
 		} else {
 			return false;

@@ -49,18 +49,18 @@ bool Add::execute(vector<string> parsedInformation){
 	
 		if (sizeType == RECURRING_DEADLINE_WITHOUT_LIMIT) {	
 			
-			rtask.setNoOfOccurrences(DEFAULT_OCCURRENCE);
 			rtask.setInterval(stoi(parsedInformation[5]));
 			rtask.setPeriod(parsedInformation[6]);
+			rtask.setNoOfOccurrences(DEFAULT_OCCURRENCE);
 
 			rtask.generateOccursForDeadlineTask();
 			_listOfOccurrences = rtask.getListOfOccurrences();
 
 		} else if(sizeType == RECURRING_TIMED_WITHOUT_LIMIT) { 
 
-			rtask.setNoOfOccurrences(DEFAULT_OCCURRENCE);
 			rtask.setInterval(stoi(parsedInformation[7]));
 			rtask.setPeriod(parsedInformation[8]);
+			rtask.setNoOfOccurrences(DEFAULT_OCCURRENCE);
 
 			rtask.generateOccursForTimedTask();
 			_listOfOccurrences = rtask.getListOfOccurrences();

@@ -37,8 +37,6 @@ bool Search::isSearchDate() {
 //Pre: Takes in a date as a string
 //Post: Return true if search word is the same as date
 bool Search::foundDate(string date) {
-	assert(date.size() > 0);
-
 	if (_searchWord == date) {
 		_log.log("Search word matches a date");
 		return true;

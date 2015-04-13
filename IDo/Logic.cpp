@@ -160,16 +160,18 @@ void Logic::markTask() {
 // List the commands available
 void Logic::viewCommands() {
 	cout << "Add a floating task: " << "add <task>" << endl;
-	cout << "Add a time task: add <task> from yyyy/mm/dd,hhmm to yyyy/mm/dd,hhmm" << endl;
-	cout << "Add a deadline: add <task> by yyyy/mm/dd,hhmm" << endl;
+	cout << "Add a timed task: add <task> from yyyy/mm/dd hhmm to yyyy/mm/dd hhmm" << endl;
+	cout << "Add a deadline: add <task> by yyyy/mm/dd hhmm" << endl;
+	cout << "Add a recurring task: add <task> by yyyy/mm/dd hhmm every x <unit of time> for x <unit of time>" << endl;
 	cout << "Editing details: edit <task number> <info to edit> <new content>" << endl;
-	cout << "Displaying all tasks: display" << endl;
+	cout << "Displaying all tasks: view all" << endl;
 	cout << "Deleting a task: delete <task number> " << endl;
 	cout << "View completed task: view done" << endl;
-	cout << "View task to be completed: view notdone" << endl;
-	cout << "To change status: mark <task number> <done/notdone> " << endl;
-	cout << "To change priority: mark <task number> <high/medium/low/none> " << endl;
-	cout << "To change label: mark <task number> <friends/family/misc etc> " << endl;
+	cout << "Clear all tasks: clear" << endl;
+	cout << "Change status/priority/label: mark <task number> <content> " << endl;
+	cout << "Search for something: search <content> " << endl;
+	cout << "Change directory to store data: store <directory> " << endl;
+	cout << "Sort alphabetically or by date: sort <choice> " << endl;
 }
 
 bool Logic::viewDecider() {
@@ -195,8 +197,10 @@ bool Logic::viewDecider() {
 		viewCommands();
 		enterToGoDefaultView();
 		return true;
-	} else {
+	} else if (_dates.isDateValid(_parsedInformation[1])) {
 		_view.viewDefault(_listOfTasks,_parsedInformation[1]);
+		return true;
+	} else {
 		return false;
 	}
 }
@@ -304,6 +308,7 @@ bool Logic::process(string line) {
 		markTask();
 	} else if (_commandChoice == "view") {
 		if (!viewDecider()) {
+			_view.viewDefault(_listOfTasks,_dates.getTodayDate());
 			printMessage(ERROR_WRONG_INPUT);
 		}
 	} else if (_commandChoice == "store") {

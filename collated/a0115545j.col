@@ -1,0 +1,1243 @@
+//@author: a0115545j
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Add.cpp
+	 */
+
+#include "Add.h"
+
+static const int INVALID = 1;
+static const int DEADLINE_TASK = 4;
+static const int TIMED_TASK = 6;
+static const int RECURRING_DEADLINE_WITHOUT_LIMIT = 7;
+static const int RECURRING_DEADLINE_GOT_LIMIT = 10;
+static const int RECURRING_TIMED_WITHOUT_LIMIT = 9;
+static const int RECURRING_TIMED_GOT_LIMIT = 12;
+static const int DEFAULT_OCCURRENCE = 5;
+static const string WORD_EVERY = "every";
+static const string ADD_TO_RTASK = "Add to Rtask";
+static const string ADD_TO_TASK = "Add to Task";
+
+//Pre: Takes in parsed information from the parser
+//Post: Return true if it contains keyword "every"
+//		Return false if it does not contain keyword "every"
+bool Add::isRecurring(vector <string> parsedInfo) {
+	int size = parsedInfo.size();
+
+	if (size > 4 && parsedInfo[4] == WORD_EVERY) {
+		return true;
+	} else if (size > 6 &&  parsedInfo[6] == WORD_EVERY) {
+		return true;
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+//This processses add function if user wants to add tasks
+//Pre: Takes in parsed information done by parser in vector
+//Post: Returns true if adding is successful
+bool Add::execute(vector<string> parsedInformation){
+	int sizeType = parsedInformation.size();
+
+	if (sizeType == INVALID) {
+		return false;
+	}
+
+	if (isRecurring(parsedInformation)) {
+
+		_log.log(ADD_TO_RTASK);
+
+		rtask.setAbstrInfo(parsedInformation);
+		rtask.setFirstOccur(parsedInformation);
+	
+		if (sizeType == RECURRING_DEADLINE_WITHOUT_LIMIT) {	
+			
+			rtask.setInterval(stoi(parsedInformation[5]));
+			rtask.setPeriod(parsedInformation[6]);
+			rtask.setNoOfOccurrences(DEFAULT_OCCURRENCE);
+
+			rtask.generateOccursForDeadlineTask();
+			_listOfOccurrences = rtask.getListOfOccurrences();
+
+		} else if(sizeType == RECURRING_TIMED_WITHOUT_LIMIT) { 
+
+			rtask.setInterval(stoi(parsedInformation[7]));
+			rtask.setPeriod(parsedInformation[8]);
+			rtask.setNoOfOccurrences(DEFAULT_OCCURRENCE);
+
+			rtask.generateOccursForTimedTask();
+			_listOfOccurrences = rtask.getListOfOccurrences();
+
+		} else if(sizeType == RECURRING_DEADLINE_GOT_LIMIT) {
+
+			rtask.setInterval(stoi(parsedInformation[5])); 
+			rtask.setPeriod(parsedInformation[6]); 		
+			rtask.setLimitingPeriod(parsedInformation[9]); 
+			rtask.setLimit(parsedInformation[8]);
+
+			rtask.generateOccursForDeadlineTask();
+			_listOfOccurrences = rtask.getListOfOccurrences();
+
+		} else if(sizeType == RECURRING_TIMED_GOT_LIMIT) { 
+
+			rtask.setInterval(stoi(parsedInformation[7]));
+			rtask.setPeriod(parsedInformation[8]);
+			rtask.setLimitingPeriod(parsedInformation[11]);
+			rtask.setLimit(parsedInformation[10]);
+			rtask.generateOccursForTimedTask();
+			_listOfOccurrences = rtask.getListOfOccurrences();
+
+		} else {
+			return false;
+		}
+
+	} else { 
+		_log.log(ADD_TO_TASK);
+
+		_task.setTaskName(parsedInformation[1]);
+
+		if (sizeType == DEADLINE_TASK) { 
+			_task.setEndDate(parsedInformation[2]);
+			_task.setEndTime(parsedInformation[3]);
+
+		} else if (sizeType == TIMED_TASK) { 
+			_task.setStartDate(parsedInformation[2]);
+			_task.setStartTime(parsedInformation[3]);
+			_task.setEndDate(parsedInformation[4]);
+			_task.setEndTime(parsedInformation[5]);
+
+		} 
+	} 
+	return true;
+}
+
+//This function is for storing recurring tasks
+//Post: Return a list of recurring tasks in vector
+vector <Task> Add::getOccurrences () {
+	return _listOfOccurrences;
+}
+
+
+//Post: Return information of the task stored
+Task Add::getTask(){
+	return _task;
+}
+
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Add.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Add.h
+	 */
+
+#ifndef ADD_H
+#define ADD_H
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include "Task.h"
+#include "RTask.h"
+#include "Log.h"
+
+using namespace std;
+
+class Add {
+private:
+
+	//Declaration of objects
+	Task _task;
+	Log _log;
+	RTask rtask;
+
+	//Declaration of variables
+	vector <Task> _listOfOccurrences;
+
+public:
+
+	//Process Functions
+	bool isRecurring(vector <string>);
+	bool execute(vector<string> parsedInformation);	
+
+	//Getter Functions
+	vector<Task> getOccurrences();
+	Task getTask();
+};
+#endif
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Add.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Logic.cpp
+	 */
+
+#include "Logic.h"
+
+const string LAST_CHANGE = "** Last Change Made **";
+const string SUCCESSFULLY_MARKED = "[Marked Successfully]";
+const string SUCCESSFULLY_ADDED = "[Added Successfully]";
+const string SUCCESSFULLY_EDITED = "[Edited Successfully]";
+const string NOT_EDITED = "[Editing NOT Successful]";
+const string SUCCESSFULLY_DELETED = "[Deleted Successfully]";
+const string SUCCESSFULLY_CLEARED = "[Cleared Successfully]";
+const string SUCCESSFULLY_SORTED = "[Sorted Successfully]";
+const string SUCCESSFULLY_CHANGE_FILE= "[Successfully Changed File Location]";
+const string TASK_NOT_FOUND = "[Task Not Found]";
+const string ERROR_WRONG_INPUT = "[ERROR] Wrong Input!";
+const string ERROR_COMMAND_INPUT = "[ERROR] Wrong Command Input!";
+const string ERROR_EMPTY_TASKLIST = "Task List is empty/Wrong task input!";
+const string ENTER_TO_DEFAULT_VIEW = "Press the ENTER key to go back to default view";
+
+void Logic::updateStorage() {
+	_storage.updateFile(_listOfTasks, 0);
+}
+
+void Logic::undo() {
+	_log.log("Undo done");
+	_listOfTasks.clear();
+	_storage.readFile(_listOfTasks, 1);
+	_view.viewDefault(_listOfTasks, _dates.getTodayDate());
+}
+
+void Logic::backup() {
+	_log.log("Back up files");
+	_storage.updateFile(_listOfTasks, 1);
+}
+
+//This function calls upon Parser to process userInput
+//Pre: userInput stored as line
+//Post: stores parsed information in a vector
+void Logic::getParsedInformation(string line) {
+	_log.log("Logic passes input to parser");
+	Parser parser;
+	_userInput = line;
+	//pass to parser and process
+	_parsedInformation = parser.completeParsing(_userInput);
+}
+
+//This function prints out the intended message for the user
+void Logic::printMessage(string message) {
+	assert (!message.empty());
+	cout << endl << message << endl << endl;
+}
+
+//This function prints out the head for styling purpose
+void Logic::printHeader(string message) {
+	assert (!message.empty());
+	cout << endl << message << endl;
+}
+
+void Logic::addTask() {
+	Add add;
+	backup();
+	if (add.execute(_parsedInformation)) {
+
+		assert (!_parsedInformation.empty());
+		if(!add.isRecurring(_parsedInformation)){
+			_log.log("Logic pass to add to add recurring tasks");
+			_listOfTasks.push_back(add.getTask());
+		} else {
+			_log.log("Logic pass to add to add tasks");
+			vector <Task> temp = add.getOccurrences();
+			int size = temp.size();
+			int index = searchNextRecurringIndex();
+			for(int i = 0; i < size; i++) {
+				temp[i].setRecurringIndex(index);
+				_listOfTasks.push_back(temp[i]);
+			}
+		}
+
+		_view.viewDefault(_listOfTasks,_dates.getTodayDate());
+		_view.viewSelectedOne(_listOfTasks, _listOfTasks.size());
+		printMessage(SUCCESSFULLY_ADDED);
+		updateStorage();
+
+	} else {
+		_view.viewDefault(_listOfTasks,_dates.getTodayDate());
+		printMessage(ERROR_WRONG_INPUT);
+	}
+}
+
+int Logic::searchNextRecurringIndex() {
+	int size = _listOfTasks.size();
+	int max = 0; 
+	int index; 
+	for (int i = 0 ; i < size; i++) {
+		index = _listOfTasks[i].getRecurringIndex();
+		if (index > max) {
+			max = index;
+		}
+	}
+
+	return max + 1;
+}
+
+void Logic::deleteTask() {
+	Delete remove;
+	backup();
+
+	_view.viewDefault(_listOfTasks, _dates.getTodayDate());
+	if (remove.isValidInput(_parsedInformation, _listOfTasks.size())) {
+		assert (!_parsedInformation.empty());
+		_log.log("Logic pass to delete");
+		remove.execute(_listOfTasks);
+		printMessage(SUCCESSFULLY_DELETED);
+		updateStorage();
+	}
+	else {
+		printMessage(ERROR_EMPTY_TASKLIST);
+	}
+}
+
+void Logic::editTask() {
+	Edit edit;
+	backup();
+
+	_view.viewDefault(_listOfTasks,_dates.getTodayDate());
+	int editedTaskNumber;
+	if (edit.execute(_parsedInformation, _listOfTasks)) {
+		assert (!_parsedInformation.empty());
+		_log.log("Logic pass to edit");
+		_listOfTasks = edit.getList();
+		editedTaskNumber = atoi(_parsedInformation[1].c_str());
+		_view.viewSelectedOne(_listOfTasks, editedTaskNumber);
+		printMessage(SUCCESSFULLY_EDITED);
+		updateStorage();
+	} else {
+		printMessage(NOT_EDITED);
+	}
+}
+
+void Logic::markTask() {
+	Mark mark;
+	backup();
+
+	_view.viewDefault(_listOfTasks, _dates.getTodayDate());
+	if (mark.isValidInput(_parsedInformation, _listOfTasks.size())) {
+		
+		assert (!_parsedInformation.empty());
+		_log.log("Logic pass to mark");
+		mark.execute(_parsedInformation, _listOfTasks);
+		printHeader(LAST_CHANGE);
+		_view.viewSelectedFew(mark.getMarkedTasks(), mark.getMarkedTaskIndex());
+		printMessage(SUCCESSFULLY_MARKED);
+		updateStorage();
+	}
+	else {
+		printMessage(ERROR_WRONG_INPUT);
+	}
+	updateStorage();
+}
+
+// List the commands available
+void Logic::viewCommands() {
+	cout << "Add a floating task: add <task>" << endl;
+	cout << "Add a timed task: add <task> from yyyy/mm/dd hhmm to yyyy/mm/dd hhmm" << endl;
+	cout << "Add a deadline: add <task> by yyyy/mm/dd hhmm" << endl;
+	cout << "Add a recurring task: add <task> by yyyy/mm/dd hhmm every x <unit of time> for x <unit of time>" << endl;
+	cout << "Editing details: edit <task number> <info to edit> <new content>" << endl;
+	cout << "Displaying all tasks: view all" << endl;
+	cout << "Deleting a task: delete <task number> " << endl;
+	cout << "View completed task: view done" << endl;
+	cout << "Clear all tasks: clear" << endl;
+	cout << "Change status/priority/label: mark <task number> <content> " << endl;
+	cout << "Search for something: search <content> " << endl;
+	cout << "Change directory to store data: store <directory> " << endl;
+	cout << "Sort alphabetically or by date: sort <choice> " << endl;
+}
+
+bool Logic::viewDecider() {
+	if (_parsedInformation.size() == 1) {
+		return false;
+	}
+	assert (!_parsedInformation.empty());
+	system("CLS");
+
+	if (_parsedInformation[1] == "all") {
+		_view.viewAll(_listOfTasks);
+		enterToGoDefaultView();
+		return true;
+	} else if (_parsedInformation[1] == "done") {
+		_view.viewDoneTasks(_listOfTasks);
+		enterToGoDefaultView();
+		return true;
+	} else if (_parsedInformation[1] == "notdone") {
+		_view.viewNotDoneTasks(_listOfTasks);
+		enterToGoDefaultView();
+		return true;
+	} else if (_parsedInformation[1] == "commands") {
+		viewCommands();
+		enterToGoDefaultView();
+		return true;
+	} else if (_dates.validDateFromString(_parsedInformation[1])) {
+		_view.viewDefault(_listOfTasks,_parsedInformation[1]);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void Logic::storeChange() {
+	_log.log("Logic call storage to change storage file name");
+	string filename;
+	_view.viewDefault(_listOfTasks,_dates.getTodayDate());
+	filename = _parsedInformation[1] + ".txt";
+	_storage.editStorageFileName(filename);
+	cout << "New File Storage: " << filename << endl; 
+	printMessage(SUCCESSFULLY_CHANGE_FILE);
+}
+
+void Logic::sortTask() {
+	Sort sort;
+	backup();
+
+	if (sort.execute(_parsedInformation, _listOfTasks)) {
+		assert (!_parsedInformation.empty());
+		_log.log("Logic pass to sort");
+		_listOfTasks = sort.getSortedList();
+		_view.viewDefault(_listOfTasks,_dates.getTodayDate());
+		printMessage(SUCCESSFULLY_SORTED);
+	} else {
+		_view.viewDefault(_listOfTasks,_dates.getTodayDate());
+		printMessage(ERROR_WRONG_INPUT);
+	}
+}
+
+void Logic::searchWord() {
+	Search search;
+	search.setSearchWord(_parsedInformation[1]);
+	search.execute(_listOfTasks);
+	View printFoundTasks;
+
+	system("CLS");
+	if (search.getNoOfFoundTasks() != 0) {
+		_log.log("Logic pass to search");
+		vector <Task> listOfFoundTasks;
+		vector <int> listOfFoundTaskNum;
+		listOfFoundTasks = search.getListOfFoundTasks();
+		listOfFoundTaskNum = search.getListOfFoundTaskNum();
+		printFoundTasks.viewSelectedFew(listOfFoundTasks, listOfFoundTaskNum);
+		enterToGoDefaultView();
+	} else {
+		printFoundTasks.viewDefault(_listOfTasks, _dates.getTodayDate());
+		printMessage(TASK_NOT_FOUND);
+	 }
+}
+
+// function that allows user to press enter to go default view after each 
+// command
+void Logic::enterToGoDefaultView() {
+	string userInput;
+	printMessage(ENTER_TO_DEFAULT_VIEW);
+
+	char check;
+	cin.get(check);
+
+	//Press Enter to go back to default view
+	if (check == '\n') {
+		_view.viewDefault(_listOfTasks,_dates.getTodayDate());
+	} else {
+		getline(cin, userInput);
+		userInput = check + userInput;
+		if(!process(userInput)) {
+
+		}
+	}
+}
+
+void Logic::readFromFile() {
+	_log.log("Read data from storage file");
+	_storage.readFile(_listOfTasks,0);
+}
+
+// Processes the command and inputs passed from UI
+bool Logic::process(string line) {
+
+	if(line.empty()){
+		cout << "[ERROR] No Input" << endl;
+		enterToGoDefaultView();
+		return true;
+	}
+
+	assert (!line.empty());
+	getParsedInformation(line);
+	_commandChoice = _parsedInformation[0];
+
+	if (_commandChoice == "undo") {
+		undo();
+	} else if (_commandChoice == "add") {
+		addTask();
+	} else if (_commandChoice == "delete") {
+		deleteTask();
+	} else if (_commandChoice == "edit") {
+		editTask();
+	} else if (_commandChoice == "clear") {
+		_listOfTasks.clear();
+		_view.viewDefault(_listOfTasks,_dates.getTodayDate());
+		printMessage(SUCCESSFULLY_CLEARED);
+		updateStorage();
+	} else if (_commandChoice == "mark") {
+		markTask();
+	} else if (_commandChoice == "view") {
+		if (!viewDecider()) {
+			_view.viewDefault(_listOfTasks,_dates.getTodayDate());
+			printMessage(ERROR_WRONG_INPUT);
+		}
+	} else if (_commandChoice == "store") {
+		storeChange();
+		updateStorage();
+	} else if (_commandChoice == "sort") {
+		sortTask();
+		updateStorage();
+	} else if (_commandChoice == "search") {
+		searchWord();
+	} else if (_commandChoice == "exit") {
+		updateStorage();
+		return false;
+	} else if (_commandChoice == "error") {
+		_view.viewDefault(_listOfTasks, _dates.getTodayDate());	
+		printMessage(ERROR_COMMAND_INPUT);
+	} else {
+		_view.viewDefault(_listOfTasks, _dates.getTodayDate());
+		printMessage(ERROR_WRONG_INPUT);
+	}
+
+	return true;
+}
+
+vector<Task> Logic::getListOfTasks(){
+	return _listOfTasks;
+}
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Logic.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Logic.h
+	 */
+
+#ifndef LOGIC_H
+#define LOGIC_H
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <assert.h>
+
+#include "Add.h"
+#include "Delete.h"
+#include "Log.h"
+#include "Task.h"
+#include "Edit.h"
+#include "Mark.h"
+#include "Parser.h"
+#include "View.h"
+#include "Storage.h"
+#include "Sort.h"
+#include "Search.h"
+
+using namespace std;
+
+class Logic {
+private:
+	Log _log;
+	Storage _storage;
+	Dates _dates;
+	View _view;
+
+	string _commandChoice;
+	vector<string> _parsedInformation;
+	string _userInput;
+	vector<Task> _listOfTasks;
+	
+	void updateStorage();
+	void undo();
+	void backup();
+	void getParsedInformation(string);
+	void printMessage(string message);
+	void printHeader(string message);
+	void addTask();
+	int searchNextRecurringIndex();
+	void deleteTask();
+	void editTask();
+	void markTask();
+	void viewCommands();
+	bool viewDecider();
+	void storeChange();
+	void sortTask();
+	void searchWord();
+
+public:
+	void readFromFile();
+	bool process(string);
+	vector<Task> getListOfTasks();
+	void enterToGoDefaultView();
+};
+
+#endif
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Logic.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\RTask.cpp
+	 */
+
+#include "RTask.h"
+
+const static string KEYWORD_EVERY = "every";
+const static string PERIOD_DAY = "day";
+const static string PERIOD_MONTH = "month";
+const static string PERIOD_YEAR = "year";
+static const int RECURRING_DEADLINE_NO_LIMIT = 7;
+static const int RECURRING_DEADLINE_WITH_LIMIT = 10;
+static const int RECURRING_TIMED_NO_LIMIT = 9;
+static const int RECURRING_TIMED_WITH_LIMIT = 12;
+static const string RTASK_TO_TASK = "RTASK to Task";
+
+RTask::RTask(){
+}
+
+RTask::~RTask(){
+}
+
+//This function initializes abstract task attributes such as taskname, starttime, endtime
+//Post: Return true if the attribute are set
+//		Return false if the attributes are not set
+bool RTask::setAbstrInfo(vector <string> parsedInfo) {
+
+	_log.log(RTASK_TO_TASK);
+	assert (!parsedInfo.empty());
+
+	//initialise abstract task attributes
+	_abstract.setTaskName(parsedInfo[1]);
+	
+	if (parsedInfo[4] == KEYWORD_EVERY){	//deadline recurring task
+		_abstract.setEndTime(parsedInfo[3]);
+	} else if (parsedInfo[6] == KEYWORD_EVERY) {	//timed task recurring task
+		_abstract.setEndTime(parsedInfo[5]);
+		_abstract.setStartTime(parsedInfo[3]);
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+//Pre: Takes in a number
+//Post: Return true if the interval between periods i.e. every 5 day, 5 is stored
+bool RTask::setInterval(int interval) {
+	_intervalBtwPeriod = interval;
+	return true;
+}
+
+//Pre:Takes in a string 
+//Post: Return true if the string is day, month, year
+//		Return false if the string does not
+bool RTask::setPeriod(string period) {
+
+	assert (!period.empty());
+
+	if (period == PERIOD_DAY) {
+		_period = day;
+	}
+	else if (period == PERIOD_MONTH) {
+		_period = month;
+	}
+	else if (period == PERIOD_YEAR) {
+		_period = year;
+	} else {
+		return false;
+	}
+	return true;
+}
+
+//This function stores starttime,startdate,endtime,enddate depending
+//on the type of recurring task
+//Pre: Takes in parsed information from parser in vector
+//Post: Return true if it is identified as one of the recurring type
+//		Reuturn false if it is not
+bool RTask::setFirstOccur(vector<string> parsedInfo){
+
+	_log.log(RTASK_TO_TASK);
+	assert (!parsedInfo.empty());
+
+    int type = parsedInfo.size();
+	_occur.setTaskName(_abstract.getTaskName());
+
+	if (type == RECURRING_DEADLINE_NO_LIMIT || type == RECURRING_DEADLINE_WITH_LIMIT) {	
+
+		_occur.setEndTime(_abstract.getEndTime());
+		_occur.setEndDate(parsedInfo[2]);
+
+	} else if (type == RECURRING_TIMED_NO_LIMIT || type == RECURRING_TIMED_WITH_LIMIT ) {
+
+		_occur.setStartTime(_abstract.getStartTime());
+		_occur.setEndTime(_abstract.getEndTime());
+		_occur.setStartDate(parsedInfo[2]);
+		_occur.setEndDate(parsedInfo[4]);
+
+	} else {
+		return false;
+	}
+	return true;
+}
+
+//Pre: Takes in a string
+//Post: Returns true if it is a day, month, year
+//		Returns false if it is not
+bool RTask::setLimitingPeriod(string period) {
+
+	assert (!period.empty());
+
+	if (period == PERIOD_DAY) {
+		_limitingPeriod = day;
+	}
+	else if (period == PERIOD_MONTH) {
+		_limitingPeriod = month;
+	}
+	else if (period == PERIOD_YEAR) {
+		_limitingPeriod = year;
+	} else {
+		return false;
+	}
+	return true;
+}
+
+//This function sets the last date limit given by the user
+//Pre: Takes in userinput as a string
+//Post: Returns true if the recurring lastDateLimit is set
+bool RTask::setLimit(string limit) {
+
+	assert (!limit.empty());
+
+	_limit = atoi(limit.c_str());
+
+	days difference;
+	date now;
+	if (!_occur.getStartDate().empty()){
+		now = from_simple_string(_occur.getStartDate());
+	} else {
+		now = from_simple_string(_occur.getEndDate());
+	}
+
+	if (_limitingPeriod == month) {
+		months interval(_limit);
+		_lastDateLimit = now + interval;
+	} else if (_limitingPeriod == year) {
+		years interval(_limit);
+		_lastDateLimit = now + interval;
+	} else if (_limitingPeriod == day) {
+		days interval(_limit);
+		_lastDateLimit = now + interval;
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+//This function stores the datelimit for a recurring function
+//Pre: Takes in a default limit 
+//Post: Return true if date limit and number of occurrences is set
+bool RTask::setNoOfOccurrences(int noOfOccurrences) {
+
+	date now;
+
+	if(!_occur.getStartDate().empty()){
+		now = from_simple_string(_occur.getStartDate());
+	} else {
+		now = from_simple_string(_occur.getEndDate());
+	}
+
+	noOfOccurrences = (noOfOccurrences - 1) * _intervalBtwPeriod;
+
+	if(_period == day) {
+		days interval(noOfOccurrences);
+		_lastDateLimit = now + interval;
+	} else if(_period == month) {
+		months interval(noOfOccurrences);
+		_lastDateLimit = now + interval;
+	} else if(_period == year) {
+		years interval(noOfOccurrences);
+		_lastDateLimit = now + interval;
+	}
+
+	_noOfOccurrences = noOfOccurrences;
+
+	return true;
+}
+
+//This functions calculates the number of occurences for deadline tasks. 
+//It also stores every recurring tasks information in a vector
+void RTask::generateOccursForDeadlineTask() {
+
+	//Push in the first occurence
+	_listOfOccurrences.push_back(_occur);
+	Task next = _occur;
+
+	_nextEndDate = from_simple_string(next.getEndDate());
+
+	
+	while (_nextEndDate <= _lastDateLimit) {
+		_endDate = from_simple_string(_occur.getEndDate());
+		
+		if (_period == day) {	
+			date_duration interval(_intervalBtwPeriod);
+			_nextEndDate = _endDate + interval;	
+		} else if (_period == month) {	
+			months interval(_intervalBtwPeriod);
+			_nextEndDate = _endDate + interval;
+		} else if (_period == year) {		
+			years interval(_intervalBtwPeriod);
+			_nextEndDate = _endDate + interval;			
+		} 
+
+		_log.log(RTASK_TO_TASK);
+
+		if(_nextEndDate <= _lastDateLimit) {
+			next.setEndDate(to_simple_string(_nextEndDate));
+			_listOfOccurrences.push_back(next);
+			_occur = next;
+		}
+	} 
+}
+
+//This functions calculates the number of occurences for tiemd tasks. 
+//It also stores every recurring tasks information in a vector
+void RTask::generateOccursForTimedTask() {
+
+	//Push in the first occurrence
+	_listOfOccurrences.push_back(_occur);
+	days diff;
+	Task next = _occur;
+	_nextEndDate = from_simple_string(next.getEndDate());
+
+	while (_nextEndDate <= _lastDateLimit) {
+		_startDate = from_simple_string(_occur.getStartDate());
+		_endDate = from_simple_string(_occur.getEndDate());
+		diff = _endDate - _startDate;
+
+		if (_period == day) {		
+			date_duration interval(_intervalBtwPeriod);
+			_nextStartDate = _endDate + interval;
+			_nextEndDate = _nextStartDate + diff;
+
+		} else if (_period == month) {
+			months interval(_intervalBtwPeriod);
+			_nextStartDate = _endDate + interval;
+			_nextEndDate = _nextStartDate + diff;
+
+		} else if (_period == year) {
+			years interval(_intervalBtwPeriod);
+			_nextStartDate = _endDate + interval;
+			_nextEndDate = _nextStartDate + diff;
+		}
+
+		_log.log(RTASK_TO_TASK);
+
+		if (_nextEndDate <= _lastDateLimit) {
+			next.setStartDate(to_simple_string(_nextStartDate));
+			next.setEndDate(to_simple_string(_nextEndDate));
+			_listOfOccurrences.push_back(next);
+			_occur = next;
+		}
+	}
+}
+
+
+vector <Task> RTask::getListOfOccurrences() {
+	return _listOfOccurrences;
+}
+
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\RTask.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\RTask.h
+	 */
+
+#ifndef RTASK_H
+#define RTASK_H
+
+#include <string>
+#include <iostream>
+#include "Task.h"
+#include "Dates.h"
+#include "Log.h"
+#include "assert.h"
+
+enum Period {
+	day, month, year
+};
+
+class RTask : public Task {
+private:
+
+	Log _log;
+	//Stores task name, start time, end time;
+	Task _abstract;	
+	//Stores start date, end date, label, priority, status
+	Task _occur;	
+
+	//Variables
+	double _noOfOccurrences;
+	int _intervalBtwPeriod;
+	int _limit;
+	int sizeType;
+
+	Period _period;
+	Period _limitingPeriod;
+	vector <Task> _listOfOccurrences;
+
+	date _startDate;
+	date _endDate;
+	date _nextStartDate;
+	date _nextEndDate;
+	date _lastDateLimit;
+
+public:
+	RTask();
+	~RTask();
+
+	//Setter Function
+	bool setAbstrInfo(vector <string>);
+	bool setInterval(int);
+	bool setPeriod(string);
+	bool setFirstOccur(vector <string>);
+	bool setLimitingPeriod(string);
+	bool setLimit(string);
+	bool setNoOfOccurrences(int);
+
+	//Process Function
+	void generateOccursForDeadlineTask();
+	void generateOccursForTimedTask();
+
+	//Getter Functions
+	vector<Task> getListOfOccurrences();
+};
+
+#endif
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\RTask.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Search.cpp
+	 */
+
+#include "Search.h"
+
+Search::Search(){
+	_noOfFoundTasks = 0;
+}
+
+Search::~Search(){
+}
+
+//Pre: Takes in a single word to be search
+void Search::setSearchWord(string userInput) {
+	_searchWord = userInput;
+	_searchWordSize = _searchWord.size();
+	
+}
+
+//Post: Return true if search word is a date
+//		Return false if otherwise
+bool Search::isSearchDate() {
+	Dates d;
+
+	if (d.checkDateFormat(_searchWord)) {
+		if(d.isDateValid(_searchWord)) {
+			_searchWord = d.getFormattedDates();
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+
+	return true;
+
+}
+
+//Pre: Takes in a date as a string
+//Post: Return true if search word is the same as date
+bool Search::foundDate(string date) {
+	if (_searchWord == date) {
+		_log.log("Search word matches a date");
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//Pre-condition: takes in a vector of task objects from logic
+//looks through the tasks according to task name
+void Search::execute(vector <Task> taskListFromLogic) {
+
+	_log.log("Executing Search");
+
+	int i;
+	if (!isSearchDate()) {
+		_log.log("Searching not a date");
+		for (i = 0; i < taskListFromLogic.size(); i++) {
+			_taskName = taskListFromLogic[i].getTaskName();
+			if (foundWord(_taskName)) {
+				_listOfFoundTasks.push_back(taskListFromLogic[i]);
+				_listOfFoundTaskNum.push_back(i + 1);
+			}
+		}
+	} else {
+		_log.log("Searching for a date");
+		for (i = 0; i < taskListFromLogic.size(); i++) {
+			_endDate = taskListFromLogic[i].getEndDate();
+			_startDate = taskListFromLogic[i].getStartDate();
+			if (foundDate(_endDate) || foundDate(_startDate)) {
+				_listOfFoundTasks.push_back(taskListFromLogic[i]);
+				_listOfFoundTaskNum.push_back(i + 1);
+			}
+		}
+		
+	}
+	_noOfFoundTasks = _listOfFoundTasks.size();
+	_log.log("End of Search");
+}
+
+vector <string> Search::stringToTokens(string taskname) {
+	vector<string> tokenisedTaskName;
+	char* ptr = (char*)taskname.c_str();
+	char *tokens;
+	tokens = strtok(ptr, " ,-");
+	while (tokens != NULL) {
+		tokenisedTaskName.push_back(tokens);
+		tokens = strtok(NULL, " ,-");
+	}
+	return tokenisedTaskName;
+}
+
+int Search::searchForWord(vector<string> tokenisedTaskName) {
+	assert(tokenisedTaskName.size() > 0);
+
+	_log.log("searching for 1 word\n");
+
+	vector <string>::iterator iter = tokenisedTaskName.begin();
+	int foundIndex = 0;
+	while (iter != tokenisedTaskName.end()) {
+		int size = (*iter).size();	//length of 1 word
+		int i = 0;
+		
+
+		while (i < size) {
+			foundIndex = ((*iter).substr(i)).find(_searchWord);
+			if (foundIndex != -1) {
+				 return foundIndex;
+			} else {
+				i++;
+			}
+		}
+
+		iter++;
+	}
+	return foundIndex;
+}
+
+bool Search::canFindFirst(int &i, vector<string> tokenisedSearchWord, vector<string> tokenisedTaskName) {
+	_log.log("searching for more than 1 word, finding first word\n");
+
+	bool foundfirst = false;
+	
+	int size = tokenisedTaskName.size();
+
+	while (!foundfirst && i < size) {
+		if (tokenisedSearchWord[0] == tokenisedTaskName[i]) {
+			foundfirst = true;
+		}
+		else {
+			i++;
+		}
+	}
+	return foundfirst;
+}
+
+bool Search::findSec(int &i, vector<string> tokenisedSearchWord, vector<string> tokenisedTaskName) {
+	_log.log("searching for remaining words\n");
+
+	bool running = true;
+	int size = tokenisedSearchWord.size();
+	int size2 = tokenisedTaskName.size();
+
+	for (int j = 0; j < size && running && i < size2; j++) {
+		if (tokenisedSearchWord[j] == tokenisedTaskName[i]) {
+			i++;
+		} else {
+			running = false;
+		}
+	}
+	return running;
+}
+
+//Pre condition: takes in the task name of task in list
+//conducts the matching of task name with the word to be searched
+//returns true if word is found, false otherwise
+bool Search::foundWord(string taskname) {
+	int whiteSpaceIndex;
+	//cout << _searchword << "search word size: " << _searchword.size() << endl;
+	if (_searchWord.size() == 1) {	//single first character search
+		if (taskname[0] == _searchWord[0]) {
+			_log.log("Search matches a word");
+			return true;
+		} else {
+			return false;
+		}
+	}
+	else if (_searchWord.size() > 1) {
+		vector <string> tokenisedTaskName;;
+		tokenisedTaskName = stringToTokens(taskname);
+		whiteSpaceIndex = _searchWord.find_first_of(" ");
+
+		//cout << "whitespace index" << whiteSpaceIndex << endl;
+		try {
+			if (whiteSpaceIndex == -1) {	//search word is 1 word
+				int i = searchForWord(tokenisedTaskName);
+				if (i != -1) {
+					return true;
+				}
+				else {
+					return false;
+				}
+
+			} else {	//search more than 1 word
+
+				int i = 0;
+				vector<string> tokenisedSearchWord = stringToTokens(_searchWord);
+				int size2 = tokenisedTaskName.size();
+
+				//cout << "i " << i << endl;
+				bool foundfirst = false;
+				foundfirst = canFindFirst(i, tokenisedSearchWord, tokenisedTaskName);
+
+				if (foundfirst && i < size2 - 1) {
+					if (findSec(i, tokenisedSearchWord, tokenisedTaskName)) {
+						_log.log("found second word\n");
+						return true;
+					}
+					else {
+						if (i == size2 - 1) {
+							throw ("exceed possible range");
+						}
+						return false;
+					}
+				} else {
+					return false;
+				}
+			} 
+
+		} 
+		catch (char* strg){
+			cout << "Exception raised: " << strg << endl;
+		}
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+
+vector <Task> Search::getListOfFoundTasks() {
+	return _listOfFoundTasks;
+}
+
+vector <int> Search::getListOfFoundTaskNum() {
+	return _listOfFoundTaskNum;
+}
+
+int Search::getNoOfFoundTasks() {
+	return _noOfFoundTasks;
+}
+
+string Search::getSearchWord(){
+	return _searchWord;
+}
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Search.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Search.h
+	 */
+
+#ifndef SEARCH_H
+#define SEARCH_H
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include "Dates.h"
+#include "Task.h"
+#include "Log.h"
+#include "Assert.h"
+
+using namespace std;
+
+class Search {
+private:
+	Log _log;
+	string _searchWord;
+	int _searchWordSize;
+	string _taskName;
+	string _endDate;
+	string _startDate;
+	vector <Task> _listOfFoundTasks;
+	vector <int> _listOfFoundTaskNum;
+	int _noOfFoundTasks;
+	int searchForWord(vector<string>);
+	bool canFindFirst(int &, vector<string>, vector<string>);
+	bool findSec(int &, vector<string>, vector<string>);
+	bool foundWord(string);
+
+public:
+	Search();
+	~Search();
+	void setSearchWord(string);
+	bool isSearchDate();
+	bool foundDate(string);
+	void execute(vector<Task>);
+	vector<string> stringToTokens(string);
+	vector<Task> getListOfFoundTasks();
+	vector <int> getListOfFoundTaskNum();
+	int getNoOfFoundTasks();
+	string getSearchWord();
+};
+
+#endif
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Search.h
+
+
+
+
+

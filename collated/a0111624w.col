@@ -1,0 +1,1729 @@
+//@author: a0111624w
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Dates.cpp
+	 */
+
+#include "Dates.h"
+
+Dates::Dates(){
+//	getTodayDate();
+}
+
+Dates::~Dates(){
+
+}
+
+//Post: Returns true if string contains the required delimiters for dates i.e. 10/10, 2009/10/10
+bool Dates::checkDelimiters(string date){
+	store.clear();
+	string input = date;
+	string temp;
+	string delimiters = "./";
+
+	int count=0;
+
+	//Extract the year month day of date
+	size_t found = input.find_first_of(delimiters);
+	while(found!=string::npos && found!=0) {
+		temp = input.substr(0,found);
+
+		for(int i = 0; i < temp.size(); i++) { 
+			if(!isdigit(temp[i])){
+				return false;
+			}
+		}
+
+		store.push_back(temp);
+		input = input.substr(found+1, input.size()-1);
+		found = input.find_first_of(delimiters);
+		count ++;
+	} 
+
+	if(count == 2 && !input.empty()) {
+		store.push_back(input);
+	} else if (count == 1 && !input.empty()) {
+		store.push_back(input);
+	} else {
+		return false;
+	}
+	
+	return true;
+}
+//Post:: Returns true if format is YYYY/MM/DD or DD/MM/YYYY or MM/DD or DD/MM
+
+bool Dates::checkYearMthDayFormat(){
+	int storeSize = store.size();
+	string tempYear;
+	string tempMth;
+	string tempDay;
+
+	if(storeSize == 3) {
+		if (store[0].size() == 4) {
+			tempYear =  store[0];
+			tempMth = store[1];
+			tempDay = store[2];
+			storeDates(tempYear, tempMth, tempDay);
+		} else {
+			return false;
+		}
+	} else if (storeSize == 2) {
+		if(store[0].size() == 2 || store[0].size() == 1) {
+			tempYear = "2015";
+			tempMth = store[0];
+			tempDay = store[1];
+			storeDates(tempYear, tempMth, tempDay);
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+//Post: Returns true if there are 2/3 pieces of numbers stored.
+//		Stores year, month, day if store size is 3.
+//		Stores month, day if store size is 2.
+//		Returns false if others.
+bool Dates::storeDates(string tempYear, string tempMth, string tempDay){
+	if(store.size() == 3) {
+		year = atoi(tempYear.c_str());
+		month = atoi(tempMth.c_str());
+		day = atoi(tempDay.c_str());
+	} else if (store.size() == 2) {
+		year = atoi(tempYear.c_str());
+		month = atoi(tempMth.c_str());
+		day = atoi(tempDay.c_str());
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+int Dates::checkDay(string daysInName) {
+	if(daysInName == "mon" || daysInName == "monday") {
+		return 1;
+	} else if (daysInName == "tues" || daysInName == "tuesday") {
+		return 2;
+	} else if (daysInName == "wed" || daysInName == "wednesday") {
+		return 3;
+	} else if (daysInName == "thurs" || daysInName == "thursday") {
+		return 4;
+	} else if (daysInName == "fri" || daysInName == "friday") {
+		return 5;
+	} else if (daysInName == "sat" || daysInName == "saturday") {
+		return 6;
+	} else if (daysInName == "sun" || daysInName == "sunday") {
+		return 0;
+	} else {
+		return 8;
+	}
+}
+
+string Dates::datesGivenDays(string inputDate, string daysInName) {
+	date d(from_string(inputDate));
+
+	greg_weekday day(checkDay(daysInName));
+	
+	string date = to_simple_string(next_weekday(d, day));
+
+	return date;
+}
+
+string Dates::datesFromToday(int numberOfDays){
+	date d1(from_simple_string(getTodayDate()));
+	date_duration dd(numberOfDays);
+	string newDate;
+	newDate = to_simple_string(d1 + dd);
+
+	return newDate;
+}
+
+//Post: Returns a string of date in the format of year/month/day
+bool Dates::checkDateFormat(string input){
+	if(!checkDelimiters(input)) {
+		return false;
+	} 
+
+	if(!checkYearMthDayFormat()){
+		return false;
+	} 
+
+	return true;
+}
+
+//This checks if date is valid
+//Post: Returns true if valid, Returns false if invalid
+bool Dates::isDateValid(string dateinput){
+
+	if(!checkDateFormat(dateinput)) {
+		return false;
+	} else {
+		try{
+			date d(year, month, day);
+			dateCheckedFormat = to_simple_string(d);
+		} catch (exception& e) {
+			cout<< "[ERROR] " << e.what() << endl << endl;
+			return false;
+		}
+	}
+	
+	date today = day_clock::local_day();
+
+	int size = dateCheckedFormat.size();
+	
+	try{
+		date dateToCheck(from_simple_string(dateCheckedFormat));
+		days difference = dateToCheck - today;
+
+		if (difference < days(0)) {
+			cout << "[ERROR] Check that the date is not before today " << today << endl << endl;
+			return false;
+		}
+	} catch (exception& e) {
+		cout<< "[ERROR] " << e.what() << endl << endl;
+		return false;
+	}
+	
+	return true;
+}
+
+string Dates::getTodayDate(){
+	time_t currentTime;
+	struct tm localTime;
+
+	time( &currentTime );                   // Get the current time
+	localtime_s( &localTime , &currentTime );  // Convert the current time to the local time
+
+	day    = localTime.tm_mday;
+	month  = localTime.tm_mon + 1;
+	year   = localTime.tm_year + 1900;
+
+	date d(year, month, day);
+	todayDate = to_simple_string(d);
+
+	return todayDate;
+}
+
+
+bool Dates::validDateFromString(string check) {
+	if(check.empty()) {
+		return false;
+	}
+	
+	if(check.size() == 11) {
+		if(check[4] != '-' && check[8] != '-') {
+			return false;
+		}
+	} else {
+		return false;
+	}
+
+	date d(from_simple_string(check));
+	if(d.is_not_a_date()) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+string Dates::getFormattedDates(){
+	return dateCheckedFormat;
+}
+
+
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Dates.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Dates.h
+	 */
+
+#ifndef DATES_H
+#define DATES_H
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include <ctime>
+#include <sstream>
+#include "boost/date_time/gregorian/gregorian.hpp" 
+
+using namespace std;
+using namespace boost::gregorian;
+
+class Dates{
+private:
+
+	int year;
+	int month;
+	int day;
+	string todayDate;
+	string dateCheckedFormat;
+
+	vector<string> store;
+	bool checkDelimiters(string date);
+	bool checkYearMthDayFormat();;
+	bool storeDates(string, string, string);
+
+public:
+	
+	Dates();
+	~Dates();
+
+	int checkDay(string);
+	string datesGivenDays(string, string);
+	string datesFromToday(int);
+	bool checkDateFormat(string date);
+	bool isDateValid(string input);
+	string getTodayDate();
+	bool validDateFromString(string date);
+	string getFormattedDates();
+};
+
+#endif
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Dates.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Edit.cpp
+	 */
+
+#include "Edit.h"
+
+const char* ERROR_STARTTIME = "[ERROR] Start Time is Over";
+const char* ERROR_ENDTIME = "[ERROR] End Time is Over";
+const char* ERROR_END_BEFORE_START = "[ERROR] End-Time cannot be earlier than Start-Time";
+const char* ERROR_STARTDATE_LATER_THAN_ENDDATE = "[ERROR] Start-Date will be later than End-Date";
+const char* ERROR_TIMEFORMAT = "[Error] Time format should be HHMM";
+const char* ERROR_TIME_NOT_DIGIT = "[Error] Time format should be numbers withing 0000 to 2359";
+const char* ERROR_TIME_RANGE = "[Error] Outside Time Range 0000 to 2359";
+const char* ERROR_TASK_INDEX = "[Error] Invalid Task Index";
+const char* ERROR_TASK_TYPE = "[Error] Invalid Task Type";
+const string ERROR_INVALIDINPUT = "[ERROR] Invalid Inputs";
+
+const string TASK_NAME = "taskname";
+const string START_DATE = "startdate";
+const string END_DATE = "enddate";
+const string START_TIME = "starttime";
+const string END_TIME = "endtime";
+
+//This function processes parsed information from parser and also tasklist from logic
+//Post: Return true if the execution of information is successful
+//		Return false if the execution of information is not successful
+bool Edit::execute(vector<string> parsedInfo, vector<Task> taskListFromLogic){
+
+	_parsedInformation = parsedInfo;
+	_taskList = taskListFromLogic;
+
+	_parsedInfoSize = _parsedInformation.size();
+	_numberOfTasks = _taskList.size();
+
+	if(_parsedInfoSize == 4) {
+		_editNumber = atoi(_parsedInformation[1].c_str()) - 1;
+		_editType = _parsedInformation[2];
+		_editContent = _parsedInformation[3];
+
+		try {
+			checkAndProcess();
+		} catch (const char* msg) {
+			cerr << msg << endl;
+			return false;
+		}
+	} else {
+		printMessage(ERROR_INVALIDINPUT);
+		return false;
+	}
+
+	return true;
+}
+
+//Post: Return the edited tasklist 
+vector<Task> Edit::getList(){
+	return _taskList;
+}
+
+//This function checks and processese the content user wants to edit 
+//Post: Return true if tasktype, tasknumber and task content to be edited is valid;
+//		Return false if otherwise;
+bool Edit::checkAndProcess(){
+
+	//Return false if task number is unavailable
+	if(_editNumber > _numberOfTasks){
+		throw ERROR_TASK_INDEX;
+	}
+
+	//Match the type of task to be edited
+	if(_editType == TASK_NAME){
+		_log.log("Editing Taskname");
+		_taskList[_editNumber].setTaskName(_editContent);
+
+	} else if(_editType == START_DATE){
+		_log.log("Editing Startdate");
+		if(!setStartDate(_editContent, _editNumber)){
+			return false;
+		}
+	} else if(_editType == START_TIME){
+		_log.log("Editing Starttime");
+		if(!setStartTime(_editContent, _editNumber)) {
+			return false;
+		} 
+	} else if(_editType == END_DATE){
+		_log.log("Editing Enddates");
+		if(!setEndDate(_editContent, _editNumber)){
+			return false;
+		}
+	} else if(_editType == END_TIME){
+		_log.log("Editing Endtime");
+		if(!setEndTime(_editContent, _editNumber)) {
+			return false;
+		} 
+	} else {
+		throw ERROR_TASK_TYPE;
+	}
+
+	return true;
+}
+
+//Pre: Takes in intended start date contnet and tasklist number to be edited
+//Post: Return true if content is valid date
+//		Return false if content is not valid date and thus throwing the specific error 
+bool Edit::setStartDate(string startDate, int index) {
+
+	getSelectedTaskInfo(index);
+
+	if(check.isDateValid(startDate)) {
+		startDate = check.getFormattedDates();
+		try {
+			compareDates(startDate, _endDate);
+			compareTime(startDate, _endDate, _startTime, _endTime);
+			_taskList[index].setStartDate(startDate);
+		} catch (const char* msg) {
+			cerr << msg << endl;
+			return false;
+		}
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+//Post: Return true if content is a valid date
+//		Return false if content is not valid date and thus sthrowing the specific error 
+bool Edit::setEndDate(string endDate, int index) {
+
+	getSelectedTaskInfo(index);
+
+	if(check.isDateValid(endDate)) {
+		endDate = check.getFormattedDates();
+		try {
+			compareDates(_startDate, endDate);
+			compareTime(_startDate, endDate, _startTime, _endTime);
+			_taskList[index].setEndDate(endDate);
+		} catch (const char* msg) {
+			cerr << msg << endl;
+			return false;
+		}
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+//Post: Return true if content is a valid Time
+//		Return false if content is not valid date and thus sthrowing the specific error 
+bool Edit::setStartTime(string startTime, int index) {
+
+	try {
+		getSelectedTaskInfo(index);
+		isPossibleTimeFormat(startTime);
+		compareTime( _startDate, _endDate, startTime,  _endTime);
+		compareDates( _startDate, _endDate);
+		_taskList[index].setStartTime(startTime);
+		_taskList[index].setStartDate(_startDate);
+	} catch (const char* msg) {
+		cerr << msg << endl;
+		return false;
+	}
+
+	if(_startDate.empty()) {
+		_taskList[index].setStartDate(check.getTodayDate());
+	}
+
+	return true;
+}
+
+//Post: Return true if content is a valid Time
+//		Return false if content is not valid date and thus sthrowing the specific error 
+bool Edit::setEndTime(string endTime, int index) {
+
+	try {
+		getSelectedTaskInfo(index);
+		isPossibleTimeFormat(endTime);
+		compareTime(_startDate, _endDate, _startTime,  endTime);
+		compareDates( _startDate, _endDate);
+		_taskList[index].setEndTime(endTime);
+		_taskList[index].setEndDate(_endDate);
+	} catch (const char* msg) {
+		cerr << msg << endl;
+		return false;
+	}
+	return true;
+}
+
+//This checks if timeformat i.e. HHMM and time value is valid
+//Post: Returns true if valid, Returns false if invalid
+bool Edit::isPossibleTimeFormat(string time){
+	
+	if(time.size()>4) {
+		throw ERROR_TIMEFORMAT;
+		return false;
+	}
+
+	for(int i = 0; i < 4; i++) { 
+		if(!isdigit(time[i])){
+			throw ERROR_TIME_NOT_DIGIT;
+			return false;
+		}
+	}
+
+	int minute = atoi(time.c_str());
+	
+	if(minute > 2359) {
+		throw ERROR_TIME_RANGE;
+		return false;
+	}
+
+	_time = time;
+		
+	return true;
+}
+
+//Post: Returns today's time as string
+string Edit::getTodayTime() {
+
+	string todayTime;
+	time_t currentTime;
+	struct tm localTime;
+
+	time( &currentTime );					  // Get the current time
+	localtime_s( &localTime , &currentTime );  // Convert the current time to the local time
+
+	int hour = localTime.tm_hour;
+	int min  = localTime.tm_min;
+
+	if(hour < 10) {
+		todayTime = '0' + to_string(hour * 100 + min);
+	} else {
+		todayTime = to_string(hour * 100 + min);
+	}
+
+	return todayTime;
+}
+
+//Pre: Takes in two different dates
+//Post: Return true if date1 is later than or equal to date2
+//		Return false if date1 is earlier than date2
+bool Edit::compareDates(string date1, string date2) {
+
+	//Return false if function takes in 1 or 0 parmeters
+	if(date1.empty() || date2.empty()) {
+		return false;
+	} 
+
+	date startDate(from_simple_string(date1));
+	date endDate(from_simple_string(date2));
+
+	if(startDate > endDate) {
+		throw ERROR_STARTDATE_LATER_THAN_ENDDATE;
+	}
+
+	return true;
+}
+
+//Pre: Takes in 2 string dates and 2 string time
+//Post: Return true if starttime is smaller than endtime given same date
+//		Return false if otherwise;
+bool Edit::compareTime(string date1, string date2, string startTime, string endTime) {
+
+	if(date1.empty() || date2.empty() || startTime.empty() || endTime.empty()) {
+		return false;
+	}
+
+	date startDate(from_simple_string(_startDate));
+	date endDate(from_simple_string(_endDate));
+	date todayDate(from_simple_string(check.getTodayDate()));
+
+	if(startDate == endDate) {
+		if(startTime > endTime) 
+			throw ERROR_END_BEFORE_START;
+	} else if(startDate == todayDate) {
+		if(startTime < getTodayTime()) {
+			throw ERROR_STARTTIME;
+		}
+	} else if(endDate == todayDate) {
+		if(endTime < getTodayTime()) {
+			throw ERROR_ENDTIME;
+		}
+	}
+
+	return true;
+}
+
+//This function stores information of a selected task from the list of tasks
+void Edit::getSelectedTaskInfo(int index) {
+	_startDate =  _taskList[index].getStartDate();
+	_endDate =  _taskList[index].getEndDate();
+	_startTime =  _taskList[index].getStartTime();
+	_endTime =  _taskList[index].getEndTime();
+}
+
+//Pre: Takes in a string 
+//Post: Print out the intended message
+void Edit::printMessage(string message) {
+	cout << endl << message << endl;
+}
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Edit.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Edit.h
+	 */
+
+#ifndef EDIT_H
+#define EDIT_H
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include "Logic.h"
+#include "Task.h"
+#include "Log.h"
+
+using namespace std;
+
+class Edit {
+private:
+	//Declaration of Objects
+	Dates check;
+	Log _log;
+
+	//Declaration of Variables
+	vector<Task> _taskList;
+	vector<string> _parsedInformation;
+
+	string _editType;
+	string _editContent;
+	string _time;
+
+	int _editNumber;
+	int _numberOfTasks;
+	int _parsedInfoSize;
+
+	string _startDate;
+	string _endDate;
+	string _startTime;
+	string _endTime;
+
+	//Functions to set the change
+	bool checkAndProcess();
+	bool setStartDate(string, int);
+	bool setEndDate(string, int);
+	bool setStartTime(string, int);
+	bool setEndTime(string, int);
+
+	//Functions to check time and dates
+	bool isPossibleTimeFormat(string);
+	string getTodayTime();
+	bool compareDates(string, string);
+	bool compareTime(string, string, string, string);
+
+	void getSelectedTaskInfo(int index);
+	void printMessage(string);
+
+public:
+	bool execute(vector<string> parsedInformation, vector<Task> taskList);
+	vector<Task> getList();
+};
+
+#endif
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Edit.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Parser.cpp
+	 */
+
+#include "Parser.h"
+
+const int NOT_VALID = -1;
+const int FIRST_WORD = 0;
+const int SECOND_WORD = 1;
+const int THIRD_WORD = 2;
+
+const string Parser::CHOICE_ADD = "add";
+const string Parser::CHOICE_DELETE = "delete"; 
+const string Parser::CHOICE_EDIT = "edit";
+const string Parser::CHOICE_CLEAR = "clear";
+const string Parser::CHOICE_SEARCH = "search";
+const string Parser::CHOICE_VIEW = "view";
+const string Parser::CHOICE_MARK = "mark";
+const string Parser::CHOICE_SORT = "sort";
+const string Parser::CHOICE_UNDO = "undo";
+const string Parser::CHOICE_STORE = "store";
+const string Parser::CHOICE_EXIT = "exit";
+const string Parser::CHOICE_ERROR = "error";
+const string Parser::MESSAGE_INVALID_TIME = "Invalid Time Input";
+const string Parser::MESSAGE_INVALID_DATE = "Invalid Date Input";
+const char* Parser::ERROR_TIME_OUT_RANGE = "[ERROR] Outside time range 0000 to 2359";
+const char* Parser:: ERROR_END_TIME_B4_STARTTIME = "[ERROR] End Time before Start Time";
+
+//This checks the choice of command 
+Parser::CommandType Parser::userCommand(){
+
+	//i.e. Returns "add" if user keys in "add do tutorial"
+	_userCommand = splittedUserInputs[0];
+
+	if (_userCommand == CHOICE_ADD) {
+		return ADD;
+    } else if (_userCommand == CHOICE_DELETE) {
+        return DEL;
+    } else if (_userCommand == CHOICE_EDIT) {
+        return EDIT;
+    } else if (_userCommand == CHOICE_CLEAR) {
+        return CLEAR;
+    } else if (_userCommand == CHOICE_SEARCH) {
+		return SEARCH;
+	} else if (_userCommand == CHOICE_VIEW) {
+        return VIEW;
+    } else if (_userCommand == CHOICE_MARK) {
+		return MARK;
+	} else if (_userCommand == CHOICE_SORT) {
+        return SORT;
+    } else if (_userCommand == CHOICE_STORE) {
+		return STORE;
+	} else if (_userCommand == CHOICE_UNDO) {
+		return UNDO;
+	} else if (_userCommand == CHOICE_EXIT) {
+		return EXIT;
+	} else {
+		return INVALID;
+	}
+}
+
+//This splits a string into words and stores them in a vector. Spacing is removed.
+vector<string> Parser::split(string userInput){
+	vector<string> tokens;
+	istringstream iss(userInput);
+	copy(istream_iterator<string>(iss), istream_iterator<string>(), back_inserter<vector<string> >(tokens));
+	splittedUserInputs = tokens;
+
+	return tokens;
+}
+
+//This processes the different commands.
+bool Parser::parseActions(vector<string> splittedUserInputs){
+	CommandType commandChoice = userCommand();
+	
+	//Removes the first word u.e. user command
+	splittedUserInputs.erase(splittedUserInputs.begin());
+
+	switch (commandChoice){
+		case ADD:
+			parsedInputs.push_back(CHOICE_ADD);
+			processAddContent(splittedUserInputs);
+			break;
+
+		case DEL:
+			parsedInputs.push_back(CHOICE_DELETE);
+			processDeleteContent(splittedUserInputs);
+			break;
+
+		case EDIT:
+			parsedInputs.push_back(CHOICE_EDIT);
+			processEditContent(splittedUserInputs);
+			break;
+
+		case CLEAR:
+			parsedInputs.push_back(CHOICE_CLEAR);
+			break;
+		
+		case SEARCH:
+			parsedInputs.push_back(CHOICE_SEARCH);
+			processSearchContent(splittedUserInputs);
+			break;
+
+		case VIEW:
+			parsedInputs.push_back(CHOICE_VIEW);
+			processView(splittedUserInputs);
+			break;
+
+		case MARK:
+			parsedInputs.push_back(CHOICE_MARK);
+			processMarkContent(splittedUserInputs);
+			break;	
+	
+		case SORT:
+			parsedInputs.push_back(CHOICE_SORT);
+			processSortContent(splittedUserInputs);
+			break;	
+
+		case STORE:
+			parsedInputs.push_back(CHOICE_STORE);
+			parsedInputs.push_back(splittedUserInputs[FIRST_WORD]);
+			break;
+
+		case UNDO:
+			parsedInputs.push_back(CHOICE_UNDO);
+			break;
+
+		case EXIT:
+			parsedInputs.push_back(CHOICE_EXIT);
+			break;
+
+		case INVALID:
+			parsedInputs.push_back(CHOICE_ERROR);
+	}
+
+	return 1;
+}
+
+//Post: Returns true if it's a timed-task i.e. add...from <date/time> to <date/time>
+//		Returns false if it's not a timed-task
+bool Parser::checkTimedTask(){
+
+    splittedSize = splittedUserInputs.size();
+	assert (splittedSize != 0);
+
+	bool valid = true;
+
+	fromPosition = keywordPos("from");
+	toPosition = keywordPos("to");
+	everyPosition = keywordPos("every");
+
+	if(fromPosition != NOT_VALID && toPosition != NOT_VALID && everyPosition != NOT_VALID) {
+		for(int i = fromPosition+1; i < toPosition; i++ ) {
+			if(!validDateTime(i)) {
+				valid = false;
+			}
+		}
+		for(int i = toPosition+1 ; i < everyPosition ; i++) {
+			if(!validDateTime(i)) {
+				valid = false;
+			}
+		}
+	} else if(fromPosition != NOT_VALID && toPosition != NOT_VALID && everyPosition == NOT_VALID) {
+		for(int i = fromPosition+1; i < toPosition; i++ ) {
+			if(!validDateTime(i)) {
+				valid = false;
+			}
+		}
+		for(int i = toPosition+1 ; i < splittedSize ; i++) {
+			if(!validDateTime(i)) {
+				valid = false;
+			}
+		}
+	} else {
+		return false;
+	}
+	
+	if(valid == true) {
+
+		//Stores startdate, starttime, enddate, endtime
+		storeTimedTaskInfo();
+
+		//Return false if start date is larger than end date
+		if(compareDates(_startDate,_endDate)) {
+			valid = false;
+		}
+
+		//Return false if start time is larger than end time
+		if(_startDate == _endDate && compareTimes(_startTime,_endTime)) {
+			valid = false;
+		}
+
+		//Return false if time is less than today's time
+
+		if(!checkTimeIfDateIsToday(_startDate, _startTime)){
+			cout << "[Error] You should start on your task NOW!" <<endl;
+			valid = false;
+		}
+	}
+	return valid;
+}
+
+//This functions stores all timedtasks information by the user
+bool Parser::storeTimedTaskInfo() {
+
+		assert (fromPosition != NOT_VALID || byPosition != NOT_VALID);
+
+		for (int i = fromPosition+1; i < toPosition; i++ ) {
+			if (check.isDateValid(splittedUserInputs[i])) {
+				_startDate = check.getFormattedDates();
+			}
+			if (isPossibleTime(splittedUserInputs[i])) {
+				_startTime = splittedUserInputs[i];
+			}
+		}
+
+		for (int i = toPosition + 1; i < splittedSize; i++) {
+			if(check.isDateValid(splittedUserInputs[i])) {
+				_endDate = check.getFormattedDates();
+			}
+			if(isPossibleTime(splittedUserInputs[i])) {
+				_endTime = splittedUserInputs[i];
+			}
+		}
+
+		setMissingDateTime();
+
+		return true;
+}
+
+//This function stores missing timedtasks information by default
+bool Parser::setMissingDateTime() {
+
+	if(_startTime.empty() && _startDate == check.getTodayDate()) {
+		_startTime = getTodayTime();
+	} else if(_startTime.empty()){
+		_startTime = "0000";
+	}
+
+	if(_endTime.empty()) {
+		_endTime = "2359";
+	}
+
+	if(_startDate.empty()){
+		_startDate = check.getTodayDate();
+	}
+
+	if(_endDate.empty()) {
+		_endDate = _startDate;
+	}
+	return true;
+}
+
+//Post: Returns true if it's a deadline task i.e. add...by <date/time>
+//		Returns false if it's not a deadline task
+bool Parser::checkDeadlineTask(){
+
+	splittedSize = splittedUserInputs.size();
+	assert (splittedSize != 0);
+	bool valid = true;
+
+	everyPosition = keywordPos("every");
+	byPosition = keywordPos("by");
+
+	if(byPosition != NOT_VALID && everyPosition != NOT_VALID) {
+		for(int i = byPosition+1; i < everyPosition; i ++ ) {
+			if(!validDateTime(i)) {
+				valid = false;
+			}
+		}
+	} else if (byPosition != NOT_VALID && everyPosition == NOT_VALID) {
+		for (int i = byPosition+1; i < splittedSize; i ++ ) {
+			if(!validDateTime(i)) {
+				valid = false;
+			}
+		}
+	} else if (byPosition == NOT_VALID) {
+		return false;
+	}
+
+	if(valid == true) {
+		for(int i = byPosition+1 ; i < splittedSize ; i++) {
+	
+			if(check.isDateValid(splittedUserInputs[i])) {
+				_endDate = check.getFormattedDates();
+			}
+			if(isPossibleTime(splittedUserInputs[i])) {
+				_endTime = splittedUserInputs[i];
+			}
+		}
+
+		if(_endDate.empty()) {
+			_endDate = check.getTodayDate();
+		}
+
+		if(_endTime.empty()) {
+			_endTime = "2359";
+		}
+
+		if(!checkTimeIfDateIsToday(_endDate, _endTime)){
+			cout << "You Missed Your DEADLINE!" <<endl;
+			valid = false;
+		}
+	}
+	return valid;
+}
+
+//Post: Returns true if it's floating task
+//		Returns false if it's not a floating task
+bool Parser::checkFloating(){
+	splittedSize = splittedUserInputs.size();
+	assert (splittedSize != 0);
+
+	if(splittedSize == 0) {
+		return false;
+	}
+
+	bool valid = true;
+
+	if(fromPosition != splittedSize-1 && fromPosition != NOT_VALID) {
+		if(check.checkDateFormat(splittedUserInputs[fromPosition+1])){
+			valid = false;
+		}
+		if(isTimeFormat(splittedUserInputs[fromPosition+1])){
+			valid = false;
+		}
+	}
+
+	if(byPosition != splittedSize-1 && byPosition != NOT_VALID) {
+		if(check.checkDateFormat(splittedUserInputs[byPosition+1])){
+			valid = false;
+		}
+		if(isTimeFormat(splittedUserInputs[byPosition+1])){
+			valid = false;
+		}
+	}
+
+	return valid;
+}
+
+//Post: Returns true if it's recurring task
+//		Returns false if it's not a recurring task
+bool Parser::checkRecurring() {
+	
+	bool validRecurring = false;
+
+	string firstKeyword = "every";
+	string secondKeyword;
+	string thirdKeyword;
+
+	int size = splittedUserInputs.size();
+
+	for (int i = 0; i < size; i++) {
+		if(splittedUserInputs[i] == firstKeyword && i != size - 1) {
+			if(checkSecondWord (i + 1) && checkThirdWord (i+2)) {
+				secondKeyword = splittedUserInputs[i+1];
+				thirdKeyword = splittedUserInputs[i+2];
+				validRecurring = true;
+			} else if (checkSecondWord(i+1) &&  !checkThirdWord(i+2)) {
+				secondKeyword = splittedUserInputs[i+1];
+				validRecurring = true;
+			} 
+		} 
+	}
+
+	if(validRecurring == true) {
+		parsedInputs.push_back(firstKeyword);
+		parsedInputs.push_back(secondKeyword);
+		if(!thirdKeyword.empty())
+			parsedInputs.push_back(thirdKeyword);
+	}
+
+	return validRecurring;
+}
+
+//Post: Returns true if after the word "for", the second word is a digit and the 
+//		third word is a day/month/year	
+bool Parser::checkRecurringLimit() {
+
+	string keyWord = "for";
+	string duration;
+	string dayMthYear;
+
+	bool valid = false;
+
+	int position = keywordPos(keyWord);
+
+	if(position != - 1) {
+		if(checkNumberOfRepeats(position+1) && checkThirdWord(position+2)) { 
+			duration = splittedUserInputs[position+1];
+			dayMthYear = splittedUserInputs[position+2];
+			valid = true;
+		}
+	}
+                                                                                	      
+	if(valid == true) {
+		parsedInputs.push_back(keyWord);
+		parsedInputs.push_back(duration);
+		parsedInputs.push_back(dayMthYear);
+	}
+
+	return valid;
+}
+
+bool Parser::checkSecondWord(int index) {
+	string secondKeyword[6] = {"day", "month" , "year", "days", "months", "years"};
+	int size = splittedUserInputs.size();
+	cout<<index<<endl;
+	//check vector boundary
+	if(index >= size) {
+		return false;
+	}
+
+	bool valid = false;
+	   
+	for(int i = 0; i < 6; i++) {
+		if(splittedUserInputs[index] == secondKeyword[i]) {
+			return true;
+		} else if(checkNumberOfRepeats(index)) {
+			return true;
+		}
+	}
+	return valid;
+}
+
+bool Parser::checkNumberOfRepeats(int index) {
+	int size1 = splittedUserInputs.size();
+
+	//check vector boundary
+	if(index >= size1) {
+		return false;
+	}
+
+	int size = splittedUserInputs[index].size();
+	
+	for (int j = 0; j < size; j++) {
+		if(!isdigit(splittedUserInputs[index][j]))
+			return false;
+	}
+	return true;
+}
+
+bool Parser::checkThirdWord(int index) {
+	string thirdKeyword[6] = {"day", "month" , "year", "days", "months", "years"};
+	int size = splittedUserInputs.size();
+
+	//check vector boundary
+	if(index >= size) {
+		return false;
+	}
+
+	for(int i = 0; i < 6; i++) {
+		if(splittedUserInputs[index] == thirdKeyword[i]) {
+			return true;
+		} 
+	}
+	return false;
+}
+
+bool Parser::storeTaskContent(int start, int end, vector<string> inputs) {
+	for(int i = start; i < end; i++) {
+		if(i == end-1){
+			_taskContent += inputs[i];
+		} else {
+			_taskContent += inputs[i] + " ";
+		}
+	}
+	return true;
+}
+
+//This sorts out the correct information for add function
+//Pre: Takes in the content of userinputs less the command
+//Post: Returns false if userinput is invalid
+bool Parser::processAddContent(vector<string> inputs) {
+	bool addResultValid = true;
+	int size = inputs.size();
+
+	if(size == 0) {
+		return false;
+	}
+
+	_log.log("Parser processing input for adding");
+	if(checkTimedTask()) {
+		storeTaskContent(0, fromPosition-1, inputs);
+		parsedInputs.push_back(_taskContent);
+		parsedInputs.push_back(_startDate);
+		parsedInputs.push_back(_startTime);
+		parsedInputs.push_back(_endDate);
+		parsedInputs.push_back(_endTime);
+
+		if(checkRecurring()) {
+			checkRecurringLimit();
+		}
+
+	} else if (checkDeadlineTask()) {
+		storeTaskContent(0, byPosition-1, inputs);
+		parsedInputs.push_back(_taskContent);
+		parsedInputs.push_back(_endDate);
+		parsedInputs.push_back(_endTime);
+
+		if(checkRecurring()) {
+			checkRecurringLimit();
+		}
+
+	} else if(checkFloating()) {
+		storeTaskContent(0, size, inputs);
+		parsedInputs.push_back(_taskContent);
+
+	} else {
+		addResultValid = false;
+	}
+	
+	return addResultValid;
+}
+
+//This sorts out the information that an edit function requires i.e. task index, type and details
+bool Parser::processEditContent(vector<string> inputs) {
+	int inputSize = inputs.size();
+	
+	if(inputSize == 0) {
+		return false;
+	}
+
+	_log.log("Parser processing input for edit");
+	if(inputSize >= 3){
+		parsedInputs.push_back(inputs[FIRST_WORD]); //task index to be edited
+		parsedInputs.push_back(inputs[SECOND_WORD]); //task type to be edited
+	
+		storeTaskContent(THIRD_WORD, inputSize, inputs);
+		parsedInputs.push_back(_taskContent);
+
+	} else {
+		return false;
+	}
+
+	return true;
+} 
+
+//This processes all words if delete function is called
+bool Parser::processDeleteContent(vector<string> inputs){
+	int size = inputs.size();
+
+	_log.log("Parser processing input for delete");
+	for(int i = 0; i < size ; i++) {
+		parsedInputs.push_back(inputs[i]);
+	}
+	return true;
+}
+
+//This processes all words if mark function is called
+bool Parser::processMarkContent(vector<string> inputs){
+	int size = inputs.size();
+
+	_log.log("Parser processing input for mark");
+	for(int i = 0; i < size ; i++) {
+		parsedInputs.push_back(inputs[i]);
+	}
+	return true;
+}
+
+//This parses the information that a view function requires i.e. undone, done, commands
+bool Parser::processView(vector<string> inputs) {
+	int size = inputs.size();
+
+	_log.log("Parser processing input for viewing");
+	if(size == 1 && inputs[FIRST_WORD] == "tmr") {
+		parsedInputs.push_back(check.datesFromToday(1));
+	} else if (size == 1 && check.checkDay(inputs[FIRST_WORD]) == 8) {
+		parsedInputs.push_back(inputs[FIRST_WORD]); //notdone, done, commands 
+	} else if(size == 1 && check.checkDay(inputs[FIRST_WORD]) < 7) {
+		parsedInputs.push_back(check.datesGivenDays(check.getTodayDate(),inputs[FIRST_WORD]));
+	} else if (size == 2 && check.checkDay(inputs[SECOND_WORD]) != 0 && inputs[FIRST_WORD] == "next") {
+		parsedInputs.push_back(check.datesGivenDays(check.getTodayDate(),inputs[SECOND_WORD]));
+	} else if (size == 3) {
+		if(inputs[FIRST_WORD] < ":" && inputs[FIRST_WORD] > "/") {
+			if(inputs[SECOND_WORD] == "day" &&  inputs[THIRD_WORD] == "after") {
+				int index = atoi(inputs[FIRST_WORD].c_str());
+				parsedInputs.push_back(check.datesFromToday(index));
+			}
+		}
+	} else {
+		return false;
+	}
+	return true;
+}
+
+//This parses the information that a sort function requires i.e. sort date/time/undone/priority
+bool Parser::processSortContent(vector<string> inputs) {
+	int size = inputs.size();
+
+	if(size == 1) {
+		parsedInputs.push_back(inputs[FIRST_WORD]); //date/time/undone/priority
+	} else {
+		return false;
+	}
+	return true;
+}
+
+bool Parser::processSearchContent(vector<string> inputs) {
+	int size = inputs.size();
+	string content;
+
+	_log.log("Parser processing input for search");
+	if(size == 1) {
+		content = inputs[FIRST_WORD];
+		parsedInputs.push_back(content);
+	} else if(size > 1) {
+		for(int i = 0;  i < size; i++){
+			if(i != size -1) { 
+				content += inputs[i] + " ";
+			} else {
+				content += inputs[i];
+			}
+		}
+		parsedInputs.push_back(content);
+	} 
+
+	return true;
+}
+
+vector<string> Parser::getParsedInputs(){
+	return parsedInputs;
+}
+
+//Post: Return true if date1 is a larger date than date2
+bool Parser::compareDates(string date1, string date2) {
+
+	if(date1.empty() || date2.empty()) {
+		return false;
+	} 
+
+	date d1(from_simple_string(date1));
+	date d2(from_simple_string(date2));
+
+	if(d1 > d2) {
+		cout <<  "[Error] End Date is before Start Date??" << endl;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//Post: Return true if time1 is a larger time than time2
+bool Parser::compareTimes(string time1, string time2) {
+
+	if(time1.empty() || time2.empty()) {
+		return false;
+	}
+
+	if(time1 > time2) {
+		throw ERROR_END_TIME_B4_STARTTIME;
+	} else {
+		return false;
+	}
+}
+
+//This checks if timeformat i.e. HHMM and time value is valid
+//Post: Returns true if valid, Returns false if invalid
+bool Parser::isPossibleTime(string time){
+	
+	if(time.size()>4) {
+		return false;
+	}
+
+	for(int i = 0; i < 4; i++) { 
+		if(!isdigit(time[i])){
+			return false;
+		}
+	}
+
+	int minute = atoi(time.c_str());
+	
+	if(minute > 2359) {
+		cout << ERROR_TIME_OUT_RANGE << endl;
+		return false;
+	}
+
+	_time = time;
+		
+	return true;
+}
+
+//Return false if time is not 4 digit or time is digit
+bool Parser::isTimeFormat(string time) {
+
+	if(time.size()>4) {
+		return false;
+	}
+
+	for(int i = 0; i < 4; i++) { 
+		if(!isdigit(time[i])){
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+//Return false if time is before today's time
+bool Parser::checkTimeIfDateIsToday(string date, string time) {
+	
+	if(date.empty() || time.empty()) {
+		return false;
+	}
+
+	if(date == check.getTodayDate()) {
+		if(time < getTodayTime()) {
+			cout <<  "[ERROR] Check the time. It's over!!" << endl;
+			return false;
+		}
+	}
+	return true;
+}
+
+bool Parser::validDateTime(int index) {
+	
+	if(!check.isDateValid(splittedUserInputs[index])) {
+		if(!isPossibleTime(splittedUserInputs[index])) {
+			return false;
+		}
+	} 
+	return true;
+}
+
+//Return today'sTime as a string
+string Parser::getTodayTime() {
+
+	string todayTime;
+	time_t currentTime;
+	struct tm localTime;
+
+	time( &currentTime );					  // Get the current time
+	localtime_s( &localTime , &currentTime );  // Convert the current time to the local time
+
+	int hour = localTime.tm_hour;
+	int min  = localTime.tm_min;
+
+	if(hour < 10) {
+		todayTime = '0' + to_string(hour * 100 + min);
+	} else {
+		todayTime = to_string(hour * 100 + min);
+	}
+
+	return todayTime;
+}
+
+//Return the position of keyword in splittedUserInputs
+int Parser::keywordPos(string keyword) {
+	int position = NOT_VALID;
+
+	int size = splittedUserInputs.size();
+
+	for(int i = 0; i < size; i++) {
+		if(keyword == splittedUserInputs[i]) {
+			position = i;
+		}
+	}
+
+	return position;
+}
+
+
+//Pre: A string that takes in userinputs
+//Post: Returns a vector of inputs which have been parsed
+vector<string> Parser::completeParsing(string line){
+
+	//removes spacing between words
+	split(line);
+	_log.log("Parser removes spacing between words");
+	//Process Parsing 
+	parseActions(splittedUserInputs);
+	_log.log("Parser parses the user input and stores in vector");
+
+	return parsedInputs;
+}
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Parser.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Parser.h
+	 */
+
+#ifndef PARSER_H
+#define PARSER_H
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <stdlib.h>
+#include <sstream>
+#include <iterator>
+#include <assert.h>
+#include "Dates.h"
+#include "Log.h"
+
+using namespace std;
+
+class Parser {
+private:
+	Dates check;
+	Log _log;
+
+	vector<string> splittedUserInputs;
+	int splittedSize;
+	vector<string> parsedInputs;
+
+	//Command Choices
+	static const string CHOICE_ADD;
+	static const string CHOICE_DELETE;
+	static const string CHOICE_EDIT;
+	static const string CHOICE_CLEAR;
+	static const string CHOICE_SEARCH;
+	static const string CHOICE_MARK;
+	static const string CHOICE_VIEW;
+	static const string CHOICE_SORT;
+	static const string CHOICE_STORE;
+	static const string CHOICE_UNDO;
+	static const string CHOICE_EXIT;
+	static const string CHOICE_ERROR;
+
+	//Error Messages
+	static const string MESSAGE_INVALID_TIME;
+	static const string MESSAGE_INVALID_DATE;
+	static const char* ERROR_TIME_OUT_RANGE;
+	static const char* ERROR_END_TIME_B4_STARTTIME;
+
+	int fromPosition;
+	int byPosition;
+	int toPosition;
+	int everyPosition;
+
+	string _userInputs;	
+	string _userCommand;
+	string _taskContent;
+	string _time;
+	string _startDate;
+	string _endDate;
+	string _startTime;
+	string _endTime;
+		
+	enum CommandType{
+		ADD, DEL, EDIT, CLEAR, SEARCH, VIEW, MARK, SORT, INVALID, STORE, UNDO, EXIT
+	};
+	CommandType userCommand();
+
+	//Functions to process inputs
+	vector<string> split(string userInput);
+	bool parseActions(vector<string> inputs);	
+	bool processAddContent(vector<string> inputs);
+	bool processDeleteContent(vector<string> inputs);
+	bool processEditContent(vector<string> inputs);
+	bool processMarkContent(vector<string> inputs);
+	bool processView(vector<string> inputs);
+	bool processSortContent(vector<string> inputs);
+	bool processSearchContent(vector<string> inputs);
+	vector<string> getParsedInputs();
+
+	bool checkTimedTask();
+	bool checkDeadlineTask();
+	bool checkFloating();
+	bool checkRecurring();
+	bool checkRecurringLimit();
+
+	//Functions for Recurring Feature
+	bool checkSecondWord(int);
+	bool checkNumberOfRepeats(int);
+	bool checkThirdWord(int);
+	
+	//Functions to check for validity
+	bool compareTimes(string time1, string time2); 
+	bool isPossibleTime(string time);
+	bool isTimeFormat(string time);
+	bool checkTimeIfDateIsToday(string date, string time);
+	bool validDateTime(int index);
+
+
+	string getTodayTime();
+	int keywordPos(string keyword);
+
+	bool storeTimedTaskInfo();
+	bool setMissingDateTime();
+	bool storeTaskContent(int, int, vector<string>);
+
+public:
+	//Stores information that has been parsed
+	vector<string> completeParsing(string);
+	bool compareDates(string date1, string date2);
+};
+
+#endif
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Parser.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDoTest\IDoTest.cpp
+	 */
+
+namespace ParserTest
+{		
+	TEST_CLASS(ParserTest)
+	{
+	public:
+
+		//Test if parsed inputs are correct for mark function
+		//This is a test for equivalence partition [commandchoice][number][content]
+		TEST_METHOD(ParseMarkInformation)
+		{
+			vector<string> parsedInputs;
+
+			string input = "mark 1 done";
+
+			Parser parser;
+			parsedInputs = parser.completeParsing(input);
+			int size = parsedInputs.size();
+
+			string expectedResults[]  = {"mark" ,"1", "done"};
+			int expectedSize = 3;
+
+			//check if the correct number of items are in the vector
+			Assert::AreEqual(expectedSize, (int)parsedInputs.size());
+
+			//check if the correct strings are in the vector
+			for(int i=0; i<size; i++){
+				Assert::AreEqual (expectedResults[i].c_str(), parsedInputs[i].c_str());
+			}
+		}
+
+		//Test if parsed inputs are correct if a deadline task is added
+		//This is a test for equivalence partition [commandchoice][content][date][time]
+		TEST_METHOD(ParseDeadLineTaskInformation)
+		{
+			vector<string> parsedInputs;
+
+			string input = "add task by 9999/9/9 2323";
+
+			Parser parser;
+			parsedInputs = parser.completeParsing(input);
+			int size = parsedInputs.size();
+
+			string expectedResults[]  = {"add" ,"task", "9999-Sep-09" , "2323"};
+			int expectedSize = 4;
+
+			//check if the correct number of items are in the vector
+			Assert::AreEqual(expectedSize, (int)parsedInputs.size());
+
+			//check if the correct strings are in the vector
+			for(int i=0; i<size; i++){
+				Assert::AreEqual (expectedResults[i].c_str(), parsedInputs[i].c_str());
+			}
+		}
+
+		//Test if parsed inputs are correct if a timed-task is added
+		TEST_METHOD(ParseTimedTaskInformation)
+		{
+			vector<string> parsedInputs;
+
+			string input = "add task from 5555/9/9 2323 to 9999/9/9 2346";
+
+			Parser parser;
+			parsedInputs = parser.completeParsing(input);
+			int size = parsedInputs.size();
+
+			string expectedResults[]  = {"add" ,"task", "5555-Sep-09" , "2323", "9999-Sep-09" , "2346"};
+			int expectedSize = 6;
+
+			//check if the correct number of items are in the vector
+			Assert::AreEqual(expectedSize, (int)parsedInputs.size());
+
+			//check if the correct strings are in the vector
+			for(int i=0; i<size; i++){
+				Assert::AreEqual (expectedResults[i].c_str(), parsedInputs[i].c_str());
+			}
+		}
+
+		//Test if parsed inputs are correct if a floating task is added
+		TEST_METHOD(ParseFloatingTaskInformation)
+		{
+			vector<string> parsedInputs;
+
+			string input = "add how are you";
+
+			Parser parser;
+			parsedInputs = parser.completeParsing(input);
+			int size = parsedInputs.size();
+
+			string expectedResults[]  = {"add" ,"how are you"};
+			int expectedSize = 2;
+
+			//check if the correct number of items are in the vector
+			Assert::AreEqual(expectedSize, (int)parsedInputs.size());
+
+			//check if the correct strings are in the vector
+			for(int i=0; i<size; i++){
+				Assert::AreEqual (expectedResults[i].c_str(), parsedInputs[i].c_str());
+			}
+		}
+
+		//Test if parsed inputs are correct for edit function
+		TEST_METHOD(ParseEditInformation)
+		{
+			vector<string> parsedInputs;
+
+			string input = "edit 1 taskname testing";
+
+			Parser parser;
+			parsedInputs = parser.completeParsing(input);
+			int size = parsedInputs.size();
+
+			string expectedResults[]  = {"edit" ,"1", "taskname" , "testing"};
+			int expectedSize = 4;
+
+			//check if the correct number of items are in the vector
+			Assert::AreEqual(expectedSize, (int)parsedInputs.size());
+
+			//check if the correct strings are in the vector
+			for(int i=0; i<size; i++){
+				Assert::AreEqual (expectedResults[i].c_str(), parsedInputs[i].c_str());
+			}
+		}
+
+		//Test if parsed inputs are correct if a timed-task is added
+		TEST_METHOD(ParseWrongStartDateInformation)
+		{
+			vector<string> parsedInputs;
+
+			string input = "add task from 2099/2/30,2323 to 9999/9/9,2346";
+
+			Parser parser;
+			parsedInputs = parser.completeParsing(input);
+			int size = parsedInputs.size();
+
+			string expectedResults[]  = {"add"};
+			int expectedSize = 1;
+
+			//check if the correct number of items are in the vector
+			Assert::AreEqual(expectedSize, (int)parsedInputs.size());
+
+			//check if the correct strings are in the vector
+			for(int i=0; i<size; i++){
+				Assert::AreEqual (expectedResults[i].c_str(), parsedInputs[i].c_str());
+			}
+		};
+	};
+}
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDoTest\IDoTest.cpp
+
+
+
+
+

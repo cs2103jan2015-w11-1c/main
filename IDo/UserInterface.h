@@ -6,7 +6,6 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <Windows.h>
 #include <iomanip>
 #include <ctime>
 #include <time.h>

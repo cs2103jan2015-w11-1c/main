@@ -1,5 +1,0 @@
-do tutorial
-notdone
-medium
-__________
-_____

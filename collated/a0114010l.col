@@ -1,0 +1,1516 @@
+//@author: a0114010l
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Main.cpp
+	 */
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <ctime>
+#include <time.h>
+#include "UserInterface.h"
+#include "Logic.h"
+#include "Parser.h"
+#include "Storage.h"
+
+using namespace std;
+
+/**
+* This is a project that works as a scheduler that has many functions.
+* By default data will be stored in output.txt as the same file as where this program is located. 
+* This program will generate backup.txt, filename.txt in the same folder as where this program is located. 
+* You can add a text file named quotes.txt in the same folder where this program  is located. 
+* A random quote will be selected at the launch of the program. 
+* Do not name the file to store your data the same as above names in the same folder. 
+* After exiting, the desired text file will be updated with database
+* Press the Enter key after typing the desired functions in the prescribed manner
+* The program expects an input otherwise it will not continue to prompt for commands
+* The command format is given by the sample interaction below:
+* Example command: add study hard (add floating task)
+* Example command: add hand in tutorial by 2359 (add deadline task)
+* Example command: edit 1 taskname exercise everyday (edit task name)
+* Example command: view all (list all the tasks added)
+* Example command: delete 1 (delete the first task)
+* Example command: view done (view all done tasks)
+* Example command: view high (view all high priority tasks)
+* Example command: clear (clear all tasks)
+* Example command: mark 1 high (mark the first task as priority high)
+* Example command: mark 1 school (label the first task as school)
+* Example command: search exercise (search for exercise)
+* Example command: store new (change the file to store data to new.txt)
+* Example command: sort deadline (sort by deadline)
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Main.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Sort.cpp
+	 */
+
+#include "Sort.h"
+
+// convert the sort choices from string to enumerated sortChoice
+Sort::SortChoice Sort::sortWhat(){
+	if (_sortChoice == "taskname") {
+		return TASKNAME;
+	}
+	else if (_sortChoice == "from") {
+		return FROM;
+	}
+	else if (_sortChoice == "to") {
+		return TO;
+	}
+	else if (_sortChoice == "by") {
+		return BY;
+	}
+	else if (_sortChoice == "deadline") {
+		return DEADLINE;
+	}
+	else {
+		return INVALID;
+	}
+}
+
+// sort by start date & time
+bool Sort::sortFrom() {
+
+	int listSize = _sortList.size();
+
+	//Ascending Sort
+	for (int i = 0; i < listSize - 1; i++) {
+		for (int j = 0; j < listSize - i - 1; j++) {
+			if (!_sortList[j].getStartDate().empty() && !_sortList[j + 1].getStartDate().empty()) {
+
+				date startDate(from_simple_string(_sortList[j].getStartDate()));
+				date startDate2(from_simple_string(_sortList[j + 1].getStartDate()));
+
+				if (startDate > startDate2) {
+					swap(j, j + 1);
+				}
+				else if (startDate == startDate2) {
+					if (_sortList[j].getStartTime() > _sortList[j + 1].getStartTime()) {
+						swap(j, j + 1);
+					}
+				}
+			}
+			else if (_sortList[j].getStartDate().empty()) {
+				swap(j, j + 1);
+			}
+		}
+	}
+	_log.log("Sort by start date and time");
+	return true;
+}
+
+// sort task name alphabetically
+bool Sort::sortTaskName(){
+
+	vector <Task> swap;
+	int listSize = _sortList.size();
+
+	//sort a to z
+	for (int i = 0; i < listSize - 1; i++) {
+		for (int j = 0; j < listSize - i - 1; j++) {
+			if (_sortList[j].getTaskName() > _sortList[j + 1].getTaskName()) {
+				swap.push_back(_sortList[j]);
+				_sortList[j] = _sortList[j + 1];
+				_sortList[j + 1] = swap[0];
+				swap.clear();
+			}
+		}
+	}
+	_log.log("Sort taskname alphabetically");
+	return true;
+}
+
+// sort by start time
+bool Sort::sortStartTime() {
+	vector <Task> swap;
+	int listSize = _sortList.size();
+
+	//Ascending Sort
+	for (int i = 0; i < listSize - 1; i++) {
+		for (int j = 0; j < listSize - i - 1; j++) {
+			if (_sortList[j].getStartDate() == _sortList[j + 1].getStartDate() 
+				&& _sortList[j].getStartTime() > _sortList[j + 1].getStartTime()) {
+				swap.push_back(_sortList[j]);
+				_sortList[j] = _sortList[j + 1];
+				_sortList[j + 1] = swap[0];
+				swap.clear();
+			}
+		}
+	}
+	_log.log("Sort by start time");
+	return true;
+}
+
+// sort by end date & time
+bool Sort::sortToBy() {
+
+	int listSize = _sortList.size();
+
+	//Ascending Sort
+	for (int i = 0; i < listSize - 1; i++) {
+		for (int j = 0; j < listSize - i - 1; j++) {
+			if (!_sortList[j].getEndDate().empty() && !_sortList[j + 1].getEndDate().empty()) {
+			
+				date endDate(from_simple_string(_sortList[j].getEndDate()));
+				date endDate2(from_simple_string(_sortList[j + 1].getEndDate()));
+
+				if (endDate > endDate2) {
+					swap(j, j + 1);
+				} else if (endDate == endDate2) {
+					if (_sortList[j].getEndTime() > _sortList[j + 1].getEndTime()) {
+						swap(j, j + 1);
+					}
+				} else if (_sortList[j].getEndDate().empty()) {
+					swap(j, j + 1);
+				}
+			} else if (_sortList[j].getEndDate().empty()) {
+				swap(j, j + 1);
+			}
+		}
+	}
+	_log.log("Sort by end date and time");
+	return true;
+}
+
+// sort by end time
+bool Sort::sortEndTime() {
+	vector <Task> swap;
+	int listSize = _sortList.size();
+
+	//Ascending Sort
+	for (int i = 0; i < listSize - 1; i++) {
+		for (int j = 0; j < listSize - i - 1; j++) {
+			if (_sortList[j].getEndDate() == _sortList[j + 1].getEndDate() 
+				&& _sortList[j].getEndTime() > _sortList[j + 1].getEndTime()) {
+				swap.push_back(_sortList[j]);
+				_sortList[j] = _sortList[j + 1];
+				_sortList[j + 1] = swap[0];
+				swap.clear();
+			}
+		}
+	}
+	_log.log("Sort by end time");
+	return true;
+}
+
+// sort by deadline, using start date & time of timed tasks and end date & time
+// of deadline tasks
+bool Sort::sortDeadLine() {
+
+	int listSize = _sortList.size();
+
+	for (int i = 0; i < listSize - 1; i++) {
+		for (int j = 0; j < listSize - i - 1; j++) {
+
+			if (!_sortList[j].getStartDate().empty() && !_sortList[j + 1].getStartDate().empty()) {
+
+				date startDate(from_simple_string(_sortList[j].getStartDate()));
+				date startDate2(from_simple_string(_sortList[j + 1].getStartDate()));
+
+				if (startDate > startDate2) {
+					swap(j, j + 1);
+				} else if (startDate == startDate2) {
+					if (_sortList[j].getStartTime() > _sortList[j + 1].getStartTime()) {
+						swap(j, j + 1);
+					}
+				}
+
+			} else if (!_sortList[j].getStartDate().empty() && _sortList[j + 1].getStartDate().empty()) {
+
+				date startDate(from_simple_string(_sortList[j].getStartDate()));
+				date endDate(from_simple_string(_sortList[j + 1].getEndDate()));
+
+				if (startDate > endDate) {
+					swap(j, j + 1);
+				} else if (startDate == endDate) {
+					if (_sortList[j].getStartTime() > _sortList[j + 1].getEndTime()) {
+						swap(j, j + 1);
+					}
+				}
+
+			} else if (_sortList[j].getStartDate().empty() && _sortList[j + 1].getStartDate().empty()) {
+
+				date endDate(from_simple_string(_sortList[j].getEndDate()));
+				date endDate2(from_simple_string(_sortList[j + 1].getEndDate()));
+
+				if (endDate > endDate2) {
+					swap(j, j + 1);
+				} else if (endDate == endDate2) {
+					if (_sortList[j].getEndTime() > _sortList[j + 1].getEndTime()) {
+						swap(j, j + 1);
+					}
+				}
+			} else if (_sortList[j].getStartDate().empty() && !_sortList[j + 1].getStartDate().empty()) {
+
+				date endDate(from_simple_string(_sortList[j].getEndDate()));
+				date startDate(from_simple_string(_sortList[j + 1].getStartDate()));
+
+				if (endDate > startDate) {
+					swap(j, j + 1);
+				} else if (endDate == startDate) {
+					if (_sortList[j].getEndTime() > _sortList[j + 1].getStartTime()) {
+						swap(j, j + 1);
+					}
+				}
+			} else {
+				return false;
+			}
+		}
+	}
+	_log.log("Sort by deadline");
+	return true;
+}
+
+bool Sort::swap(int current, int next) {
+	vector <Task> swap;
+
+	swap.push_back(_sortList[current]);
+	_sortList[current] = _sortList[next];
+	_sortList[next] = swap[0];
+	swap.clear();
+
+	return true;
+}
+
+// main function that processes the command and executes them
+bool Sort::execute(vector <string> parsedInformation, vector <Task> list) {
+	int size = parsedInformation.size();
+
+	if (size == 2) {
+		_sortChoice = parsedInformation[1];
+		_sortList = list;
+	}
+	else {
+		cout << "[Error] No such sorting!" << endl;
+		return false;
+	}
+
+	SortChoice sortType = sortWhat();
+
+	switch (sortType) {
+		case TASKNAME:
+			sortTaskName();
+			break;
+		case FROM:
+			sortFrom();
+			break;
+		case TO:
+			sortToBy();
+			break;
+		case BY:
+			sortToBy();
+			break;
+		case DEADLINE:
+			sortDeadLine();
+			break;
+		case INVALID:
+			return false;
+	}
+
+	return true;
+}
+
+vector<Task> Sort::getSortedList() {
+	return _sortList;
+}
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Sort.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Sort.h
+	 */
+
+#ifndef SORT_H
+#define SORT_H
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include "Log.h"
+#include "Task.h"
+#include "boost/date_time/gregorian/gregorian.hpp" 
+
+using namespace std;
+using namespace boost::gregorian;
+
+class Sort {
+private:
+	Log _log;
+	Task _task;
+	string _sortChoice;
+	vector<Task> _sortList;
+
+	enum SortChoice{
+		FROM, TO, BY, DEADLINE, DONE, NOTDONE, PRIORITY, TASKNAME, INVALID
+	};
+
+	SortChoice sortWhat();
+
+	bool sortFrom();
+	bool sortTaskName();
+	bool sortStartTime();
+	bool sortToBy();
+	bool sortEndTime();
+	bool sortDeadLine();
+
+	bool swap(int current, int next);
+
+public:
+	bool execute(vector <string> parsedInformation, vector <Task> list);
+	vector<Task> getSortedList();
+};
+
+#endif
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Sort.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\UserInterface.cpp
+	 */
+
+#include "UserInterface.h"
+
+using namespace std;
+
+UserInterface::UserInterface() {
+}
+
+UserInterface::~UserInterface() {
+} 
+
+//This function helps to set the intended volor
+//Pre: Takes in a value that represents a color
+void UserInterface::SetColor1(int value){
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),  value);
+}
+
+void UserInterface::readFile() {
+	_logic.readFromFile();
+}
+
+// Take in user inputs
+string UserInterface::receiveInput() {
+	string fromUser;
+
+	getline(cin, fromUser);
+	_userInput = fromUser;
+	return _userInput;
+}
+
+// This function displays today's date at the launch of the program
+void UserInterface::displayDate() {
+    char date[9];
+	_strdate_s(date);
+	cout << "------------------------- ";
+	SetColor1(14); // bright yellow
+	cout << date;
+	SetColor1(7); // default white
+	cout << " -------------------------" << endl;
+}
+
+// This function displays quote of the day at the launch of the program
+void UserInterface::qotd() {
+    int lineCount = 0;
+    int randomQuote_int = 0;
+    string line = "";
+    vector<string>randomQuote_vect;
+    
+    ifstream quoteFile ("quotes.txt");
+    
+    srand(time_t(0));
+    if (quoteFile.is_open()) {
+		while (!quoteFile.eof()) {
+			getline(quoteFile, line);
+            if (line != " ") {
+				randomQuote_vect.push_back(line);
+                lineCount++;
+			}
+        }
+
+		randomQuote_int = rand() % lineCount;
+		SetColor1(6); // yellow
+        cout << "Quote of the day: " << endl;
+        cout << randomQuote_vect[randomQuote_int] << endl << endl;
+        quoteFile.close();
+	}
+}
+
+void UserInterface::displayDivider() {
+	cout << " " << endl;
+	SetColor1(3); // cyan
+    cout << "*************************************************************" << endl;
+	SetColor1(7); // default white
+	cout << " " << endl;
+}
+
+string UserInterface::welcomeMessage() {
+    string welcome =  "Good day, Jim. How productive would you like to be today? :)";
+	assert (!welcome.empty());
+	SetColor1(15); // bright white
+	cout << welcome;
+	return welcome;
+}
+
+// displays commands available at launch of program
+void UserInterface::instructMessage() {
+	cout << "Here are some commands: " << endl; 
+
+	SetColor1(2);
+	cout << setw(15) << "add";
+	SetColor1(2);
+	cout << setw(15) << "edit";
+	SetColor1(2);
+	cout << setw(15) << "delete";
+	SetColor1(2);
+	cout << setw(15) << "clear" << endl;
+	SetColor1(5);
+	cout << setw(22) << "search";
+	SetColor1(5);
+	cout << setw(15) << "mark";
+	SetColor1(5);
+	cout << setw(15) << "view" << endl << endl;
+
+	SetColor1(7);
+	cout << "Data will be stored by default in the file path specified in "
+		 << endl << "filename.txt" << endl << endl << "Let's get started!" 
+		 << endl;
+}
+
+void UserInterface::process() {
+	bool carryOn = true;
+	readFile();
+	assert (carryOn);
+	while(carryOn){
+		_log.log("Command is not exit. Passing user input to logic");
+		carryOn = _logic.process(receiveInput());
+	}
+}
+
+// Getter for UserInputs
+string UserInterface::getUserInputs() {
+	return _userInput;
+}
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\UserInterface.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\UserInterface.h
+	 */
+
+#ifndef USERINTERFACE_H
+#define USERINTERFACE_H
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <iomanip>
+#include <ctime>
+#include <time.h>
+#include <Windows.h>
+#include "Logic.h"
+#include "Log.h"
+
+
+using namespace std;
+
+#pragma once
+class UserInterface {
+private:
+	string _userInput;
+	Logic _logic;
+	Log _log;
+
+	void SetColor1(int value);
+	void readFile();
+	string receiveInput();
+
+public:
+	UserInterface();
+	~UserInterface();
+
+	void displayDate();
+	void qotd();
+	void displayDivider();
+	string welcomeMessage();
+	void instructMessage();
+	void process();
+	string getUserInputs();
+};
+
+#endif
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\UserInterface.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\View.cpp
+	 */
+
+#include "View.h"
+
+const string DISPLAYING = "[List of Tasks]";
+const string CHANGES = "**Last Change Made**";
+
+
+View::View() {
+	_todayDate = _date.getTodayDate();
+}
+
+void View::printMessage(string message) {
+	cout << endl << message << endl << endl;
+}
+
+// displaying today's timed tasks
+void View::displayToday(vector <Task> &list, int size, string date) {
+	SetColor(brightWhite);
+	cout << "Today's Date [" << _todayDate << "]" << endl << endl;
+	SetColor(pink);
+	cout << "** " << date << " Timed-Tasks **" << endl << endl;
+	SetColor(defaultWhite);
+	printTimedTaskHeader();
+	for(int i = 0; i < size; i++) {
+		if(list[i].getStartDate() == date) {
+			displayTimedTask(i+1,list[i]);
+		}
+	}
+	cout << endl;
+}
+
+// displaying header for timed tasks
+void View::printTimedTaskHeader() {
+	cout << " "
+		<< setw(3) << "No." << setw(4) << " "
+		<< "Period" << setw(8) << " "
+		<< "Status" << setw(5) << " "
+		<< "Label" << setw(12) << " "
+		<< "Task" << endl;
+
+	SetColor(cyan);
+	cout << string(80, '-') << endl;
+	SetColor(defaultWhite);
+}
+
+// Print out timed tasks 
+void View::displayTimedTask(int index, Task task) {
+	printIndex(index);
+	printStart(task);
+	printStatus(task,0);
+	printLabel(task);
+	printPriority(task);
+}
+
+// displaying deadline tasks on a date provided
+void View::displayDeadline(vector <Task> &list, int size, string date) {
+	SetColor(pink);
+	cout << "** Upcoming Deadline Tasks from " << date << " onwards **" << endl << endl; 
+	SetColor(defaultWhite);
+
+	printDeadlineTaskHeader();
+
+	Sort sort;
+	vector <string> parsedInformation;
+	vector <Task> deadlineList;
+	vector <int> indexList;
+	parsedInformation.push_back("sort");
+	parsedInformation.push_back("deadline");
+	
+	for (int i = 0; i < size; i++) {
+		if((list[i].getStartDate().empty()) && !list[i].getEndDate().empty() && list[i].getStatus() == notdone) {
+			deadlineList.push_back(list[i]);
+			indexList.push_back(i+1);
+		}
+	}
+
+	if (sort.execute(parsedInformation, deadlineList)) {
+		deadlineList = sort.getSortedList();
+	}
+
+	int displaySize = deadlineList.size();
+	int j = 0; 
+	for (int i = 0 ; i < displaySize && j < 5; i++) {
+		if (deadlineList[i].getEndDate() >= date) {
+			displayDeadlineTask(indexList[i], deadlineList[i]);	
+			j++;
+		}
+	}
+	cout << endl;
+}
+
+// displaying header for deadline tasks
+void View::printDeadlineTaskHeader() {
+	cout << " " 
+		 << setw(3) << "No." << setw(4) << " "
+		 << "Due Date" << setw(10) << " "
+	     << "Status"<< setw(5) << " "
+		 << "Label" << setw(12) << " "
+		 << "Task" << endl;
+
+	SetColor(cyan);
+	cout << string(80, '-') << endl;
+	SetColor(defaultWhite);
+}
+
+// Print out deadline tasks
+void View::displayDeadlineTask(int index, Task task) {
+	printIndex(index);
+	printDeadline(task);
+	printStatus(task,0);
+	printLabel(task);
+	printPriority(task);
+}
+
+// displaying floating tasks
+void View::displayFloating(vector <Task> &list, int size) {
+	SetColor(pink);
+	cout << "** Floating Tasks **" << endl << endl;
+	SetColor(defaultWhite);
+
+	printFloatingTaskHeader();
+	for (int i = 0; i < size; i++) {
+		if((list[i].getStartDate().empty()) && list[i].getEndDate().empty()) {
+		
+			displayFloatingTask(i+1,list[i]);
+		}
+	}
+	cout << endl;
+}
+
+// displaying header for floating tasks
+void View::printFloatingTaskHeader() {
+	cout << " " 
+		 << setw(3) << "No." << setw(4) << " "
+	     << "Status"<< setw(5) << " "
+		 << "Label" << setw(12) << " "
+		 << "Task" << endl;
+
+	SetColor(cyan);
+	cout << string(80, '-') << endl;
+	SetColor(defaultWhite);
+}
+
+// Print out floating tasks
+void View::displayFloatingTask(int index, Task task) {
+	printIndex(index);
+	printStatus(task,1);
+	printLabel(task);
+	printPriority(task);
+}
+
+// change the colour of words
+void View::SetColor(int value){
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), value);
+}
+
+void View::printIndex(int index) {
+	cout << setw(3) << index << "." << setw(4) << " ";
+}
+
+// print start date & time
+void View::printStart(Task task) {
+	if (!task.getStartTime().empty() && !task.getEndTime().empty()){
+		cout << setw(4) << task.getStartTime() << " " << setw(2) << "to"
+		     << " " << setw(4) << task.getEndTime();
+	}
+}
+
+// check if deadline is over and print deadline date & time
+void View::printDeadline(Task task) {
+	Parser parser;
+	string _todayDate;
+	bool valid = false;
+	parser.compareDates(_todayDate, task.getDeadline());
+
+	if(task.getStartTime().empty() && !task.getEndTime().empty()){
+		if(valid) {
+		SetColor(brightRed);
+		cout << task.getEndDate() << " " << task.getEndTime();
+		SetColor(defaultWhite);
+		} else {
+			cout << task.getEndDate() << " " << task.getEndTime();
+		}
+	} 
+}
+
+// print out status of the given task
+void View::printStatus (Task task, bool isFloatingTask) {
+	if (!isFloatingTask) {
+		if (task.getStatus() == notdone) {
+			cout << setw(12) << "[NOT DONE]" << setw(1) << " ";
+		} else {
+			cout << setw(8) << "[DONE]" << setw(5) << " ";
+		}
+	} else {
+		if (task.getStatus() == notdone) {
+			cout << setw(7) << "[NOT DONE]" << setw(1) << " ";
+		} else {
+			cout << setw(3) << "[DONE]" << setw(5) << " ";
+		}
+	}
+}
+
+// print out label of the given task
+void View::printLabel (Task task) {
+	int spacing;
+	assert (task.getLabel().size() <= 15);
+	cout << "[" << task.getLabel() << "]";
+	spacing = 15 - task.getLabel().size();
+	cout << setw(spacing) << " ";
+}
+
+// print out priority of the given task
+void View::printPriority (Task task) {
+	if (task.getPriority() == high) {
+		SetColor(brightRed); // red
+		cout << task.getTaskName() << endl;
+		SetColor(defaultWhite); // default white
+	} else if (task.getPriority() == medium) {
+		SetColor(yellow); // bright yellow
+		cout << task.getTaskName() << endl;
+		SetColor(defaultWhite); // default white
+	} else if (task.getPriority() == low) {
+		SetColor(brightGreen); // bright green
+		cout << task.getTaskName() << endl;
+		SetColor(defaultWhite); // default white
+	} else {
+		SetColor(defaultWhite); // default white
+		cout << task.getTaskName() << endl;
+	}
+}
+
+// Display the header of the tasks added
+void View::printHeader () {
+	cout << " "
+		 << setw(3) << "No." << setw(3) << " "
+		 << "From" << setw(14) << " "
+		 << "To" << setw(16) << " "
+		 << "Status" << setw(7) << " "
+		 << "Label" << setw(12) << " "
+		 << "Task" << endl;
+
+	SetColor(cyan);
+	cout << string(80, '-') << endl;
+	SetColor(defaultWhite);
+}
+
+// Print out one event
+void View::display(Task task) {
+	cout << setw(3) << " ";
+	if (!task.getStartDate().empty()){    // timed tasks
+		cout << setw(10) << task.getStartDate();
+		cout << setw(5) << task.getStartTime();
+		cout << setw(2) << " ";
+		cout << setw(9) << task.getEndDate();
+		cout << setw(5) << task.getEndTime();
+	} else if (task.getStartDate().empty() && !task.getEndDate().empty()) { // deadline tasks
+		cout << setw(18) << " ";
+		cout << setw(10) << task.getEndDate();
+		cout << setw(5) << task.getEndTime();
+	} else {  // floating tasks
+		cout << setw(34) << " ";
+	}
+
+	if (task.getStatus() == notdone) {
+		cout << setw(12) << "[NOT DONE]" << setw(3) << " ";
+	}
+	else {
+		cout << setw(8) << "[DONE]" << setw(7) << " ";
+	}
+
+	printLabel(task);
+	printPriority(task);
+}
+
+// print the tasks given
+void View::viewSelectedFew(vector<Task> list, vector<int> taskNum) {
+	printMessage(DISPLAYING);
+	printHeader();
+	int size = list.size();
+	for (int i = 0; i < size; i++) {
+		cout << setw(3) << taskNum[i] << ".";
+		display(list[i]);
+	}
+	cout << endl;
+}
+
+// print the selected task
+void View::viewSelectedOne(vector<Task> list, int taskNumber) {
+	printMessage(CHANGES);
+	printHeader();
+
+	cout << setw(3) << taskNumber << ".";
+	display(list[taskNumber - 1]);
+}
+
+// Default view after every command
+void View::viewDefault(vector<Task> &list, string date) {
+	system("CLS");
+	_log.log("Called display to view timed tasks");
+	displayToday(list,list.size(),date);
+	_log.log("Called display to view deadline tasks");
+	displayDeadline(list,list.size(),date);
+	_log.log("Called display to view floating tasks");
+	displayFloating(list,list.size());
+}
+
+// Print all tasks in database
+void View::viewAll(vector <Task> &list) {
+	printMessage(DISPLAYING);
+	printHeader();
+	int size = list.size();
+	for (int i = 0; i < size; i++) {
+		cout << setw(3) << i + 1 << ".";
+		display(list[i]);
+	}
+	cout << endl;
+}
+
+// Display the tasks that are done
+void View::viewDoneTasks(vector <Task> &list) {
+	printMessage(DISPLAYING);
+	printHeader();
+	int _size = list.size();
+	for (int i = 0; i < _size; i++) {
+		if (list[i].getStatus() == done) {
+			cout << setw(3) << i + 1 << ".";
+			display(list[i]);
+		}
+	}
+	cout << endl;
+}
+
+// Display the tasks that are not done
+void View::viewNotDoneTasks(vector <Task> &list) {
+	printMessage(DISPLAYING);
+	printHeader();
+
+	int _size = list.size();
+	for (int i = 0; i < _size; i++) {
+		if (list[i].getStatus() == notdone) {
+			cout << setw(3) << i + 1 << ".";
+			display(list[i]);
+		}
+	}
+	cout << endl;
+}
+
+// Display tasks by priority
+void View::viewPriority(vector <Task> &list, string priority) {
+	printMessage(DISPLAYING);
+	printHeader();
+	int _size = list.size();
+	Priority enumPriority;
+
+	if (priority == "high") {
+		enumPriority = high;
+	} else if (priority == "medium") {
+		enumPriority = medium;
+	} else {
+		enumPriority = low;
+	}
+
+	for (int i = 0; i < _size; i++) {
+		if (list[i].getPriority() == enumPriority) {
+			cout << setw(3) << i + 1 << ".";
+			display(list[i]);
+		}
+	}
+	cout << endl;
+}
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\View.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\View.h
+	 */
+
+#ifndef VIEW_H
+#define VIEW_H
+
+const int blue = 1;
+const int green = 2;
+const int cyan = 3;
+const int red = 4;
+const int purple = 5;
+const int darkYellow = 6;
+const int defaultWhite = 7;
+const int grey = 8;
+const int brightBlue = 9;
+const int brightGreen = 10;
+const int brightCyan = 11;
+const int brightRed = 12;
+const int pink = 13;
+const int yellow = 14;
+const int brightWhite = 15;
+
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <string>
+#include <Windows.h>
+#include <assert.h>
+#include "Dates.h"
+#include "Sort.h"
+#include "Parser.h"
+#include "Task.h"
+#include "Log.h"
+
+using namespace std;
+
+class View {
+private:
+	Dates _date;
+	string _todayDate;
+	Log _log;
+
+	void printMessage(string);
+	void displayToday(vector <Task> &, int, string);
+	void printTimedTaskHeader();
+	void displayTimedTask(int, Task);
+	void displayDeadline(vector <Task> &, int, string);
+	void printDeadlineTaskHeader();
+	void displayDeadlineTask(int, Task);
+	void displayFloating(vector <Task> &, int);
+	void printFloatingTaskHeader();
+	void displayFloatingTask(int, Task);
+	void SetColor(int value);
+	void printIndex(int);
+	void printStart(Task);
+	void printDeadline(Task);
+	void printStatus(Task, bool);
+	void printLabel(Task);
+	void printPriority(Task);
+
+	void printHeader();
+	void display(Task task);
+
+public:
+	View();
+	void viewSelectedFew(vector<Task>, vector<int>);
+	void viewSelectedOne(vector<Task>, int);
+	void viewDefault(vector<Task> &list, string);
+	
+	void viewAll(vector <Task> &list);
+	void viewDoneTasks(vector <Task> &list);
+	void viewNotDoneTasks(vector <Task> &list);
+	void viewPriority(vector <Task> &list, string priority);
+};
+
+#endif
+
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\View.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDoTest\IDoTest.cpp
+	 */
+
+namespace LogicTest
+{
+	TEST_CLASS (DeleteTest)
+	{
+	public:
+		TEST_METHOD(DeleteIsValidInput)
+		{
+			Task task;
+			Task task2;
+			vector <Task> testVector;
+			vector <string> parse;
+			Delete testDelete;
+			string expected = "exercise";
+			task.setTaskName("do work");
+			task2.setTaskName("exercise");
+			testVector.push_back(task);
+			testVector.push_back(task2);
+			parse.push_back("delete");
+			parse.push_back("1");
+			Assert::IsTrue(testDelete.isValidInput(parse,testVector.size()));
+			parse.pop_back();
+			parse.push_back("5");
+			Assert::IsFalse(testDelete.isValidInput(parse,testVector.size()));
+		}
+
+		TEST_METHOD(DeletingTask)
+		{
+			Task task;
+			Task task2;
+			vector <Task> testVector;
+			vector <string> parse;
+			Delete testDelete;
+			string expected = "exercise";
+			task.setTaskName("do work");
+			task2.setTaskName("exercise");
+			testVector.push_back(task);
+			testVector.push_back(task2);
+			parse.push_back("delete");
+			parse.push_back("1");
+			testDelete.isValidInput(parse,testVector.size());
+			testDelete.execute(testVector);
+			Assert::AreEqual(expected,testVector[0].getTaskName());
+		}
+	};
+
+	TEST_CLASS (EditTest)
+	{
+	public:
+		TEST_METHOD(EditTaskName)
+		{
+			Task task;
+			vector <Task> testVector;
+			vector <string> parse;
+			Edit testEdit;
+			string expected = "study everyday";
+			task.setTaskName("do work");
+			testVector.push_back(task);
+			parse.push_back("edit");
+			parse.push_back("1");
+			parse.push_back("taskname");
+			parse.push_back("study everyday");
+			testEdit.execute(parse,testVector);
+			testVector=testEdit.getList();
+			Assert::AreEqual(expected,testVector[0].getTaskName());
+		}
+
+		TEST_METHOD(EditStart)
+		{
+			Task task;
+			vector <Task> testVector;
+			vector <string> parse;
+			Edit testEdit;
+			string expected = "2015-May-20";
+			string expected2 = "2000";
+			task.setTaskName("do work");
+			task.setStartDate("2015-May-19");
+			task.setStartTime("1800");
+			task.setEndDate("2015-May-21");
+			task.setEndTime("1900");
+			testVector.push_back(task);
+			parse.push_back("edit");
+			parse.push_back("1");
+			parse.push_back("startdate");
+			parse.push_back("5/20");
+			testEdit.execute(parse,testVector);
+			testVector=testEdit.getList();
+			Assert::AreEqual(expected,testVector[0].getStartDate());
+			parse.pop_back();
+			parse.pop_back();
+			parse.push_back("starttime");
+			parse.push_back("2000");
+			testEdit.execute(parse,testVector);
+			testVector=testEdit.getList();
+			Assert::AreEqual(expected2,testVector[0].getStartTime());
+		}
+
+		TEST_METHOD(EditEnd)
+		{
+			Task task;
+			vector <Task> testVector;
+			vector <string> parse;
+			Edit testEdit;
+			string expected = "2015-May-22";
+			string expected2 = "2000";
+			task.setTaskName("do work");
+			task.setEndDate("2015-May-21");
+			task.setEndTime("1900");
+			testVector.push_back(task);
+			parse.push_back("edit");
+			parse.push_back("1");
+			parse.push_back("enddate");
+			parse.push_back("5/22");
+			testEdit.execute(parse,testVector);
+			testVector=testEdit.getList();
+			Assert::AreEqual(expected,testVector[0].getEndDate());
+			parse.pop_back();
+			parse.pop_back();
+			parse.push_back("endtime");
+			parse.push_back("2000");
+			testEdit.execute(parse,testVector);
+			testVector=testEdit.getList();
+			Assert::AreEqual(expected2,testVector[0].getEndTime());
+		}
+	};
+
+	TEST_CLASS (LogicTest)
+	{
+	public:
+		TEST_METHOD(AddTask)
+		{
+			Logic testLogic;
+			vector <Task> testVector;
+			string expected = "exercise everyday";
+			string expected2 = "finish CS";
+			string expected3 = "attend lecture";
+			string expected4 = "2015-May-14";
+			string expected5 = "2359";
+			string expected6 = "2015-May-13";
+			string expected7 = "1800";
+			testLogic.process("add exercise everyday");
+			testLogic.process("add finish CS by 5/14 2359");
+			testLogic.process("add attend lecture from 5/13 1600 to 1800");
+			testVector = testLogic.getListOfTasks();
+			Assert::AreEqual(expected,testVector[0].getTaskName());
+			Assert::AreEqual(expected2,testVector[1].getTaskName());
+			Assert::AreEqual(expected3,testVector[2].getTaskName());
+			Assert::AreEqual(expected4,testVector[1].getEndDate());
+			Assert::AreEqual(expected5,testVector[1].getEndTime());
+			Assert::AreEqual(expected6,testVector[2].getEndDate());
+			Assert::AreEqual(expected7,testVector[2].getEndTime());
+		}
+
+		TEST_METHOD(UndoTest)
+		{
+			Logic testLogic;
+			vector <Task> testVector;
+			int expected = 3;
+			int expected2 = 2;
+			int size;
+			testLogic.process("add exercise everyday");
+			testLogic.process("add finish CS by 5/14 2359");
+			testLogic.process("add attend lecture from 5/13 1600 to 1800");
+			testVector = testLogic.getListOfTasks();
+			size = testVector.size();
+			Assert::AreEqual(expected,size);
+			testLogic.process("undo");
+			testVector = testLogic.getListOfTasks();
+			size = testVector.size();
+			Assert::AreEqual(expected2,size);
+		}
+	};
+
+	TEST_CLASS (MarkTest)
+	{
+	public:
+		TEST_METHOD(MarkStatusTest)
+		{
+			Task task;
+			vector <Task> testVector;
+			vector <string> parse;
+			Mark testMark;
+			Status expected = done;
+			task.setTaskName("do work");
+			testVector.push_back(task);
+			parse.push_back("mark");
+			parse.push_back("2");
+			parse.push_back("done");
+			Assert::IsFalse(testMark.isValidInput(parse,1));
+			parse.pop_back();
+			parse.pop_back();
+			parse.push_back("1");
+			parse.push_back("done");
+			testMark.execute(parse,testVector);
+			Assert::AreEqual(expected,testVector[0].getStatus());
+		}
+
+		TEST_METHOD(MarkLabelTest)
+		{
+			Task task;
+			Task task2;
+			vector <Task> testVector;
+			vector <string> parse;
+			Mark testMark;
+			string expected = "school";
+			string expected2 = "family";
+			task.setTaskName("do CS");
+			task2.setTaskName("visit grandma");
+			testVector.push_back(task);
+			testVector.push_back(task2);
+			parse.push_back("mark");
+			parse.push_back("1");
+			parse.push_back("school");
+			testMark.execute(parse,testVector);
+			Assert::AreEqual(expected,testVector[0].getLabel());
+			parse.pop_back();
+			parse.pop_back();
+			parse.push_back("2");
+			parse.push_back("family");
+			testMark.execute(parse,testVector);
+			Assert::AreEqual(expected2,testVector[1].getLabel()); 
+		}
+	};
+
+	TEST_CLASS (SearchTest)
+	{
+	public:
+		TEST_METHOD(SearchWordTest)
+		{
+			Task task;
+			Task task2;
+			Task task3;
+			Task task4;
+			vector <Task> testVector;
+			vector <Task> results;
+			vector <Task> results2;
+			vector <int> numberOfFoundTasks;
+			vector <string> parse;
+			Search testSearch;
+			Search testSearch2;
+			int expected = 1;
+			int expected2 = 2;
+			string expected3 = "do work";
+			string expected4 = "do send email";
+			string expected5 = "do send email";
+			string expected6 = "send letter";
+			task.setTaskName("do work");
+			task2.setTaskName("do send email");
+			task3.setTaskName("send letter");
+			task4.setTaskName("read book");
+			testVector.push_back(task);
+			testVector.push_back(task2);
+			testVector.push_back(task3);
+			testVector.push_back(task4);
+			parse.push_back("search");
+			parse.push_back("do");
+			testSearch.setSearchWord(parse[1]);
+			testSearch.execute(testVector);
+			results = testSearch.getListOfFoundTasks();
+			numberOfFoundTasks = testSearch.getListOfFoundTaskNum();
+			Assert::AreEqual(expected,numberOfFoundTasks[0]);
+			Assert::AreEqual(expected2,numberOfFoundTasks[1]);
+			Assert::AreEqual(expected3,results[0].getTaskName());
+			Assert::AreEqual(expected4,results[1].getTaskName());
+			parse.pop_back();
+			parse.push_back("send");
+			testSearch2.setSearchWord(parse[1]);
+			testSearch2.execute(testVector);
+			results2 = testSearch2.getListOfFoundTasks();
+			Assert::AreEqual(expected5,results2[0].getTaskName());
+			Assert::AreEqual(expected6,results2[1].getTaskName());
+		}
+
+		TEST_METHOD(SearchDateTest)
+		{
+			Task task;
+			Task task2;
+			Task task3;
+			Task task4;
+			vector <Task> testVector;
+			vector <Task> results;
+			vector <Task> results2;
+			vector <int> numberOfFoundTasks;
+			vector <string> parse;
+			Search testSearch;
+			Search testSearch2;
+			int expected = 1;
+			int expected2 = 2;
+			string expected3 = "do work";
+			string expected4 = "do send email";
+			string expected5 = "do send email";
+			string expected6 = "send letter";
+			task.setTaskName("do work");
+			task.setStartDate("2015-May-01");
+			task.setStartTime("1200");
+			task.setEndDate("2015-May-01");
+			task.setEndTime("2000");
+			task2.setTaskName("do send email");
+			task2.setStartDate("2015-May-01");
+			task2.setStartTime("1800");
+			task2.setEndDate("2015-May-01");
+			task2.setEndTime("2000");
+			task3.setTaskName("send letter");
+			task3.setStartDate("2015-May-02");
+			task3.setStartTime("2000");
+			task3.setEndDate("2015-May-02");
+			task3.setEndTime("2100");
+			task4.setTaskName("read book");
+			task4.setStartDate("2015-May-03");
+			task4.setStartTime("2000");
+			task4.setEndDate("2015-May-01");
+			task4.setEndTime("2000");
+			testVector.push_back(task);
+			testVector.push_back(task2);
+			testVector.push_back(task3);
+			testVector.push_back(task4);
+			parse.push_back("search");
+			parse.push_back("5/1");
+			testSearch.setSearchWord(parse[1]);
+			testSearch.execute(testVector);
+			results = testSearch.getListOfFoundTasks();
+			numberOfFoundTasks = testSearch.getListOfFoundTaskNum();
+			Assert::AreEqual(expected,numberOfFoundTasks[0]);
+			Assert::AreEqual(expected2,numberOfFoundTasks[1]);
+			Assert::AreEqual(expected3,results[0].getTaskName());
+			Assert::AreEqual(expected4,results[1].getTaskName());
+		}
+
+		TEST_METHOD(SearchFirstAlphabetTest)
+		{
+			Task task;
+			Task task2;
+			Task task3;
+			Task task4;
+			vector <Task> testVector;
+			vector <Task> results;
+			vector <Task> results2;
+			vector <int> numberOfFoundTasks;
+			vector <string> parse;
+			Search testSearch;
+			Search testSearch2;
+			int expected = 1;
+			int expected2 = 3;
+			string expected3 = "do work";
+			string expected4 = "do send email";
+			string expected5 = "do send email";
+			string expected6 = "send letter";
+			task.setTaskName("do work");
+			task2.setTaskName("send letter");
+			task3.setTaskName("do send email");
+			task4.setTaskName("read book");
+			testVector.push_back(task);
+			testVector.push_back(task2);
+			testVector.push_back(task3);
+			testVector.push_back(task4);
+			parse.push_back("search");
+			parse.push_back("d");
+			testSearch.setSearchWord(parse[1]);
+			testSearch.execute(testVector);
+			results = testSearch.getListOfFoundTasks();
+			numberOfFoundTasks = testSearch.getListOfFoundTaskNum();
+			Assert::AreEqual(expected,numberOfFoundTasks[0]);
+			Assert::AreEqual(expected2,numberOfFoundTasks[1]);
+			Assert::AreEqual(expected3,results[0].getTaskName());
+			Assert::AreEqual(expected4,results[1].getTaskName());
+		}
+
+		TEST_METHOD(SearchSubstringTest)
+		{
+			Task task;
+			Task task2;
+			Task task3;
+			vector <Task> testVector;
+			vector <Task> results;
+			vector <Task> results2;
+			vector <int> numberOfFoundTasks;
+			vector <string> parse;
+			Search testSearch;
+			Search testSearch2;
+			int expected = 1;
+			int expected2 = 2;
+			string expected3 = "do functions";
+			string expected4 = "have fun";
+			string expected5 = "average your data";
+			int expected6 = 3;
+			task.setTaskName("do functions");
+			task2.setTaskName("have fun");
+			task3.setTaskName("average your data");
+			testVector.push_back(task);
+			testVector.push_back(task2);
+			testVector.push_back(task3);
+			parse.push_back("search");
+			parse.push_back("fun");
+			testSearch.setSearchWord(parse[1]);
+			testSearch.execute(testVector);
+			results = testSearch.getListOfFoundTasks();
+			numberOfFoundTasks = testSearch.getListOfFoundTaskNum();
+			Assert::AreEqual(expected,numberOfFoundTasks[0]);
+			Assert::AreEqual(expected2,numberOfFoundTasks[1]);
+			Assert::AreEqual(expected3,results[0].getTaskName());
+			Assert::AreEqual(expected4,results[1].getTaskName());
+			parse.pop_back();
+			parse.push_back("ave");
+			testSearch2.setSearchWord(parse[1]);
+			testSearch2.execute(testVector);
+			results2 = testSearch2.getListOfFoundTasks();
+			numberOfFoundTasks = testSearch2.getListOfFoundTaskNum();
+			Assert::AreEqual(expected2,numberOfFoundTasks[0]);
+			Assert::AreEqual(expected6,numberOfFoundTasks[1]);
+			Assert::AreEqual(expected4,results2[0].getTaskName());
+			Assert::AreEqual(expected5,results2[1].getTaskName()); 
+		}
+
+		TEST_METHOD(SearchMultipleWordsTest)
+		{
+			Task task;
+			Task task2;
+			Task task3;
+			vector <Task> testVector;
+			vector <Task> results;
+			vector <Task> results2;
+			vector <int> numberOfFoundTasks;
+			vector <string> parse;
+			Search testSearch;
+			Search testSearch2;
+			int expected = 1;
+			int expected2 = 2;
+			string expected3 = "enjoy your life to the fullest";
+			string expected4 = "bring grandma to the hospital";
+			string expected5 = "do not waste your life";
+			int expected6 = 3;
+			task.setTaskName("enjoy your life to the fullest");
+			task2.setTaskName("bring grandma to the hospital");
+			task3.setTaskName("do not waste your life");
+			testVector.push_back(task);
+			testVector.push_back(task2);
+			testVector.push_back(task3);
+			parse.push_back("search");
+			parse.push_back("to the");
+			testSearch.setSearchWord(parse[1]);
+			testSearch.execute(testVector);
+			results = testSearch.getListOfFoundTasks();
+			numberOfFoundTasks = testSearch.getListOfFoundTaskNum();
+			Assert::AreEqual(expected,numberOfFoundTasks[0]);
+			Assert::AreEqual(expected2,numberOfFoundTasks[1]);
+			Assert::AreEqual(expected3,results[0].getTaskName());
+			Assert::AreEqual(expected4,results[1].getTaskName());
+			parse.pop_back();
+			parse.push_back("your life");
+			testSearch2.setSearchWord(parse[1]);
+			testSearch2.execute(testVector);
+			results2 = testSearch2.getListOfFoundTasks();
+			numberOfFoundTasks = testSearch2.getListOfFoundTaskNum();
+			Assert::AreEqual(expected,numberOfFoundTasks[0]);
+			Assert::AreEqual(expected6,numberOfFoundTasks[1]);
+			Assert::AreEqual(expected3,results2[0].getTaskName());
+			Assert::AreEqual(expected5,results2[1].getTaskName()); 
+		}
+	};
+}
+
+//creating a template specialization of the ToString function
+//for unit testing of enum Status type
+namespace Microsoft{
+	namespace VisualStudio {
+		namespace CppUnitTestFramework {
+
+			template<>
+			static std::wstring ToString<Status>(const Status  & status) {
+				return L"notdone";
+			}
+
+		}
+	}
+}
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDoTest\IDoTest.cpp
+
+
+
+
+

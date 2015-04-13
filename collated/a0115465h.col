@@ -1,0 +1,1201 @@
+//@author: a0115465h
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Delete.cpp
+	 */
+
+#include "Delete.h"
+
+// main function that does the deleting for recurring tasks
+void Delete::deleteRecurring (vector <Task> taskList) {
+	getRecurringIndexToDelete (taskList);
+	checkRecurringToDelete (taskList);
+}
+
+// Get the recurring indexes for the tasks to be deleted
+void Delete::getRecurringIndexToDelete (vector <Task> taskList) {
+	int recurringIndex;
+	int size = parsedInfo.size();
+	for (int i = 2 ; i < size ; i++) {
+		recurringIndex = taskList[atoi(parsedInfo[i].c_str())-1].getRecurringIndex();
+		if (recurringIndex != 0) {
+			recurringToDelete.push_back(recurringIndex);
+		}
+	}
+}
+
+// Check whether the task to be deleted is recurring, if yes calls another function
+void Delete::checkRecurringToDelete (vector <Task> taskList) {
+	if (recurringToDelete.size() == 0) {  // if user wants to batch delete a non-recurring task
+		taskIndexToDelete.push_back(atoi(parsedInfo[2].c_str())-1);
+	} else {
+		getRecurringToDelete(taskList);
+	}
+}
+
+// Get the indexes of the recurring tasks to be deleted
+void Delete::getRecurringToDelete (vector <Task> taskList) {
+	int sizeTaskList = taskList.size();
+	int sizeRecurring = recurringToDelete.size();
+	for (int i = 0 ; i < sizeTaskList ; i++) {
+		for (int j = 0 ; j < sizeRecurring ; j++) {	
+			if (taskList[i].getRecurringIndex() == recurringToDelete[j]) {
+				taskIndexToDelete.push_back(i);
+			}
+		}
+	}
+	sort(taskIndexToDelete.begin(),taskIndexToDelete.end());
+}
+
+bool Delete::isValidInput(vector <string> parsedInformation, int taskListSize) {
+	parsedInfo = parsedInformation;
+	bool validNumber = true;
+	int size = parsedInformation.size(); 
+	
+	if (size < 2) {
+		return false;
+	}
+
+	if (parsedInformation[1] == "all") {
+		for (int i = 2 ; i < size ; i++) {
+			if (atoi(parsedInformation[i].c_str()) > taskListSize ||
+			atoi(parsedInformation[i].c_str()) <= 0) {
+				return false;
+			}
+		}
+	} else {
+		for (int i = 1 ; i < size ; i++) {
+			if (atoi(parsedInformation[i].c_str()) > taskListSize ||
+			atoi(parsedInformation[i].c_str()) <= 0) {
+				return false;
+			}
+		}
+	}
+	return validNumber;
+}
+
+// Main function that takes in user command and executes them
+void Delete::execute(vector<Task> &taskList) {
+	int size = parsedInfo.size();
+	
+	if (parsedInfo[1] != "all") {   // deleting non-recurring task
+		_log.log("Deleting non-recurring tasks");
+		for (int i = 1 ; i < size ; i++) {
+			taskIndexToDelete.push_back((atoi(parsedInfo[i].c_str()))-1);
+		}
+	} else {    //deleting recurring tasks
+		_log.log("Batch deleting recurring tasks");
+		deleteRecurring(taskList);	
+	}
+	
+	size = taskIndexToDelete.size();
+	for (int i = size - 1; i >= 0; i--) {
+		 taskList.erase(taskList.begin() + taskIndexToDelete[i]);
+	}
+}
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Delete.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Delete.h
+	 */
+
+#ifndef DELETE_H
+#define DELETE_H
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include "Log.h"
+#include "Task.h"
+
+using namespace std;
+
+class Delete{
+private:
+	Log _log;
+	vector <string> parsedInfo;
+	vector <int> taskIndexToDelete;
+	vector <int> recurringToDelete;
+
+	void deleteRecurring (vector <Task> taskList);
+	void getRecurringIndexToDelete (vector <Task> taskList);
+	void checkRecurringToDelete (vector <Task> taskList);
+	void getRecurringToDelete (vector <Task> taskList);
+
+public:
+	bool isValidInput(vector <string> parsedInformation, int taskListSize);
+	void execute(vector<Task> &taskList);
+};
+
+#endif
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Delete.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Mark.cpp
+	 */
+
+#include "Mark.h"
+
+const string DONE = "done";
+const string NOTDONE = "notdone";
+const string HIGH = "high";
+const string MEDIUM = "medium";
+const string LOW = "low";
+
+//This function set the task statuc to done or not done
+void Mark::markStatus (Task &taskToMark){
+	
+	if (_contentToMark == DONE) {
+		taskToMark.setStatus(done);
+	} else if (_contentToMark == NOTDONE) {
+		taskToMark.setStatus(notdone);
+	}
+	_log.log("Mark status");
+}
+
+//This function set the task priority to low,medium,high
+void Mark::markPriority(Task &taskToMark) {
+	if (_contentToMark == HIGH) {
+		taskToMark.setPriority(high);
+	} else if (_contentToMark == MEDIUM) {
+		taskToMark.setPriority(medium);
+	} else if (_contentToMark == LOW) {
+		taskToMark.setPriority(low);
+	}	
+	_log.log("Mark priority");
+}
+
+//This function set the task label to what the user wants
+void Mark::markLabel (Task &taskToMark) {
+	taskToMark.setLabel(_contentToMark);
+	_log.log("Mark label");
+}
+
+//checks if input number falls within size of task list
+bool Mark::isValidInput(vector <string> parsedInformation, int taskListSize) {
+	bool validNumber = true;
+	int size = parsedInformation.size() - 1; 
+	for (int i = 1 ; i < size ; i++) {
+		if (atoi(parsedInformation[i].c_str()) > taskListSize || atoi(parsedInformation[i].c_str()) < 0) {
+			return false;
+		}
+	}
+	return validNumber;
+}
+
+//This function processes if mark function is called
+void Mark::execute(vector<string> parsedInformation, vector<Task> &taskListFromLogic) {
+	int size = parsedInformation.size();
+
+	_contentToMark = parsedInformation[size - 1];
+	
+	for (int i = 1; i < size - 1; i++) {
+		_indexToMark = atoi(parsedInformation[i].c_str()) - 1;
+
+		if (_contentToMark == DONE || _contentToMark == NOTDONE) {
+			markStatus(taskListFromLogic[_indexToMark]);
+		} else if (_contentToMark == HIGH || _contentToMark == MEDIUM || _contentToMark == LOW) {
+			markPriority(taskListFromLogic[_indexToMark]);
+		} else {
+			markLabel(taskListFromLogic[_indexToMark]);
+		}
+		_markedTask.push_back(taskListFromLogic[_indexToMark]);
+		_markedTaskIndex.push_back(_indexToMark + 1);
+	}
+}
+
+vector<Task> Mark::getMarkedTasks(){
+	return _markedTask;
+}
+
+vector<int> Mark::getMarkedTaskIndex(){
+	return _markedTaskIndex;
+}
+
+
+
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Mark.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Mark.h
+	 */
+
+#ifndef MARK_H
+#define MARK_H
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include "Log.h"
+#include "Task.h"
+
+using namespace std;
+
+class Mark {
+private:
+
+	Log _log;
+	vector<Task> _markedTask;
+	vector<int> _markedTaskIndex;
+	int _indexToMark;
+	string _contentToMark;
+
+
+	void markStatus (Task &taskToMark);
+	void markPriority (Task &taskToMark);
+	void markLabel (Task &taskToMark);
+
+public:
+	bool isValidInput(vector <string>, int);
+	void execute (vector<string> parsedInformation, vector<Task> &taskListFromLogic);
+	vector<Task> getMarkedTasks();
+	vector<int> getMarkedTaskIndex();
+
+};
+
+#endif
+
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Mark.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Storage.cpp
+	 */
+
+#include "Storage.h"
+
+const string Storage::BACKUP = "backup.txt";
+
+Storage::Storage () {
+	ifstream readFile ("filename.txt");
+	string directory;
+	getline (readFile,directory);
+	if (directory.empty()) {
+		ofstream writeFile ("filename.txt");
+		writeFile << "output.txt" << endl;
+		directory = "output.txt";
+	}
+	assert (!directory.empty());
+	_storageFileName=directory;
+}
+
+//output start date & time or end date & time
+string Storage::dateAndTime (Task task, bool isStartTrue) {
+	ostringstream oss;
+	if (isStartTrue) {
+		oss << task.getStartDate() << endl << task.getStartTime() << endl;
+	} else {
+		oss << task.getEndDate() << endl << task.getEndTime() << endl;
+	}
+	return oss.str();
+}
+
+// returns the priority in string
+string Storage::priorityDecider (Priority priority) {
+	string answer;
+	switch (priority) {
+		case high:
+			answer = "high";
+			break;
+
+		case medium:
+			answer = "medium";
+			break;
+
+		case low:
+			answer = "low";
+			break;
+	}
+	return answer; 
+}
+
+// return the status in string
+string Storage::statusDecider (Status status) {
+	string answer;
+	switch (status) {
+		case notdone:
+			answer = "notdone";
+			break;
+
+		case done:
+			answer = "done";
+			break;
+	}
+	return answer;
+}
+
+// change the status of the task 
+void Storage::setTempStatus (Task &task, string status) {
+	if (status == "done") {
+		task.setStatus(done);
+	} else if (status == "notdone") {
+		task.setStatus(notdone);
+	}
+}
+
+// change the priority of the task
+void Storage::setTempPriority (Task &task, string priority) {
+	if (priority == "high") {
+		task.setPriority(high);
+	} else if (priority == "medium") {
+		task.setPriority(medium);
+	} else if (priority == "low") {
+		task.setPriority(low);
+	} 
+}
+
+// returns the current directory of the storage file
+string Storage::getStorageFileName () {
+	return _storageFileName;
+}
+
+// changes the directory of the storage file and the directory in filename.txt
+void Storage::editStorageFileName (string name) {
+	_storageFileName=name;
+	ofstream writeFile ("filename.txt");
+	writeFile << _storageFileName << endl;
+	writeFile.close();
+}
+
+// store the vector of data into file
+void Storage::updateFile (vector <Task> &taskList, bool isUndoTrue) {
+	string fileName;
+
+	if (!isUndoTrue) {
+		fileName = _storageFileName;
+	} else {
+		fileName = BACKUP;
+	}
+
+	ofstream writeFile (fileName);
+	int _size = taskList.size();
+	
+	for (int i = 0 ; i < _size ; i++) {
+		writeFile << taskList[i].getTaskName() << endl;
+		writeFile << taskList[i].getRecurringIndex() << endl;
+		if (!taskList[i].getStartDate().empty()) {
+			writeFile << dateAndTime(taskList[i],1);
+		}
+		if (!taskList[i].getEndDate().empty()) {
+			writeFile << dateAndTime(taskList[i],0);
+		}
+	writeFile << statusDecider(taskList[i].getStatus()) << endl;
+	writeFile << priorityDecider(taskList[i].getPriority()) << endl;
+	writeFile << taskList[i].getLabel() << endl;
+	writeFile << "__________" << endl;
+	}
+
+	if (_size > 0) {
+		writeFile << "_____" << endl;
+	}
+	writeFile.close();
+
+	if (!isUndoTrue) {
+		_log.log("Updated storage file");
+	} else {
+		_log.log("Backed up file");
+	}
+}
+
+// read the data from file and store in the vector
+void Storage::readFile (vector <Task> &taskList, bool isUndoTrue) {
+	string fileName;
+	string line;
+	vector <string> infoFromFile;
+
+	if (!isUndoTrue) {
+		fileName = _storageFileName;
+	} else {
+		fileName = BACKUP;
+	}
+	ifstream readFile (fileName);
+
+	getline(readFile,line);
+	if (!line.empty()) {
+		while (line != "_____") {
+			while (line != "__________") {
+				infoFromFile.push_back(line);
+				getline (readFile,line);
+			}
+			
+			Task task;
+			int size = infoFromFile.size();
+			string taskName = infoFromFile[0];
+			int recurringIndex = atoi(infoFromFile[1].c_str());
+			string startDate;
+			string startTime;
+			string endDate;
+			string endTime;
+			string status = infoFromFile[size-3];
+			string priority = infoFromFile[size-2];
+			string label = infoFromFile[size-1];
+			
+			if (size == 9) {
+				assert (!infoFromFile[2].empty());
+				assert (!infoFromFile[3].empty());
+				assert (!infoFromFile[4].empty());
+				assert (!infoFromFile[5].empty());
+				startDate = infoFromFile[2];
+				startTime = infoFromFile[3];
+				endDate = infoFromFile[4];
+				endTime = infoFromFile[5];
+			}
+	
+			if (size == 7) {
+				assert (!infoFromFile[2].empty());
+				assert (!infoFromFile[3].empty());
+				endDate = infoFromFile[2];
+				endTime = infoFromFile[3];
+			}
+
+			task.setTaskName(taskName);
+			task.setRecurringIndex(recurringIndex);
+			task.setStartDate(startDate);
+			task.setStartTime(startTime);
+			task.setEndDate(endDate);
+			task.setEndTime(endTime);
+			setTempStatus(task,status);
+			setTempPriority(task,priority);
+			task.setLabel(label);
+
+			taskList.push_back(task);
+			infoFromFile.clear();
+			getline(readFile,line);
+		}
+	}
+	if (!isUndoTrue) {
+		_log.log("Updated data from storage file");
+	} else {
+		_log.log("Restored data from back up file");
+	}
+}
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Storage.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Storage.h
+	 */
+
+#ifndef STORAGE_H
+#define STORAGE_H
+
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <assert.h>
+#include "Log.h"
+#include "Task.h"
+
+using namespace std;
+
+class Task;
+
+class Storage {
+private:
+	Log _log;
+	string _storageFileName;
+	static const string BACKUP;
+
+	string dateAndTime (Task , bool);
+	string priorityDecider (Priority);
+	string statusDecider (Status);
+	void setTempStatus(Task &, string);
+	void setTempPriority(Task &, string);
+
+public:
+	Storage();
+	string getStorageFileName ();
+	void editStorageFileName (string name);
+	void updateFile (vector <Task> &temp, bool isUndoTrue);
+	void readFile (vector <Task> &temp, bool isUndoTrue);
+};
+
+#endif
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Storage.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Task.cpp
+	 */
+
+#include "Task.h"
+
+Task::Task(){
+	_status = notdone;
+	_priority = low;
+	_label = "none";
+	_recurringIndex = 0;
+}
+
+Task::~Task(){
+}
+
+string Task::getTaskName () {
+	return _taskName;
+}
+
+string Task::getStartDate () {
+	return _startDate;
+}
+
+string Task::getStartTime() {
+	return _startTime;
+}
+
+string Task::getEndDate() {
+	return _endDate;
+}
+
+string Task::getEndTime() {
+	return _endTime;
+}
+
+string Task::getDeadline() {
+	return _deadline;
+}
+
+Status Task::getStatus() {
+	return _status;
+}
+
+Priority Task::getPriority() {
+	return _priority;
+}
+
+string Task::getLabel() {
+	return _label;
+}
+
+int Task::getRecurringIndex() {
+	return _recurringIndex;
+}
+
+void Task::setTaskName(string name) {
+	_taskName = name;
+}
+
+void Task::setStartDate(string date) {
+	_startDate = date;
+}
+
+void Task::setStartTime(string time) {
+	_startTime = time;
+}
+
+void Task::setEndDate(string date) {
+	_endDate = date;
+}
+
+void Task::setEndTime(string time) {
+	_endTime = time;
+}
+
+void Task::setDeadline(string date) {
+	_deadline = date;
+}
+
+void Task::setStatus(Status state) {
+	_status = state;
+}
+
+void Task::setPriority(Priority priority) {
+	_priority = priority;
+} 
+
+void Task::setLabel(string label) {
+	_label = label;
+}
+
+void Task::setRecurringIndex(int index) {
+	_recurringIndex = index;
+}
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Task.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Task.h
+	 */
+
+#ifndef TASK_H
+#define TASK_H
+
+#include <string>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+enum Status {
+	done, notdone
+};
+
+enum Priority {
+	high, medium, low
+};
+
+
+// This class serves as a template for all the tasks to be added. 
+// It contains all the setters and getters for all the attributes, for example
+// task names, statuses, times and dates and others
+class Task {
+private:
+	string _taskName;
+	string _startDate;
+	string _startTime;
+	string _endDate;
+	string _endTime;
+	string _deadline;
+	Status _status;
+	Priority _priority;
+	string _label;
+	int _recurringIndex;
+
+public:
+	Task();
+	~Task();
+	string getTaskName();
+	string getStartDate();
+	string getStartTime();
+	string getEndDate();
+	string getEndTime();
+	string getDeadline();
+	Status getStatus();
+	Priority getPriority();
+	string getLabel();
+	int getRecurringIndex();
+	void setTaskName(string name);
+	void setStartDate(string date);
+	void setStartTime(string time);
+	void setEndDate(string date);
+	void setEndTime(string time);
+	void setDeadline(string date);
+	void setStatus(Status state);
+	void setPriority(Priority priority);
+	void setLabel(string label);
+	void setRecurringIndex(int index);
+};
+
+#endif
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDo\Task.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDoTest\IDoTest.cpp
+	 */
+
+namespace StorageTest
+{		
+	TEST_CLASS(StorageTest)
+	{
+	public:
+		
+		TEST_METHOD(UpdateStorage)
+		{
+			Task task;
+			vector <Task> testVector;
+			Storage storage;
+			string temp;
+			string directory;
+			task.setTaskName("do tutorial");
+			task.setStartDate("2015-Apr-13");
+			task.setStartTime("1300");
+			task.setEndDate("2015-Apr-14");
+			task.setEndTime("1300");
+			testVector.push_back(task);
+			storage.updateFile (testVector,0);
+			ifstream readDirectory ("filename.txt");
+			getline(readDirectory,directory);
+			readDirectory.close();
+			ifstream readFile (directory);
+			getline(readFile,temp);
+			Assert::AreEqual (temp, task.getTaskName());
+			getline(readFile,temp);
+			Assert::AreEqual (atoi(temp.c_str()), 0);
+			getline(readFile,temp);
+			Assert::AreEqual (temp, task.getStartDate());
+			getline(readFile,temp);
+			Assert::AreEqual (temp, task.getStartTime());
+			getline(readFile,temp);
+			Assert::AreEqual (temp, task.getEndDate());
+			getline(readFile,temp);
+			Assert::AreEqual (temp, task.getEndTime());
+			readFile.close();
+		}
+
+		TEST_METHOD(ReadFromStorage)
+		{
+			Task task;
+			vector <Task> testVector;
+			vector <Task> readVector;
+			Storage storage;
+			string temp;
+			string directory;
+			task.setTaskName("do tutorial");
+			task.setStartDate("2015-Apr-13");
+			task.setStartTime("1300");
+			task.setEndDate("2015-Apr-14");
+			task.setEndTime("1300");
+			testVector.push_back(task);
+			storage.updateFile (testVector,0);
+			storage.readFile (readVector,0);
+			Assert::AreEqual (testVector[0].getTaskName(), readVector[0].getTaskName());
+			Assert::AreEqual (testVector[0].getStartDate(), readVector[0].getStartDate());
+			Assert::AreEqual (testVector[0].getStartTime(), readVector[0].getStartTime());
+			Assert::AreEqual (testVector[0].getEndDate(), readVector[0].getEndDate());
+			Assert::AreEqual (testVector[0].getEndTime(), readVector[0].getEndTime());
+		}
+
+		TEST_METHOD(EditStorageFile)
+		{
+			Storage storage;
+			string newFile = "new";
+			string expected = "new.txt";
+			string read;
+			storage.editStorageFileName("new.txt");
+			ifstream readFile ("filename.txt");
+			getline(readFile,read);
+			Assert::AreEqual(expected,read);
+			read = storage.getStorageFileName();
+			Assert::AreEqual(expected,read);
+		}
+	};
+}
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDoTest\IDoTest.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDoTest\IDoTest.cpp
+	 */
+
+namespace IntegrationTest
+{
+	TEST_CLASS (LogicTest)
+	{
+	public:
+		TEST_METHOD(AddNonRecurringTest)
+		{
+			Logic logicAddTest;
+			vector <Task> results;
+			int numOfTask;
+			int expected = 2; 
+			string expected2 = "submit CS";
+			string expected3 = "inform instructor abt venue change";
+			logicAddTest.process("add submit CS by 5/13");
+			logicAddTest.process("add inform instructor abt venue change");
+			results = logicAddTest.getListOfTasks();
+			numOfTask = results.size();
+			Assert::AreEqual(expected, numOfTask);
+			Assert::AreEqual(expected2,results[0].getTaskName());
+			Assert::AreEqual(expected3,results[1].getTaskName());
+		}
+
+		TEST_METHOD(AddNonRecurringTest2)
+		{
+			Logic logicAddTest;
+			Dates dates;
+			vector <Task> results;
+			int numOfTask;
+			int expected = 3;
+			string expected2 = "submit v0.5";
+			string expected3 = dates.getTodayDate();
+			string expected4 = "2350";
+			string expected5 = dates.getTodayDate();
+			string expected6 = "2359";
+			string expected7 = "holiday";
+			string expected8 = "2015-Jun-03";
+			string expected9 = "0300";
+			string expected10 = "2015-Jun-07";
+			string expected11 = "0800";
+			string expected12 = "dental appointment";
+			string expected13 = "2015-Jun-05";
+			string expected14 = "1000";
+			string expected15 = "2015-Jun-05";
+			string expected16 = "1200";
+			logicAddTest.process("add submit v0.5 from 2350 to 2359");
+			logicAddTest.process("add holiday from 6/3 0300 to 6/7 0800");
+			logicAddTest.process("add dental appointment from 6/5 1000 to 1200");
+			results = logicAddTest.getListOfTasks();
+			numOfTask = results.size();
+			Assert::AreEqual(expected, numOfTask);
+			Assert::AreEqual(expected2, results[0].getTaskName());
+			Assert::AreEqual(expected3, results[0].getStartDate());
+			Assert::AreEqual(expected4, results[0].getStartTime());
+			Assert::AreEqual(expected5, results[0].getEndDate());
+			Assert::AreEqual(expected6, results[0].getEndTime());
+			Assert::AreEqual(expected7, results[1].getTaskName());
+			Assert::AreEqual(expected8, results[1].getStartDate());
+			Assert::AreEqual(expected9, results[1].getStartTime());
+			Assert::AreEqual(expected10, results[1].getEndDate());
+			Assert::AreEqual(expected11, results[1].getEndTime());
+			Assert::AreEqual(expected12, results[2].getTaskName());
+			Assert::AreEqual(expected13, results[2].getStartDate());
+			Assert::AreEqual(expected14, results[2].getStartTime());
+			Assert::AreEqual(expected15, results[2].getEndDate());
+			Assert::AreEqual(expected16, results[2].getEndTime());
+		}
+
+		TEST_METHOD(AddRecurringTest)
+		{
+			Logic logicAddTest;
+			int numOfTask;
+			int expected = 5; 
+			logicAddTest.process("add submit CS by 6/13 every 3 day");
+			numOfTask = (logicAddTest.getListOfTasks()).size();
+			Assert::AreEqual(expected, numOfTask);
+		}
+
+		TEST_METHOD(AddRecurringTest2)
+		{
+			Logic logicAddTest;
+			vector <Task> results;
+			int numOfTask;
+			int expected = 9; 
+			string expected2 = "submit CS";
+			logicAddTest.process("add submit CS by 6/13 every 7 day for 2 month");
+			results = logicAddTest.getListOfTasks();
+			numOfTask = results.size();
+			Assert::AreEqual(expected, numOfTask);
+			for (int i = 0 ; i < numOfTask ; i++) {
+				Assert::AreEqual(expected2, results[i].getTaskName());
+			}
+		}
+
+		TEST_METHOD(AddRecurringTest3)
+		{
+			Logic logicAddTest;
+			vector <Task> results;
+			int numOfTask;
+			int expected = 31;
+			string expected2 = "eat medicine";
+			string expected3 = "2358";
+			string expected4 = "2359";
+			logicAddTest.process("add eat medicine from 2358 to 2359 every 1 day for 1 month");
+			results = logicAddTest.getListOfTasks();
+			numOfTask = results.size();
+			Assert::AreEqual(expected, numOfTask);
+			for (int i = 0 ; i < numOfTask ; i++) {
+				Assert::AreEqual(expected2, results[i].getTaskName());
+				Assert::AreEqual(expected3, results[i].getStartTime());
+				Assert::AreEqual(expected4, results[i].getEndTime());
+			}
+		}
+
+		TEST_METHOD(AddRecurringTest4)
+		{
+			Logic logicAddTest;
+			vector <Task> results;
+			int numOfTask;
+			int expected = 101;
+			string expected2 = "birthday";
+			string expected3 = "2015-Sep-08";
+			string expected4 = "2016-Sep-08";
+			string expected5 = "2017-Sep-08";
+			string expected6 = "2114-Sep-08";
+			logicAddTest.process("add birthday from 9/8 0000 to 2359 every 1 year for 100 year");
+			results = logicAddTest.getListOfTasks();
+			numOfTask = results.size();
+			Assert::AreEqual(expected, numOfTask);
+			for (int i = 0 ; i < numOfTask ; i++) {
+				Assert::AreEqual(expected2, results[i].getTaskName());
+			}
+			Assert::AreEqual(expected3, results[0].getStartDate());
+			Assert::AreEqual(expected4, results[1].getStartDate());
+			Assert::AreEqual(expected5, results[2].getStartDate());
+			Assert::AreEqual(expected6, results[99].getStartDate());
+		}
+
+		TEST_METHOD(DeleteSingleTest)
+		{
+			Logic logicAddTest;
+			Delete remove;
+			vector <Task> results;
+			int numOfTask;
+			int expected = 2;
+			string expected2 = "holiday";
+			string expected3 = "dental appointment";
+			logicAddTest.process("add submit v0.5 from 2350 to 2359");
+			logicAddTest.process("add holiday from 6/3 0300 to 6/7 0800");
+			logicAddTest.process("add dental appointment from 6/5 1000 to 1200");
+			logicAddTest.process("delete 1");
+			results = logicAddTest.getListOfTasks();
+			numOfTask = results.size();
+			Assert::AreEqual(expected,numOfTask);
+			Assert::AreEqual(expected2,results[0].getTaskName());
+			Assert::AreEqual(expected3,results[1].getTaskName());
+		}
+
+		TEST_METHOD(DeleteMultipleTest)
+		{
+			Logic logicAddTest;
+			Delete remove;
+			vector <Task> results;
+			int numOfTask;
+			int expected = 1;
+			string expected2 = "holiday";
+			string expected3 = "dental appointment";
+			logicAddTest.process("add submit v0.5 from 2350 to 2359");
+			logicAddTest.process("add holiday from 6/3 0300 to 6/7 0800");
+			logicAddTest.process("add dental appointment from 6/5 1000 to 1200");
+			logicAddTest.process("delete 1 3");
+			results = logicAddTest.getListOfTasks();
+			numOfTask = results.size();
+			Assert::AreEqual(expected,numOfTask);
+			Assert::AreEqual(expected2,results[0].getTaskName());
+		}
+
+		TEST_METHOD(DeleteRecurringTest)
+		{
+			Logic logicAddTest;
+			Delete remove;
+			vector <Task> results;
+			int numOfTask;
+			int expected = 2;
+			string expected2 = "submit v0.5";
+			string expected3 = "holiday";
+			logicAddTest.process("add submit v0.5 from 2350 to 2359");
+			logicAddTest.process("add holiday from 6/3 0300 to 6/7 0800");
+			logicAddTest.process("add dental appointment from 6/5 1000 to 1200 every 7 day for 2 month");
+			logicAddTest.process("delete all 3");
+			results = logicAddTest.getListOfTasks();
+			numOfTask = results.size();
+			Assert::AreEqual(expected,numOfTask);
+			Assert::AreEqual(expected2,results[0].getTaskName());
+			Assert::AreEqual(expected3,results[1].getTaskName());
+		}
+
+		TEST_METHOD(DeleteRecurringTest2)
+		{
+			Logic logicAddTest;
+			Delete remove;
+			vector <Task> results;
+			int numOfTask;
+			int expected = 10;
+			string expected2 = "holiday";
+			string expected3 = "dental appointment";
+			logicAddTest.process("add submit v0.5 from 2350 to 2359");
+			logicAddTest.process("add holiday from 6/3 0300 to 6/7 0800");
+			logicAddTest.process("add dental appointment from 6/5 1000 to 1200 every 7 day for 2 month");
+			logicAddTest.process("delete all 1");
+			results = logicAddTest.getListOfTasks();
+			numOfTask = results.size();
+			Assert::AreEqual(expected,numOfTask);
+			Assert::AreEqual(expected2,results[0].getTaskName());
+			Assert::AreEqual(expected3,results[1].getTaskName());
+		}
+
+		TEST_METHOD(EditTest)
+		{
+			Logic logicEditTest;
+			vector<Task> listOfTasks;
+			string expected = "holiday";
+			string expected2 = "internship";
+			string expected3 = "2015-Jun-05";
+			string expected4 = "0700";
+			string expected5 = "2015-Aug-08";
+			string expected6 = "1800";
+			logicEditTest.process("add holiday from 6/1 0300 to 6/7 0800");
+			listOfTasks = logicEditTest.getListOfTasks();
+			Assert::AreEqual(expected, listOfTasks[0].getTaskName());
+			logicEditTest.process("edit 1 taskname internship");
+			listOfTasks = logicEditTest.getListOfTasks();
+			Assert::AreEqual(expected2, listOfTasks[0].getTaskName());	
+			logicEditTest.process("edit 1 startdate 6/5");
+			listOfTasks = logicEditTest.getListOfTasks();
+			Assert::AreEqual(expected3, listOfTasks[0].getStartDate());	
+			logicEditTest.process("edit 1 starttime 0700");
+			listOfTasks = logicEditTest.getListOfTasks();
+			Assert::AreEqual(expected4, listOfTasks[0].getStartTime());	
+			logicEditTest.process("edit 1 enddate 8/8");
+			listOfTasks = logicEditTest.getListOfTasks();
+			Assert::AreEqual(expected5, listOfTasks[0].getEndDate());	
+			logicEditTest.process("edit 1 endtime 1800");
+			listOfTasks = logicEditTest.getListOfTasks();
+			Assert::AreEqual(expected6, listOfTasks[0].getEndTime());	
+		}
+
+		TEST_METHOD(ClearTest)
+		{
+			Logic logicClearTest;
+			vector<Task> listOfTasks;
+			int expected = 0;
+			int size; 
+			logicClearTest.process("add submit v0.5 from 2300 to 2359");
+			logicClearTest.process("add holiday from 6/3 0300 to 6/7 0800");
+			logicClearTest.process("add dental appointment from 6/5 1000 to 1200");
+			logicClearTest.process("clear");
+			listOfTasks = logicClearTest.getListOfTasks();
+			size = listOfTasks.size();
+			Assert::AreEqual(expected, size);	
+		}
+
+		TEST_METHOD(MarkStatusTest)
+		{
+			Logic logicMarkTest;
+			vector<Task> listOfTasks;
+			Status expected = done;
+			int size; 
+			logicMarkTest.process("add submit v0.5 from 2350 to 2359");
+			logicMarkTest.process("mark 1 done");
+			listOfTasks = logicMarkTest.getListOfTasks();
+			size = listOfTasks.size();
+			Assert::AreEqual(expected, listOfTasks[0].getStatus());	
+		}
+
+		TEST_METHOD(MarkLabelTest)
+		{
+			Logic logicMarkTest;
+			vector<Task> listOfTasks;
+			string expected = "school";
+			int size; 
+			logicMarkTest.process("add submit v0.5 from 2350 to 2359");
+			logicMarkTest.process("mark 1 school");
+			listOfTasks = logicMarkTest.getListOfTasks();
+			size = listOfTasks.size();
+			Assert::AreEqual(expected, listOfTasks[0].getLabel());	
+		}
+
+		TEST_METHOD(StoreChangeTest)
+		{
+			Logic logicMarkTest;
+			string file;
+			string expected = "new.txt";
+			logicMarkTest.process("store new");
+			ifstream readFile ("filename.txt");
+			getline(readFile,file);
+			readFile.close();
+			Assert::AreEqual(expected, file);	
+		}
+
+		TEST_METHOD(SortNameTest)
+		{
+			Logic logicSortTest;
+			vector<Task> listOfTasks;
+			string expected = "dental appointment";
+			string expected2 = "holiday";
+			string expected3 = "submit v0.5";
+			logicSortTest.process("add submit v0.5 from 2350 to 2359");
+			logicSortTest.process("add holiday from 6/3 0300 to 6/7 0800");
+			logicSortTest.process("add dental appointment from 6/5 1000 to 1200");
+			logicSortTest.process("sort taskname");
+			listOfTasks = logicSortTest.getListOfTasks();
+			Assert::AreEqual(expected, listOfTasks[0].getTaskName());
+			Assert::AreEqual(expected2, listOfTasks[1].getTaskName());
+			Assert::AreEqual(expected3, listOfTasks[2].getTaskName());
+		}
+
+		TEST_METHOD(SortFromTest)
+		{
+			Logic logicSortTest;
+			vector<Task> listOfTasks;
+			string expected = "submit v0.5";
+			string expected2 = "holiday";
+			string expected3 = "dental appointment";
+			logicSortTest.process("add submit v0.5 from 2350 to 2359");
+			logicSortTest.process("add holiday from 6/3 0300 to 6/7 0800");
+			logicSortTest.process("add dental appointment from 6/5 1000 to 1200");
+			logicSortTest.process("sort from");
+			listOfTasks = logicSortTest.getListOfTasks();
+			Assert::AreEqual(expected, listOfTasks[0].getTaskName());
+			Assert::AreEqual(expected2, listOfTasks[1].getTaskName());
+			Assert::AreEqual(expected3, listOfTasks[2].getTaskName());
+		}
+
+		TEST_METHOD(SortToTest)
+		{
+			Logic logicSortTest;
+			vector<Task> listOfTasks;
+			string expected = "submit v0.5";
+			string expected2 = "dental appointment";
+			string expected3 = "holiday";
+			logicSortTest.process("add submit v0.5 from 2350 to 2359");
+			logicSortTest.process("add holiday from 6/3 0300 to 6/7 0800");
+			logicSortTest.process("add dental appointment from 6/5 1000 to 1200");
+			logicSortTest.process("sort to");
+			listOfTasks = logicSortTest.getListOfTasks();
+			Assert::AreEqual(expected, listOfTasks[0].getTaskName());
+			Assert::AreEqual(expected2, listOfTasks[1].getTaskName());
+			Assert::AreEqual(expected3, listOfTasks[2].getTaskName());
+			logicSortTest.process("undo");
+			logicSortTest.process("sort by");
+			listOfTasks = logicSortTest.getListOfTasks();
+			Assert::AreEqual(expected, listOfTasks[0].getTaskName());
+			Assert::AreEqual(expected2, listOfTasks[1].getTaskName());
+			Assert::AreEqual(expected3, listOfTasks[2].getTaskName());
+		}
+
+		TEST_METHOD(SortDeadlineTest)
+		{
+			Logic logicSortTest;
+			vector<Task> listOfTasks;
+			string expected = "submit v0.5";
+			string expected2 = "holiday";
+			string expected3 = "dental appointment";
+			logicSortTest.process("add submit v0.5 from 2350 to 2359");
+			logicSortTest.process("add dental appointment from 5/5 1000 to 1200");
+			logicSortTest.process("add holiday from 5/3 0300 to 5/7 0800");
+			logicSortTest.process("sort deadline");
+			listOfTasks = logicSortTest.getListOfTasks();
+			Assert::AreEqual(expected, listOfTasks[0].getTaskName());
+			Assert::AreEqual(expected2, listOfTasks[1].getTaskName());
+			Assert::AreEqual(expected3, listOfTasks[2].getTaskName());
+		}
+
+		TEST_METHOD(InvalidSortTest)
+		{
+			Logic logicSortTest;
+			vector<Task> listOfTasks;
+			string expected = "submit v0.5";
+			string expected2 = "dental appointment";
+			string expected3 = "holiday";
+			logicSortTest.process("add submit v0.5 from 2350 to 2359");
+			logicSortTest.process("add dental appointment from 6/5 1000 to 1200");
+			logicSortTest.process("add holiday from 6/3 0300 to 6/7 0800");
+			logicSortTest.process("sort priority");
+			listOfTasks = logicSortTest.getListOfTasks();
+			Assert::AreEqual(expected, listOfTasks[0].getTaskName());
+			Assert::AreEqual(expected2, listOfTasks[1].getTaskName());
+			Assert::AreEqual(expected3, listOfTasks[2].getTaskName());
+		}
+	};
+}
+	// End of segment: C:\Users\Shen Yee\Downloads\Dropbox\Sem 4\CS2103\Project\IDoTest\IDoTest.cpp
+
+
+
+
+

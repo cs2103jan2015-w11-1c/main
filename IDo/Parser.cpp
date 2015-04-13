@@ -564,7 +564,7 @@ bool Parser::processView(vector<string> inputs) {
 		parsedInputs.push_back(check.datesFromToday(1));
 	} else if (size == 1 && check.checkDay(inputs[FIRST_WORD]) == 8) {
 		parsedInputs.push_back(inputs[FIRST_WORD]); //notdone, done, commands 
-	} else if(size == 1 && check.checkDay(inputs[FIRST_WORD]) < 8) {
+	} else if(size == 1 && check.checkDay(inputs[FIRST_WORD]) < 7) {
 		parsedInputs.push_back(check.datesGivenDays(check.getTodayDate(),inputs[FIRST_WORD]));
 	} else if (size == 2 && check.checkDay(inputs[SECOND_WORD]) != 0 && inputs[FIRST_WORD] == "next") {
 		parsedInputs.push_back(check.datesGivenDays(check.getTodayDate(),inputs[SECOND_WORD]));

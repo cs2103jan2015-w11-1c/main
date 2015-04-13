@@ -197,7 +197,7 @@ bool Logic::viewDecider() {
 		viewCommands();
 		enterToGoDefaultView();
 		return true;
-	} else if (_dates.isDateValid(_parsedInformation[1])) {
+	} else if (_dates.validDateFromString(_parsedInformation[1])) {
 		_view.viewDefault(_listOfTasks,_parsedInformation[1]);
 		return true;
 	} else {

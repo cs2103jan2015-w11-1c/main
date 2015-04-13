@@ -9,23 +9,6 @@ Dates::~Dates(){
 
 }
 
-string Dates::getTodayDate(){
-	time_t currentTime;
-	struct tm localTime;
-
-	time( &currentTime );                   // Get the current time
-	localtime_s( &localTime , &currentTime );  // Convert the current time to the local time
-
-	day    = localTime.tm_mday;
-	month  = localTime.tm_mon + 1;
-	year   = localTime.tm_year + 1900;
-
-	date d(year, month, day);
-	todayDate = to_simple_string(d);
-
-	return todayDate;
-}
-
 //Post: Returns true if string contains the required delimiters for dates i.e. 10/10, 2009/10/10
 bool Dates::checkDelimiters(string date){
 	store.clear();
@@ -115,7 +98,6 @@ bool Dates::storeDates(string tempYear, string tempMth, string tempDay){
 	return true;
 }
 
-
 int Dates::checkDay(string daysInName) {
 	if(daysInName == "mon" || daysInName == "monday") {
 		return 1;
@@ -204,6 +186,44 @@ bool Dates::isDateValid(string dateinput){
 	return true;
 }
 
+string Dates::getTodayDate(){
+	time_t currentTime;
+	struct tm localTime;
+
+	time( &currentTime );                   // Get the current time
+	localtime_s( &localTime , &currentTime );  // Convert the current time to the local time
+
+	day    = localTime.tm_mday;
+	month  = localTime.tm_mon + 1;
+	year   = localTime.tm_year + 1900;
+
+	date d(year, month, day);
+	todayDate = to_simple_string(d);
+
+	return todayDate;
+}
+
+
+bool Dates::validDateFromString(string check) {
+	if(check.empty()) {
+		return false;
+	}
+	
+	if(check.size() == 11) {
+		if(check[4] != '-' && check[8] != '-') {
+			return false;
+		}
+	} else {
+		return false;
+	}
+
+	date d(from_simple_string(check));
+	if(d.is_not_a_date()) {
+		return false;
+	} else {
+		return true;
+	}
+}
 
 string Dates::getFormattedDates(){
 	return dateCheckedFormat;

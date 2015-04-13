@@ -7,7 +7,7 @@ const int SECOND_WORD = 1;
 const int THIRD_WORD = 2;
 
 const string Parser::CHOICE_ADD = "add";
-const string Parser::CHOICE_DELETE = "delete";
+const string Parser::CHOICE_DELETE = "delete"; 
 const string Parser::CHOICE_EDIT = "edit";
 const string Parser::CHOICE_CLEAR = "clear";
 const string Parser::CHOICE_SEARCH = "search";
@@ -72,7 +72,7 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 	
 	//Removes the first word u.e. user command
 	splittedUserInputs.erase(splittedUserInputs.begin());
-	
+
 	switch (commandChoice){
 		case ADD:
 			parsedInputs.push_back(CHOICE_ADD);
@@ -124,6 +124,7 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 
 		case EXIT:
 			parsedInputs.push_back(CHOICE_EXIT);
+			break;
 
 		case INVALID:
 			parsedInputs.push_back(CHOICE_ERROR);
@@ -137,6 +138,8 @@ bool Parser::parseActions(vector<string> splittedUserInputs){
 bool Parser::checkTimedTask(){
 
     splittedSize = splittedUserInputs.size();
+	assert (splittedSize != 0);
+
 	bool valid = true;
 
 	fromPosition = keywordPos("from");
@@ -154,7 +157,7 @@ bool Parser::checkTimedTask(){
 				valid = false;
 			}
 		}
-	} else if (fromPosition != NOT_VALID && toPosition != NOT_VALID && everyPosition == NOT_VALID) {
+	} else if(fromPosition != NOT_VALID && toPosition != NOT_VALID && everyPosition == NOT_VALID) {
 		for(int i = fromPosition+1; i < toPosition; i++ ) {
 			if(!validDateTime(i)) {
 				valid = false;
@@ -178,12 +181,14 @@ bool Parser::checkTimedTask(){
 		if(compareDates(_startDate,_endDate)) {
 			valid = false;
 		}
-	
+
 		//Return false if start time is larger than end time
 		if(_startDate == _endDate && compareTimes(_startTime,_endTime)) {
 			valid = false;
 		}
+
 		//Return false if time is less than today's time
+
 		if(!checkTimeIfDateIsToday(_startDate, _startTime)){
 			cout << "[Error] You should start on your task NOW!" <<endl;
 			valid = false;
@@ -192,6 +197,7 @@ bool Parser::checkTimedTask(){
 	return valid;
 }
 
+//This functions stores all timedtasks information by the user
 bool Parser::storeTimedTaskInfo() {
 
 		assert (fromPosition != NOT_VALID || byPosition != NOT_VALID);
@@ -219,6 +225,7 @@ bool Parser::storeTimedTaskInfo() {
 		return true;
 }
 
+//This function stores missing timedtasks information by default
 bool Parser::setMissingDateTime() {
 
 	if(_startTime.empty() && _startDate == check.getTodayDate()) {
@@ -241,38 +248,35 @@ bool Parser::setMissingDateTime() {
 	return true;
 }
 
-
-
 //Post: Returns true if it's a deadline task i.e. add...by <date/time>
 //		Returns false if it's not a deadline task
 bool Parser::checkDeadlineTask(){
 
-	int size = splittedUserInputs.size();
-	byPosition = -1;
-	int everyPosition = -1;
+	splittedSize = splittedUserInputs.size();
+	assert (splittedSize != 0);
 	bool valid = true;
 
 	everyPosition = keywordPos("every");
 	byPosition = keywordPos("by");
 
-	if(byPosition != -1 && everyPosition != -1) {
+	if(byPosition != NOT_VALID && everyPosition != NOT_VALID) {
 		for(int i = byPosition+1; i < everyPosition; i ++ ) {
-			if(!check.isDateValid(splittedUserInputs[i]) && !isPossibleTime(splittedUserInputs[i])) {
+			if(!validDateTime(i)) {
 				valid = false;
 			}
 		}
-	} else if (byPosition != -1 && everyPosition == -1) {
-		for(int i = byPosition+1; i < size; i ++ ) {
-			if(!check.isDateValid(splittedUserInputs[i]) && !isPossibleTime(splittedUserInputs[i])) {
+	} else if (byPosition != NOT_VALID && everyPosition == NOT_VALID) {
+		for (int i = byPosition+1; i < splittedSize; i ++ ) {
+			if(!validDateTime(i)) {
 				valid = false;
 			}
 		}
-	} else if (byPosition == -1) {
+	} else if (byPosition == NOT_VALID) {
 		return false;
 	}
 
 	if(valid == true) {
-		for(int i = byPosition+1 ; i < size ; i++) {
+		for(int i = byPosition+1 ; i < splittedSize ; i++) {
 	
 			if(check.isDateValid(splittedUserInputs[i])) {
 				_endDate = check.getFormattedDates();
@@ -301,10 +305,16 @@ bool Parser::checkDeadlineTask(){
 //Post: Returns true if it's floating task
 //		Returns false if it's not a floating task
 bool Parser::checkFloating(){
-	int size = splittedUserInputs.size();
+	splittedSize = splittedUserInputs.size();
+	assert (splittedSize != 0);
+
+	if(splittedSize == 0) {
+		return false;
+	}
+
 	bool valid = true;
 
-	if(fromPosition != size-1 && fromPosition != -1) {
+	if(fromPosition != splittedSize-1 && fromPosition != NOT_VALID) {
 		if(check.checkDateFormat(splittedUserInputs[fromPosition+1])){
 			valid = false;
 		}
@@ -313,7 +323,7 @@ bool Parser::checkFloating(){
 		}
 	}
 
-	if(byPosition != size-1 && byPosition != -1) {
+	if(byPosition != splittedSize-1 && byPosition != NOT_VALID) {
 		if(check.checkDateFormat(splittedUserInputs[byPosition+1])){
 			valid = false;
 		}
@@ -462,6 +472,10 @@ bool Parser::processAddContent(vector<string> inputs) {
 	bool addResultValid = true;
 	int size = inputs.size();
 
+	if(size == 0) {
+		return false;
+	}
+
 	_log.log("Parser processing input for adding");
 	if(checkTimedTask()) {
 		storeTaskContent(0, fromPosition-1, inputs);
@@ -499,13 +513,17 @@ bool Parser::processAddContent(vector<string> inputs) {
 //This sorts out the information that an edit function requires i.e. task index, type and details
 bool Parser::processEditContent(vector<string> inputs) {
 	int inputSize = inputs.size();
+	
+	if(inputSize == 0) {
+		return false;
+	}
 
 	_log.log("Parser processing input for edit");
 	if(inputSize >= 3){
 		parsedInputs.push_back(inputs[FIRST_WORD]); //task index to be edited
 		parsedInputs.push_back(inputs[SECOND_WORD]); //task type to be edited
 	
-		storeTaskContent(2, inputSize, inputs);
+		storeTaskContent(THIRD_WORD, inputSize, inputs);
 		parsedInputs.push_back(_taskContent);
 
 	} else {
@@ -612,7 +630,7 @@ bool Parser::compareDates(string date1, string date2) {
 	date d2(from_simple_string(date2));
 
 	if(d1 > d2) {
-		cout << endl << "[Error] End Date is before Start Date??" << endl <<endl;
+		cout <<  "[Error] End Date is before Start Date??" << endl;
 		return true;
 	} else {
 		return false;
@@ -627,8 +645,7 @@ bool Parser::compareTimes(string time1, string time2) {
 	}
 
 	if(time1 > time2) {
-//		throw ERROR_END_TIME_B4_STARTTIME;
-		return true;
+		throw ERROR_END_TIME_B4_STARTTIME;
 	} else {
 		return false;
 	}
@@ -651,7 +668,7 @@ bool Parser::isPossibleTime(string time){
 	int minute = atoi(time.c_str());
 	
 	if(minute > 2359) {
-//		throw ERROR_TIME_OUT_RANGE;
+		cout << ERROR_TIME_OUT_RANGE << endl;
 		return false;
 	}
 
@@ -686,7 +703,8 @@ bool Parser::checkTimeIfDateIsToday(string date, string time) {
 
 	if(date == check.getTodayDate()) {
 		if(time < getTodayTime()) {
-			throw "[ERROR] Time is OVER!!!";
+			cout <<  "[ERROR] Check the time. It's over!!" << endl;
+			return false;
 		}
 	}
 	return true;
@@ -699,9 +717,9 @@ bool Parser::validDateTime(int index) {
 			return false;
 		}
 	} 
-
 	return true;
 }
+
 //Return today'sTime as a string
 string Parser::getTodayTime() {
 

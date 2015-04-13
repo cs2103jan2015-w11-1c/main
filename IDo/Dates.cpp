@@ -163,12 +163,10 @@ string Dates::datesFromToday(int numberOfDays){
 bool Dates::checkDateFormat(string input){
 	
 	if(!checkDelimiters(input)) {
-//		cout << "Error: Date format is wrong." <<endl;
 		return false;
 	} 
 
 	if(!checkYearMthDayFormat()){
-//		cout << "Error: Date format1 is wrong." <<endl;
 		return false;
 	} 
 

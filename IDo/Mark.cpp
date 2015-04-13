@@ -9,17 +9,17 @@ const string LOW = "low";
 
 //This function set the task statuc to done or not done
 void Mark::markStatus (Task &taskToMark){
-	_log.log("Marking status");
+	
 	if (_contentToMark == DONE) {
 		taskToMark.setStatus(done);
 	} else if (_contentToMark == NOTDONE) {
 		taskToMark.setStatus(notdone);
 	}
+	_log.log("Mark status");
 }
 
 //This function set the task priority to low,medium,high
 void Mark::markPriority(Task &taskToMark) {
-	_log.log("Marking priority");
 	if (_contentToMark == HIGH) {
 		taskToMark.setPriority(high);
 	} else if (_contentToMark == MEDIUM) {
@@ -27,12 +27,13 @@ void Mark::markPriority(Task &taskToMark) {
 	} else if (_contentToMark == LOW) {
 		taskToMark.setPriority(low);
 	}	
+	_log.log("Mark priority");
 }
 
 //This function set the task label to what the user wants
 void Mark::markLabel (Task &taskToMark) {
-	_log.log("Marking label");
 	taskToMark.setLabel(_contentToMark);
+	_log.log("Mark label");
 }
 
 //checks if input number falls within size of task list

@@ -1,3 +1,4 @@
+//@author A0115545J
 #include "Logic.h"
 
 const string LAST_CHANGE = "** Last Change Made **";

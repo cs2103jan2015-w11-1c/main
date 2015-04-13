@@ -1,4 +1,4 @@
-//@author A0115465H
+//@author A0114010L
 #ifndef VIEW_H
 #define VIEW_H
 

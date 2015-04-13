@@ -7,6 +7,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <assert.h>
 #include "Log.h"
 #include "Task.h"
 
@@ -14,6 +15,7 @@ using namespace std;
 
 class Task;
 
+// This class
 class Storage {
 private:
 	Log _log;

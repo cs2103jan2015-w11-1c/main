@@ -1,6 +1,5 @@
 //@author A0115465H
 #include "Storage.h"
-#include <assert.h>
 
 const string Storage::BACKUP = "backup.txt";
 
@@ -8,9 +7,16 @@ Storage::Storage () {
 	ifstream readFile ("filename.txt");
 	string directory;
 	getline (readFile,directory);
+	if (directory.empty()) {
+		ofstream writeFile ("filename.txt");
+		writeFile << "output.txt" << endl;
+		directory = "output.txt";
+	}
+	assert (!directory.empty());
 	_storageFileName=directory;
 }
 
+//output start date & time or end date & time
 string Storage::dateAndTime (Task task, bool isStartTrue) {
 	ostringstream oss;
 	if (isStartTrue) {
@@ -21,6 +27,7 @@ string Storage::dateAndTime (Task task, bool isStartTrue) {
 	return oss.str();
 }
 
+// returns the priority in string
 string Storage::priorityDecider (Priority priority) {
 	string answer;
 	switch (priority) {
@@ -39,9 +46,9 @@ string Storage::priorityDecider (Priority priority) {
 	return answer; 
 }
 
+// return the status in string
 string Storage::statusDecider (Status status) {
 	string answer;
-
 	switch (status) {
 		case notdone:
 			answer = "notdone";
@@ -54,6 +61,7 @@ string Storage::statusDecider (Status status) {
 	return answer;
 }
 
+// change the status of the task 
 void Storage::setTempStatus (Task &task, string status) {
 	if (status == "done") {
 		task.setStatus(done);
@@ -62,6 +70,7 @@ void Storage::setTempStatus (Task &task, string status) {
 	}
 }
 
+// change the priority of the task
 void Storage::setTempPriority (Task &task, string priority) {
 	if (priority == "high") {
 		task.setPriority(high);
@@ -72,10 +81,12 @@ void Storage::setTempPriority (Task &task, string priority) {
 	} 
 }
 
+// returns the current directory of the storage file
 string Storage::getStorageFileName () {
 	return _storageFileName;
 }
 
+// changes the directory of the storage file and the directory in filename.txt
 void Storage::editStorageFileName (string name) {
 	_storageFileName=name;
 	ofstream writeFile ("filename.txt");
@@ -83,6 +94,7 @@ void Storage::editStorageFileName (string name) {
 	writeFile.close();
 }
 
+// store the vector of data into file
 void Storage::updateFile (vector <Task> &taskList, bool isUndoTrue) {
 	string fileName;
 
@@ -122,6 +134,7 @@ void Storage::updateFile (vector <Task> &taskList, bool isUndoTrue) {
 	}
 }
 
+// read the data from file and store in the vector
 void Storage::readFile (vector <Task> &taskList, bool isUndoTrue) {
 	string fileName;
 	string line;

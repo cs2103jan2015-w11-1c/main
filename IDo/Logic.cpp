@@ -1,3 +1,4 @@
+//@author A0115545J
 #include "Logic.h"
 
 const string LAST_CHANGE = "** Last Change Made **";
@@ -172,7 +173,6 @@ void Logic::viewCommands() {
 }
 
 bool Logic::viewDecider() {
-
 	if (_parsedInformation.size() == 1) {
 		return false;
 	}
@@ -202,8 +202,8 @@ bool Logic::viewDecider() {
 }
 
 void Logic::storeChange() {
-	string filename;
 	_log.log("Logic call storage to change storage file name");
+	string filename;
 	_view.viewDefault(_listOfTasks,_dates.getTodayDate());
 	filename = _parsedInformation[1] + ".txt";
 	_storage.editStorageFileName(filename);
@@ -248,6 +248,8 @@ void Logic::searchWord() {
 	 }
 }
 
+// function that allows user to press enter to go default view after each 
+// command
 void Logic::enterToGoDefaultView() {
 	string userInput;
 	printMessage(ENTER_TO_DEFAULT_VIEW);

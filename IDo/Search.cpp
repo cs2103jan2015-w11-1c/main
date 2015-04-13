@@ -156,7 +156,6 @@ bool Search::findSec(int &i, vector<string> tokenisedSearchWord, vector<string> 
 //conducts the matching of task name with the word to be searched
 //returns true if word is found, false otherwise
 bool Search::foundWord(string taskname) {
-
 	int whiteSpaceIndex;
 	//cout << _searchword << "search word size: " << _searchword.size() << endl;
 	if (_searchWord.size() == 1) {	//single first character search
@@ -168,10 +167,8 @@ bool Search::foundWord(string taskname) {
 		}
 	}
 	else if (_searchWord.size() > 1) {
-
 		vector <string> tokenisedTaskName;;
 		tokenisedTaskName = stringToTokens(taskname);
-
 		whiteSpaceIndex = _searchWord.find_first_of(" ");
 
 		//cout << "whitespace index" << whiteSpaceIndex << endl;

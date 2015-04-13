@@ -343,7 +343,7 @@ namespace IntegrationTest
 			Logic logicAddTest;
 			vector <Task> results;
 			int numOfTask;
-			int expected = 30;
+			int expected = 31;
 			string expected2 = "eat medicine";
 			string expected3 = "2358";
 			string expected4 = "2359";
@@ -363,7 +363,7 @@ namespace IntegrationTest
 			Logic logicAddTest;
 			vector <Task> results;
 			int numOfTask;
-			int expected = 100;
+			int expected = 101;
 			string expected2 = "birthday";
 			string expected3 = "2015-Sep-08";
 			string expected4 = "2016-Sep-08";
@@ -447,7 +447,7 @@ namespace IntegrationTest
 			Delete remove;
 			vector <Task> results;
 			int numOfTask;
-			int expected = 9;
+			int expected = 10;
 			string expected2 = "holiday";
 			string expected3 = "dental appointment";
 			logicAddTest.process("add submit v0.5 from 2300 to 2359");

@@ -1,6 +1,5 @@
 //@author A0115465H
 #include "Storage.h"
-#include <assert.h>
 
 const string Storage::BACKUP = "backup.txt";
 
@@ -8,6 +7,12 @@ Storage::Storage () {
 	ifstream readFile ("filename.txt");
 	string directory;
 	getline (readFile,directory);
+	if (directory.empty()) {
+		ofstream writeFile ("filename.txt");
+		writeFile << "output.txt" << endl;
+		directory = "output.txt";
+	}
+	assert (!directory.empty());
 	_storageFileName=directory;
 }
 

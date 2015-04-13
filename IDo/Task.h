@@ -16,6 +16,10 @@ enum Priority {
 	high, medium, low
 };
 
+
+// This class serves as a template for all the tasks to be added. 
+// It contains all the setters and getters for all the attributes, for example
+// task names, statuses, times and dates and others
 class Task {
 private:
 	string _taskName;

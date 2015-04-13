@@ -1,11 +1,13 @@
 //@author A0115465H
 #include "Delete.h"
 
+// main function that does the deleting for recurring tasks
 void Delete::deleteRecurring (vector <Task> taskList) {
 	getRecurringIndexToDelete (taskList);
 	checkRecurringToDelete (taskList);
 }
 
+// Get the recurring indexes for the tasks to be deleted
 void Delete::getRecurringIndexToDelete (vector <Task> taskList) {
 	int recurringIndex;
 	int size = parsedInfo.size();
@@ -17,14 +19,16 @@ void Delete::getRecurringIndexToDelete (vector <Task> taskList) {
 	}
 }
 
+// Check whether the task to be deleted is recurring, if yes calls another function
 void Delete::checkRecurringToDelete (vector <Task> taskList) {
 	if (recurringToDelete.size() == 0) {  // if user wants to batch delete a non-recurring task
-			taskIndexToDelete.push_back(atoi(parsedInfo[2].c_str())-1);
+		taskIndexToDelete.push_back(atoi(parsedInfo[2].c_str())-1);
 	} else {
 		getRecurringToDelete(taskList);
 	}
 }
 
+// Get the indexes of the recurring tasks to be deleted
 void Delete::getRecurringToDelete (vector <Task> taskList) {
 	int sizeTaskList = taskList.size();
 	int sizeRecurring = recurringToDelete.size();
@@ -65,6 +69,7 @@ bool Delete::isValidInput(vector <string> parsedInformation, int taskListSize) {
 	return validNumber;
 }
 
+// Main function that takes in user command and executes them
 void Delete::execute(vector<Task> &taskList) {
 	int size = parsedInfo.size();
 	

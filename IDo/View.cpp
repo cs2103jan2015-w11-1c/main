@@ -4,6 +4,7 @@
 const string DISPLAYING = "[List of Tasks]";
 const string CHANGES = "**Last Change Made**";
 
+
 View::View() {
 	_todayDate = _date.getTodayDate();
 }
@@ -12,6 +13,7 @@ void View::printMessage(string message) {
 	cout << endl << message << endl << endl;
 }
 
+// displaying today's timed tasks
 void View::displayToday(vector <Task> &list, int size, string date) {
 	SetColor(brightWhite);
 	cout << "Today's Date [" << _todayDate << "]" << endl << endl;
@@ -27,6 +29,7 @@ void View::displayToday(vector <Task> &list, int size, string date) {
 	cout << endl;
 }
 
+// displaying header for timed tasks
 void View::printTimedTaskHeader() {
 	cout << " "
 		<< setw(3) << "No." << setw(4) << " "
@@ -49,6 +52,7 @@ void View::displayTimedTask(int index, Task task) {
 	printPriority(task);
 }
 
+// displaying deadline tasks on a date provided
 void View::displayDeadline(vector <Task> &list, int size, string date) {
 	SetColor(pink);
 	cout << "** Upcoming Deadline Tasks from " << date << " onwards **" << endl << endl; 
@@ -85,6 +89,7 @@ void View::displayDeadline(vector <Task> &list, int size, string date) {
 	cout << endl;
 }
 
+// displaying header for deadline tasks
 void View::printDeadlineTaskHeader() {
 	cout << " " 
 		 << setw(3) << "No." << setw(4) << " "
@@ -107,6 +112,7 @@ void View::displayDeadlineTask(int index, Task task) {
 	printPriority(task);
 }
 
+// displaying floating tasks
 void View::displayFloating(vector <Task> &list, int size) {
 	SetColor(pink);
 	cout << "** Floating Tasks **" << endl << endl;
@@ -122,6 +128,7 @@ void View::displayFloating(vector <Task> &list, int size) {
 	cout << endl;
 }
 
+// displaying header for floating tasks
 void View::printFloatingTaskHeader() {
 	cout << " " 
 		 << setw(3) << "No." << setw(4) << " "
@@ -142,6 +149,7 @@ void View::displayFloatingTask(int index, Task task) {
 	printPriority(task);
 }
 
+// change the colour of words
 void View::SetColor(int value){
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), value);
 }
@@ -150,6 +158,7 @@ void View::printIndex(int index) {
 	cout << setw(3) << index << "." << setw(4) << " ";
 }
 
+// print start date & time
 void View::printStart(Task task) {
 	if (!task.getStartTime().empty() && !task.getEndTime().empty()){
 		cout << setw(4) << task.getStartTime() << " " << setw(2) << "to"
@@ -157,6 +166,7 @@ void View::printStart(Task task) {
 	}
 }
 
+// check if deadline is over and print deadline date & time
 void View::printDeadline(Task task) {
 	Parser parser;
 	string _todayDate;
@@ -174,12 +184,13 @@ void View::printDeadline(Task task) {
 	} 
 }
 
+// print out status of the given task
 void View::printStatus (Task task, bool isFloatingTask) {
 	if (!isFloatingTask) {
 		if (task.getStatus() == notdone) {
-		cout << setw(12) << "[NOT DONE]" << setw(1) << " ";
+			cout << setw(12) << "[NOT DONE]" << setw(1) << " ";
 		} else {
-		cout << setw(8) << "[DONE]" << setw(5) << " ";
+			cout << setw(8) << "[DONE]" << setw(5) << " ";
 		}
 	} else {
 		if (task.getStatus() == notdone) {
@@ -190,6 +201,7 @@ void View::printStatus (Task task, bool isFloatingTask) {
 	}
 }
 
+// print out label of the given task
 void View::printLabel (Task task) {
 	int spacing;
 	cout << "[" << task.getLabel() << "]";
@@ -197,6 +209,7 @@ void View::printLabel (Task task) {
 	cout << setw(spacing) << " ";
 }
 
+// print out priority of the given task
 void View::printPriority (Task task) {
 	if (task.getPriority() == high) {
 		SetColor(brightRed); // red
@@ -259,6 +272,7 @@ void View::display(Task task) {
 	printPriority(task);
 }
 
+// print the tasks given
 void View::viewSelectedFew(vector<Task> list, vector<int> taskNum) {
 	printMessage(DISPLAYING);
 	printHeader();
@@ -270,6 +284,7 @@ void View::viewSelectedFew(vector<Task> list, vector<int> taskNum) {
 	cout << endl;
 }
 
+// print the selected task
 void View::viewSelectedOne(vector<Task> list, int taskNumber) {
 	printMessage(CHANGES);
 	printHeader();
@@ -289,6 +304,7 @@ void View::viewDefault(vector<Task> &list, string date) {
 	displayFloating(list,list.size());
 }
 
+// Print all tasks in database
 void View::viewAll(vector <Task> &list) {
 	printMessage(DISPLAYING);
 	printHeader();
@@ -329,6 +345,7 @@ void View::viewNotDoneTasks(vector <Task> &list) {
 	cout << endl;
 }
 
+// Display tasks by priority
 void View::viewPriority(vector <Task> &list, string priority) {
 	printMessage(DISPLAYING);
 	printHeader();

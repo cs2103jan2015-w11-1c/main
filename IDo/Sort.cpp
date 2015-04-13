@@ -1,6 +1,7 @@
 //@author A0114010L
 #include "Sort.h"
 
+// convert the sort choices from string to enumerated sortChoice
 Sort::SortChoice Sort::sortWhat(){
 	if (_sortChoice == "taskname") {
 		return TASKNAME;
@@ -22,6 +23,7 @@ Sort::SortChoice Sort::sortWhat(){
 	}
 }
 
+// sort by start date & time
 bool Sort::sortFrom() {
 
 	int listSize = _sortList.size();
@@ -52,6 +54,7 @@ bool Sort::sortFrom() {
 	return true;
 }
 
+// sort task name alphabetically
 bool Sort::sortTaskName(){
 
 	vector <Task> swap;
@@ -72,6 +75,7 @@ bool Sort::sortTaskName(){
 	return true;
 }
 
+// sort by start time
 bool Sort::sortStartTime() {
 	vector <Task> swap;
 	int listSize = _sortList.size();
@@ -92,6 +96,7 @@ bool Sort::sortStartTime() {
 	return true;
 }
 
+// sort by end date & time
 bool Sort::sortToBy() {
 
 	int listSize = _sortList.size();
@@ -122,6 +127,7 @@ bool Sort::sortToBy() {
 	return true;
 }
 
+// sort by end time
 bool Sort::sortEndTime() {
 	vector <Task> swap;
 	int listSize = _sortList.size();
@@ -142,6 +148,8 @@ bool Sort::sortEndTime() {
 	return true;
 }
 
+// sort by deadline, using start date & time of timed tasks and end date & time
+// of deadline tasks
 bool Sort::sortDeadLine() {
 
 	int listSize = _sortList.size();
@@ -209,7 +217,6 @@ bool Sort::sortDeadLine() {
 }
 
 bool Sort::swap(int current, int next) {
-
 	vector <Task> swap;
 
 	swap.push_back(_sortList[current]);
@@ -220,6 +227,7 @@ bool Sort::swap(int current, int next) {
 	return true;
 }
 
+// main function that processes the command and executes them
 bool Sort::execute(vector <string> parsedInformation, vector <Task> list) {
 	int size = parsedInformation.size();
 

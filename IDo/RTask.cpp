@@ -166,6 +166,8 @@ bool RTask::setNoOfOccurrences(int noOfOccurrences) {
 		now = from_simple_string(_occur.getEndDate());
 	}
 
+	noOfOccurrences = (noOfOccurrences - 1) * _intervalBtwPeriod;
+
 	if(_period == day) {
 		days interval(noOfOccurrences);
 		_lastDateLimit = now + interval;
@@ -192,18 +194,20 @@ void RTask::generateOccursForDeadlineTask() {
 
 	_nextEndDate = from_simple_string(next.getEndDate());
 
+	
 	while (_nextEndDate <= _lastDateLimit) {
 		_endDate = from_simple_string(_occur.getEndDate());
+		
 		if (_period == day) {	
 			date_duration interval(_intervalBtwPeriod);
 			_nextEndDate = _endDate + interval;	
 		} else if (_period == month) {	
 			months interval(_intervalBtwPeriod);
-			date nextEndDate = _endDate + interval;
+			_nextEndDate = _endDate + interval;
 		} else if (_period == year) {		
 			years interval(_intervalBtwPeriod);
-			date nextEndDate = _endDate + interval;			
-		}
+			_nextEndDate = _endDate + interval;			
+		} 
 
 		_log.log(RTASK_TO_TASK);
 
